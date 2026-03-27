@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+.login-wrapper {
+    @apply flex items-center justify-center min-h-screen bg-gray-900;
+}
+
+.login-box {
+    @apply w-full max-w-md p-8 space-y-8 bg-gray-800 rounded-xl shadow-2xl;
+}
+
+.title-main {
+    @apply text-3xl font-extrabold text-white;
+}
+
+.title-sub {
+    @apply mt-2 text-sm text-gray-400;
+}
+
+.input-label {
+    @apply block text-sm font-medium text-gray-300;
+}
+
+/* Gom mớ class dài ngoằng của thẻ input vào đây */
+.input-field {
+    @apply w-full px-4 py-3 mt-1 text-white bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-colors;
+}
+
+/* Gom class của nút bấm */
+.btn-primary {
+    @apply w-full px-4 py-3 text-sm font-bold text-white transition-colors bg-green-500 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-900;
+}
+
+.btn-disabled {
+    @apply opacity-50 cursor-not-allowed;
+}
+
+.error-message {
+    @apply p-3 text-sm text-red-500 bg-red-100/10 rounded-lg text-center border border-red-500/50;
+}
