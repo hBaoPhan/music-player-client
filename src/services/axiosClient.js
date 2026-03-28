@@ -30,8 +30,7 @@ axiosClient.interceptors.response.use(
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
             console.error("Token hết hạn hoặc không có quyền truy cập!");
             localStorage.removeItem('token');
-
-            // window.location.href = '/login'; 
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }

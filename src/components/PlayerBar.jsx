@@ -1,11 +1,29 @@
-import React, { useRef, useEffect } from 'react';
-import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2 } from 'react-icons/fi';
+import React, { useRef, useEffect, useState } from 'react';
+import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX } from 'react-icons/fi';
 import { usePlayer } from '../context/PlayerContext';
 import '../styles/PlayerBar.css';
 
 const PlayerBar = () => {
-    const { currentSong, isPlaying, setIsPlaying } = usePlayer();
+    const { currentSong, isPlaying, setIsPlaying, playNext, playPrev } = usePlayer();
     const audioRef = useRef(null);
+
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const progressPercent = duration && duration > 0 ? (currentTime / duration) * 100 : 0;
+
+    const [volume, setVolume] = useState(1);
+    const volumePercent = volume * 100;
+
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = volume;
+        }
+        if (isPlaying && audioRef.current) {
+            audioRef.current.play();
+        } else if (!isPlaying && audioRef.current) {
+            audioRef.current.pause();
+        }
+    }, [isPlaying, currentSong, volume]);
 
     useEffect(() => {
         if (isPlaying && audioRef.current) {
@@ -19,6 +37,39 @@ const PlayerBar = () => {
         setIsPlaying(!isPlaying);
     };
 
+    const formatTime = (time) => {
+        if (time && !isNaN(time)) {
+            const minutes = Math.floor(time / 60);
+            const formatMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+            const seconds = Math.floor(time % 60);
+            const formatSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+            return `${formatMinutes}:${formatSeconds}`;
+        }
+        return '00:00';
+    };
+
+    const handleTimeUpdate = () => {
+        setCurrentTime(audioRef.current.currentTime);
+    };
+
+    const handleLoadedMetadata = () => {
+        setDuration(audioRef.current.duration);
+    };
+
+    const handleSeek = (e) => {
+        const newTime = Number(e.target.value);
+        audioRef.current.currentTime = newTime;
+        setCurrentTime(newTime);
+    };
+
+    const handleEnded = () => {
+        playNext();
+    };
+
+    const handleVolumeChange = (e) => {
+        setVolume(Number(e.target.value));
+    };
+
     if (!currentSong) {
         return (
             <div className="player-container justify-center">
@@ -29,7 +80,13 @@ const PlayerBar = () => {
 
     return (
         <div className="player-container">
-            <audio ref={audioRef} src={currentSong.audioUrl} />
+            <audio
+                ref={audioRef}
+                src={currentSong.audioUrl}
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+                onEnded={handleEnded}
+            />
 
             <div className="song-info-wrapper">
                 <img
@@ -45,22 +102,44 @@ const PlayerBar = () => {
 
             <div className="controls-wrapper">
                 <div className="buttons-group">
-                    <FiSkipBack className="control-btn text-xl" />
+                    <FiSkipBack className="control-btn text-xl" onClick={playPrev} />
 
                     <button onClick={togglePlay} className="play-pause-btn">
-                        {isPlaying ? <FiPause className="text-xl" /> : <FiPlay className="text-xl ml-1" />}
+                        {isPlaying ? <FiPause className="text-xl text-black" /> : <FiPlay className="text-xl ml-1 text-black" />}
                     </button>
 
-                    <FiSkipForward className="control-btn text-xl" />
+                    <FiSkipForward className="control-btn text-xl" onClick={playNext} />
                 </div>
-                {/*progress bar*/}
+
+                <div className="progress-container">
+                    <span>{formatTime(currentTime)}</span>
+                    <input
+                        type="range"
+                        min="0"
+                        max={duration || 0}
+                        value={currentTime}
+                        onChange={handleSeek}
+                        className="progress-bar-input"
+
+                        style={{ '--progress-percent': `${progressPercent}%` }}
+                    />
+                    <span>{formatTime(duration)}</span>
+                </div>
             </div>
 
             <div className="volume-wrapper">
-                <FiVolume2 className="text-xl" />
-                <div className="w-24 h-1 bg-gray-600 rounded-full cursor-pointer">
-                    <div className="w-1/2 h-full bg-white rounded-full hover:bg-green-500"></div>
-                </div>
+                {volume === 0 ? <FiVolumeX className="text-xl" /> : <FiVolume2 className="text-xl" />}
+
+                <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={volume}
+                    onChange={handleVolumeChange}
+                    className="volume-slider-input"
+                    style={{ '--volume-percent': `${volumePercent}%` }}
+                />
             </div>
         </div>
     );

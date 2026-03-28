@@ -7,11 +7,13 @@ import { usePlayer } from '../context/PlayerContext';
 const Home = () => {
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { currentSong, setCurrentSong, isPlaying, setIsPlaying } = usePlayer();
+
+    const { currentSong, setCurrentSong, isPlaying, setIsPlaying, setSongQueue } = usePlayer();
 
     const handlePlaySong = (song) => {
         setCurrentSong(song);
         setIsPlaying(true);
+        setSongQueue(songs);
     };
 
     useEffect(() => {
