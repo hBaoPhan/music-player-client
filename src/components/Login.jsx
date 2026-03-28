@@ -19,7 +19,7 @@ const Login = () => {
 
         try {
             const response = await authService.login(username, password);
-            console.log(response)
+            console.log(response) ///////////////////////// console log token ///////////////
             localStorage.setItem('token', response.token);
             navigate('/');
         } catch (err) {
@@ -39,7 +39,7 @@ const Login = () => {
                     <p className="title-sub">Hòa mình vào thế giới âm nhạc của bạn</p>
                 </div>
 
-                <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+                <form className="mt-8 space-y-6" onSubmit={() => { handleLogin }}>
 
 
 

@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+
+.layout-container {
+    @apply flex h-screen bg-gray-900 text-white overflow-hidden;
+}
+
+.sidebar {
+    @apply w-64 bg-black shrink-0;
+}
+
+.sidebar-content {
+    @apply p-6;
+}
+
+.app-logo {
+    @apply text-2xl font-bold text-green-500;
+}
+
+.main-content {
+    @apply flex-1 overflow-y-auto pb-24;
+}
+
+.page-wrapper {
+    @apply p-8;
+}
+
+.player-bar {
+    @apply fixed bottom-0 left-0 right-0 h-24 bg-gray-800 border-t border-gray-700 z-50;
+}
+
+.player-content {
+    @apply flex items-center justify-between h-full px-6;
+}
+
+.player-text {
+    @apply text-gray-400;
+}
