@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+.home-container {
+    @apply space-y-8 pb-8;
+}
+
+.section-title {
+    @apply text-2xl font-bold text-white mb-6 hover:underline cursor-pointer;
+}
+
+.song-grid {
+    @apply grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+}
+
+.song-card {
+    @apply p-4 transition-all duration-300 bg-gray-800/40 rounded-xl cursor-pointer hover:bg-gray-800 hover:shadow-xl;
+}
+
+.song-image-wrapper {
+    @apply relative w-full mb-4 overflow-hidden rounded-md aspect-square bg-gray-700 shadow-lg;
+}
+
+.song-image {
+    @apply object-cover w-full h-full transition-transform duration-300 group-hover:scale-105;
+}
+
+.play-button-overlay {
+    @apply absolute bottom-2 right-2 flex items-center justify-center w-12 h-12 text-black transition-all duration-300 translate-y-4 bg-green-500 rounded-full opacity-0 shadow-xl group-hover:translate-y-0 group-hover:opacity-100 hover:bg-green-400 hover:scale-105;
+}
+
+.song-title {
+    @apply text-base font-semibold text-white truncate;
+}
+
+.song-artist {
+    @apply mt-1 text-sm text-gray-400 truncate;
+}
+
+.loading-text {
+    @apply text-center text-gray-400 mt-20 text-lg;
+}
