@@ -8,9 +8,7 @@
     @apply w-64 bg-black shrink-0;
 }
 
-.sidebar-content {
-    @apply p-6;
-}
+/* .sidebar-content {} */
 
 .app-logo {
     @apply text-2xl font-bold text-green-500;

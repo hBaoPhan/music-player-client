@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import '../styles/MainLayout.css';
+import Sidebar from './Sidebar';
 
 const MainLayout = () => {
     return (
@@ -8,7 +9,7 @@ const MainLayout = () => {
 
             <aside className="sidebar">
                 <div className="sidebar-content">
-                    <h1 className="app-logo">Music App</h1>
+                    <Sidebar></Sidebar>
                 </div>
             </aside>
 
