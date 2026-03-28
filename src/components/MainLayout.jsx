@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import '../styles/MainLayout.css';
 import Sidebar from './Sidebar';
+import PlayerBar from './PlayerBar';
 
 const MainLayout = () => {
     return (
@@ -21,8 +22,7 @@ const MainLayout = () => {
 
             <div className="player-bar">
                 <div className="player-content">
-                    <p className="player-text">Thanh phát nhạc sẽ nằm ở đây...</p>
-                    {/*Play, Pause, Next*/}
+                    <PlayerBar></PlayerBar>
                 </div>
             </div>
         </div>

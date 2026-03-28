@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+.player-container {
+    @apply h-full flex items-center justify-between px-6 bg-gray-800 border-t border-gray-800 text-white;
+}
+
+.song-info-wrapper {
+    @apply flex items-center gap-4 w-1/3;
+}
+
+.song-cover {
+    @apply w-14 h-14 rounded-md object-cover shadow-md;
+}
+
+.song-text-info {
+    @apply flex flex-col;
+}
+
+.player-song-title {
+    @apply text-sm font-semibold hover:underline cursor-pointer line-clamp-1;
+}
+
+.player-song-artist {
+    @apply text-xs text-gray-400 hover:underline cursor-pointer line-clamp-1;
+}
+
+/* Khu vực điều khiển Play/Pause (ở giữa) */
+.controls-wrapper {
+    @apply flex flex-col items-center justify-center w-1/3;
+}
+
+.buttons-group {
+    @apply flex items-center gap-6;
+}
+
+.control-btn {
+    @apply text-gray-400 hover:text-white transition-colors cursor-pointer;
+}
+
+.play-pause-btn {
+    @apply flex items-center justify-center w-10 h-10 bg-white text-black rounded-full hover:scale-105 transition-transform cursor-pointer;
+}
+
+.volume-wrapper {
+    @apply flex items-center justify-end gap-3 w-1/3 text-gray-400;
+}
+
+.no-song-text {
+    @apply text-sm text-gray-500 italic;
+}
