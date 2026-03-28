@@ -14,7 +14,7 @@ const Sidebar = () => {
             <div className="logo-section">
                 <h1 className="logo-text cursor-pointer" onClick={() => navigate('/')}>
                     <FiMusic className="text-3xl" />
-                    Music App
+                    Spotifour
                 </h1>
             </div>
 

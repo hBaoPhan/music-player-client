@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 .player-container {
-    @apply h-full flex items-center justify-between px-6 bg-gray-800 border-t border-gray-800 text-white;
+    @apply h-full w-full flex items-center justify-between px-6 bg-gray-800 border-t border-gray-800 text-white;
 }
 
 .song-info-wrapper {
@@ -24,7 +24,6 @@
     @apply text-xs text-gray-400 hover:underline cursor-pointer line-clamp-1;
 }
 
-/* Khu vực điều khiển Play/Pause (ở giữa) */
 .controls-wrapper {
     @apply flex flex-col items-center justify-center w-1/3;
 }
