@@ -24,7 +24,7 @@ const Login = () => {
             console.log(response) ///////////////////////// console log token ///////////////
             localStorage.setItem('token', response.token);
 
-            setCurrentUser(getUser());
+            await getUser();
             navigate('/');
         } catch (err) {
             setError('Tên đăng nhập hoặc mật khẩu không chính xác!');

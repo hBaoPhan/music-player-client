@@ -1,11 +1,11 @@
 @import 'tailwindcss';
 
 .layout-container {
-    @apply flex h-screen bg-gray-900 text-white overflow-hidden;
+    @apply flex h-screen bg-gray-900 text-white overflow-hidden pt-[72px];
 }
 
 .sidebar {
-    @apply w-64 bg-black shrink-0;
+    @apply w-64 bg-black shrink-0 overflow-y-auto pb-24;
 }
 
 /* .sidebar-content {} */

@@ -8,6 +8,7 @@ import Header from './Header';
 const MainLayout = () => {
     return (
         <div className="layout-container">
+            <Header></Header>
 
             <aside className="sidebar">
                 <div className="sidebar-content">
@@ -16,7 +17,6 @@ const MainLayout = () => {
             </aside>
 
             <main className="main-content">
-                <Header></Header>
                 <div className="page-wrapper">
                     <Outlet />
                 </div>

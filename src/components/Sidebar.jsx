@@ -28,11 +28,6 @@ const Sidebar = () => {
                 </div>
 
                 <div className="nav-item">
-                    <FiSearch className="text-xl" />
-                    Tìm Kiếm
-                </div>
-
-                <div className="nav-item">
                     <FiList className="text-xl" />
                     Thư Viện
                 </div>
