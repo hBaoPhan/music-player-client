@@ -3,10 +3,12 @@ import { Outlet } from 'react-router-dom';
 import '../styles/MainLayout.css';
 import Sidebar from './Sidebar';
 import PlayerBar from './PlayerBar';
+import Header from './Header';
 
 const MainLayout = () => {
     return (
         <div className="layout-container">
+            <Header></Header>
 
             <aside className="sidebar">
                 <div className="sidebar-content">

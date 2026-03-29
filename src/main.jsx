@@ -4,13 +4,18 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { PlayerProvider } from './context/PlayerContext.jsx'
+import { AuthProvider } from './context/AuthContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <PlayerProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </PlayerProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <PlayerProvider>
+          <App />
+        </PlayerProvider>
+      </AuthProvider>
+    </BrowserRouter>
+
+
   </StrictMode>,
 )

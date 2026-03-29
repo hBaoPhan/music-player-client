@@ -1,10 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX } from 'react-icons/fi';
+import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX, FiHeart } from 'react-icons/fi';
 import { usePlayer } from '../context/PlayerContext';
+import { useAuth } from '../context/AuthContext';
+import userService from '../services/userService';
 import '../styles/PlayerBar.css';
 
 const PlayerBar = () => {
     const { currentSong, isPlaying, setIsPlaying, playNext, playPrev } = usePlayer();
+    const { currentUser, getUser } = useAuth();
     const audioRef = useRef(null);
 
     const [currentTime, setCurrentTime] = useState(0);
@@ -70,6 +73,22 @@ const PlayerBar = () => {
         setVolume(Number(e.target.value));
     };
 
+    const handleToggleFavorite = async () => {
+        if (!currentUser || !currentSong) return;
+        
+        try {
+            await userService.toggleFavorite(currentUser.id, currentSong.id);
+            await getUser();
+        } catch (error) {
+            console.error("Lỗi khi thêm vào yêu thích:", error);
+        }
+    };
+
+    const isFavorite = () => {
+        if (!currentUser || !currentSong) return false;
+        return currentUser?.favoriteSongs?.some(fav => fav.id === currentSong.id);
+    };
+
     if (!currentSong) {
         return (
             <div className="player-container justify-center">
@@ -77,6 +96,8 @@ const PlayerBar = () => {
             </div>
         );
     }
+
+    const favorited = isFavorite();
 
     return (
         <div className="player-container">
@@ -98,6 +119,12 @@ const PlayerBar = () => {
                     <span className="player-song-title">{currentSong.title}</span>
                     <span className="player-song-artist">{currentSong.artist?.name || "Unknown Artist"}</span>
                 </div>
+                <button 
+                    className="ml-4 focus:outline-none" 
+                    onClick={handleToggleFavorite}
+                >
+                    <FiHeart className={`text-xl transition-colors ${favorited ? 'fill-green-500 text-green-500' : 'text-gray-400 hover:text-white'}`} />
+                </button>
             </div>
 
             <div className="controls-wrapper">
@@ -127,7 +154,7 @@ const PlayerBar = () => {
                 </div>
             </div>
 
-            <div className="volume-wrapper">
+            <div className="volume-wrapper flex-1 justify-end">
                 {volume === 0 ? <FiVolumeX className="text-xl" /> : <FiVolume2 className="text-xl" />}
 
                 <input

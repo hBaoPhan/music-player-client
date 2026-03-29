@@ -11,14 +11,13 @@ const Sidebar = () => {
 
     return (
         <div className="sidebar-container">
-            <div className="logo-section">
+            {/* <div className="logo-section">
                 <h1 className="logo-text cursor-pointer" onClick={() => navigate('/')}>
                     <FiMusic className="text-3xl" />
                     Spotifour
                 </h1>
-            </div>
+            </div> */}
 
-            {/* menu */}
             <nav className="nav-menu">
                 <div
                     className={`nav-item ${isActive('/') ? 'nav-item-active' : ''}`}
@@ -26,11 +25,6 @@ const Sidebar = () => {
                 >
                     <FiHome className="text-xl" />
                     Trang Chủ
-                </div>
-
-                <div className="nav-item">
-                    <FiSearch className="text-xl" />
-                    Tìm Kiếm
                 </div>
 
                 <div className="nav-item">

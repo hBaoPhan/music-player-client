@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 .sidebar-container {
-    @apply w-64 bg-black h-full flex flex-col;
+    @apply w-64 bg-black h-full flex flex-col mt-3;
 }
 
 .logo-section {
