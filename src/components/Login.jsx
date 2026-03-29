@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 
 import '../styles/Login.css';
 
 const Login = () => {
+    const { setCurrentUser, getUser } = useAuth();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -21,6 +23,8 @@ const Login = () => {
             const response = await authService.login(username, password);
             console.log(response) ///////////////////////// console log token ///////////////
             localStorage.setItem('token', response.token);
+
+            setCurrentUser(getUser());
             navigate('/');
         } catch (err) {
             setError('Tên đăng nhập hoặc mật khẩu không chính xác!');
@@ -39,7 +43,7 @@ const Login = () => {
                     <p className="title-sub">Hòa mình vào thế giới âm nhạc của bạn</p>
                 </div>
 
-                <form className="mt-8 space-y-6" onSubmit={() => { handleLogin }}>
+                <form className="mt-8 space-y-6" onSubmit={handleLogin}>
 
 
 
