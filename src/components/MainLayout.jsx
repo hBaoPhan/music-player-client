@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import '../styles/MainLayout.css';
 import Sidebar from './Sidebar';
 import PlayerBar from './PlayerBar';
+import Header from './Header';
 
 const MainLayout = () => {
     return (
@@ -15,6 +16,7 @@ const MainLayout = () => {
             </aside>
 
             <main className="main-content">
+                <Header></Header>
                 <div className="page-wrapper">
                     <Outlet />
                 </div>

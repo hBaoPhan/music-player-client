@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+
+.header-container {
+    @apply sticky top-0 z-40 flex items-center justify-between px-8 py-4 bg-gray-900/95 backdrop-blur-sm;
+}
+
+.header-left {
+    @apply flex items-center gap-4;
+}
+
+.nav-btn {
+    @apply flex items-center justify-center w-8 h-8 text-gray-400 bg-black rounded-full cursor-not-allowed;
+}
+
+.header-right {
+    @apply flex items-center gap-4;
+}
+
+.user-menu-wrapper {
+    @apply relative;
+}
+
+/* Nút Avatar tròn */
+.user-avatar-btn {
+    @apply flex items-center justify-center w-10 h-10 transition-transform bg-purple-300 rounded-full cursor-pointer hover:scale-105 focus:outline-none ring-4 ring-black;
+}
+
+.avatar-fallback {
+    @apply text-base font-bold text-black;
+}
+
+/* Khung Dropdown Menu */
+.user-dropdown-menu {
+    @apply absolute right-0 w-48 py-1 mt-2 bg-gray-800 rounded-md shadow-2xl ring-1 ring-white/10;
+}
+
+.dropdown-item {
+    @apply flex items-center w-full gap-3 px-4 py-3 text-sm font-medium text-gray-300 transition-colors cursor-pointer hover:bg-gray-700 hover:text-white;
+}
