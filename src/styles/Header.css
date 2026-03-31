@@ -20,7 +20,6 @@
     @apply relative;
 }
 
-/* Nút Avatar tròn */
 .user-avatar-btn {
     @apply flex items-center justify-center w-10 h-10 transition-transform bg-purple-300 rounded-full cursor-pointer hover:scale-105 focus:outline-none ring-4 ring-black;
 }
@@ -29,11 +28,72 @@
     @apply text-base font-bold text-black;
 }
 
-/* Khung Dropdown Menu */
 .user-dropdown-menu {
     @apply absolute right-0 w-48 py-1 mt-2 bg-gray-800 rounded-md shadow-2xl ring-1 ring-white/10;
 }
 
 .dropdown-item {
     @apply flex items-center w-full gap-3 px-4 py-3 text-sm font-medium text-gray-300 transition-colors cursor-pointer hover:bg-gray-700 hover:text-white;
+}
+
+.header-search-container {
+    @apply relative w-full max-w-md mx-8 flex-1;
+}
+
+.search-input-wrapper {
+    @apply relative flex items-center w-full;
+}
+
+.search-icon {
+    @apply absolute left-4 text-gray-400 group-hover:text-white transition-colors text-lg z-10;
+}
+
+.search-input {
+    @apply w-full h-12 pl-12 pr-10 text-sm text-white bg-gray-800 border border-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 focus:bg-gray-800 transition-all placeholder:text-gray-400 hover:bg-gray-700;
+}
+
+.search-clear-btn {
+    @apply absolute right-4 text-gray-400 hover:text-white p-1 rounded-full transition-colors focus:outline-none z-10;
+}
+
+.search-dropdown-menu {
+    @apply absolute left-0 right-0 top-[calc(100%+8px)] bg-gray-900 border border-gray-700/50 rounded-xl overflow-hidden shadow-2xl z-50 ring-1 ring-white/5;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.search-result-list {
+    @apply flex flex-col;
+}
+
+.search-result-item {
+    @apply flex items-center gap-3 p-3 transition-colors cursor-pointer hover:bg-gray-800/80 active:bg-gray-800 border-b border-gray-800/50 last:border-0;
+}
+
+.result-img-wrapper {
+    @apply w-12 h-12 flex-shrink-0 bg-gray-800 rounded overflow-hidden relative;
+}
+
+.result-img-wrapper img {
+    @apply w-full h-full object-cover;
+}
+
+.fallback-img {
+    @apply w-full h-full bg-gradient-to-br from-purple-900 to-indigo-900;
+}
+
+.result-info {
+    @apply flex flex-col flex-1 overflow-hidden justify-center;
+}
+
+.result-title {
+    @apply text-base font-medium text-white truncate;
+}
+
+.result-artist {
+    @apply text-xs text-gray-400 truncate mt-0.5;
+}
+
+.search-no-result {
+    @apply p-6 text-center text-sm text-gray-400 bg-gray-900/50;
 }

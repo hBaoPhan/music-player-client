@@ -27,7 +27,10 @@ axiosClient.interceptors.response.use(
         return response.data;
     },
     (error) => {
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        const isAuthError = error.response && (error.response.status === 401 || error.response.status === 403);
+        const isNotOnLoginPage = window.location.pathname !== '/login';
+
+        if (isAuthError && isNotOnLoginPage) {
             console.error("Token hết hạn hoặc không có quyền truy cập!");
             localStorage.removeItem('token');
             window.location.href = '/login';
