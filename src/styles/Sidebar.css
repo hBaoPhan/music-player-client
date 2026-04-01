@@ -1,7 +1,90 @@
 @import "tailwindcss";
 
 .sidebar-container {
-    @apply w-64 bg-black h-full flex flex-col mt-3;
+    @apply bg-black h-full flex flex-col mt-3;
+    width: 256px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-container.sidebar-collapsed {
+    width: 72px;
+}
+
+.sidebar-header {
+    @apply flex justify-end gap-2 px-2 mt-2 mb-3;
+    overflow: hidden;
+}
+
+.sidebar-collapsed .sidebar-header {
+    @apply justify-center;
+}
+
+.sidebar-toggle-btn {
+    @apply flex items-center justify-center w-9 h-9 text-gray-400 rounded-lg cursor-pointer transition-all duration-200 flex-shrink-0;
+    background: transparent;
+}
+
+.sidebar-toggle-btn:hover {
+    @apply text-white bg-gray-800;
+}
+
+.brand-text {
+    @apply text-2xl font-bold text-green-500 whitespace-nowrap flex justify-center items-center flex-1;
+    opacity: 1;
+    max-width: 180px;
+    transition: opacity 0.2s ease 0.1s, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.sidebar-collapsed .brand-text {
+    max-width: 0;
+    opacity: 0;
+    transition: opacity 0.1s ease, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-menu {
+    @apply flex-1 px-2 space-y-1;
+}
+
+.nav-item {
+    @apply flex items-center gap-4 px-4 py-3 text-sm font-semibold text-gray-400 transition-all rounded-lg cursor-pointer;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.nav-item:hover {
+    @apply text-white bg-gray-800;
+}
+
+.nav-item-active {
+    @apply text-white bg-gray-800;
+}
+
+.nav-item-icon {
+    @apply text-xl flex-shrink-0;
+}
+
+.sidebar-collapsed .nav-item {
+    @apply justify-center px-0;
+    gap: 0;
+}
+
+.nav-label {
+    @apply text-sm font-semibold;
+    max-width: 180px;
+    opacity: 1;
+    transition: opacity 0.2s ease 0.1s, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.sidebar-collapsed .nav-label {
+    max-width: 0;
+    opacity: 0;
+    transition: opacity 0.1s ease, max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.divider {
+    @apply mx-2 my-3 border-t border-gray-800;
 }
 
 .logo-section {
@@ -10,20 +93,4 @@
 
 .logo-text {
     @apply text-2xl font-bold text-green-500 flex items-center gap-2;
-}
-
-.nav-menu {
-    @apply flex-1 px-4 space-y-2;
-}
-
-.nav-item {
-    @apply flex items-center gap-4 px-4 py-3 text-sm font-semibold text-gray-400 transition-colors rounded-lg cursor-pointer hover:text-white hover:bg-gray-800;
-}
-
-.nav-item-active {
-    @apply text-white bg-gray-800;
-}
-
-.divider {
-    @apply mx-4 my-4 border-t border-gray-800;
 }

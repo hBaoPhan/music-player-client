@@ -1,46 +1,61 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiHome, FiSearch, FiList, FiHeart, FiMusic } from 'react-icons/fi';
+import { FiHome, FiList, FiHeart, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi';
 import '../styles/Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ isCollapsed, onToggle }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const isActive = (path) => location.pathname === path;
 
+    const navItems = [
+        { path: '/', icon: FiHome, label: 'Trang Chủ' },
+        { path: null, icon: FiList, label: 'Thư Viện' },
+    ];
+
+    const secondaryItems = [
+        { path: '/favorites', icon: FiHeart, label: 'Bài Hát Yêu Thích' },
+    ];
+
+    const renderNavItem = (item) => {
+        const Icon = item.icon;
+        const active = item.path && isActive(item.path);
+
+        return (
+            <div
+                key={item.label}
+                className={`nav-item ${active ? 'nav-item-active' : ''}`}
+                onClick={() => item.path && navigate(item.path)}
+                title={isCollapsed ? item.label : undefined}
+            >
+                <Icon className="nav-item-icon" />
+                <span className="nav-label">{item.label}</span>
+            </div>
+        );
+    };
+
     return (
-        <div className="sidebar-container">
-            {/* <div className="logo-section">
-                <h1 className="logo-text cursor-pointer" onClick={() => navigate('/')}>
-                    <FiMusic className="text-3xl" />
-                    Spotifour
-                </h1>
-            </div> */}
+        <div className={`sidebar-container ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
+            <div className="sidebar-header">
+                <span className="brand-text">Spotifour</span>
+                <button
+                    className="sidebar-toggle-btn"
+                    onClick={onToggle}
+                    title={isCollapsed ? 'Mở rộng' : 'Thu gọn'}
+                >
+                    {isCollapsed
+                        ? <FiChevronsRight className="text-xl" />
+                        : <FiChevronsLeft className="text-xl" />
+                    }
+                </button>
+
+            </div>
 
             <nav className="nav-menu">
-                <div
-                    className={`nav-item ${isActive('/') ? 'nav-item-active' : ''}`}
-                    onClick={() => navigate('/')}
-                >
-                    <FiHome className="text-xl" />
-                    Trang Chủ
-                </div>
-
-                <div className="nav-item">
-                    <FiList className="text-xl" />
-                    Thư Viện
-                </div>
-
-                <div className="divider"></div>
-
-                <div
-                    className={`nav-item ${isActive('/favorites') ? 'nav-item-active' : ''}`}
-                    onClick={() => navigate('/favorites')}
-                >
-                    <FiHeart className="text-xl" />
-                    Bài Hát Yêu Thích
-                </div>
+                {navItems.map(renderNavItem)}
+                <div className="divider" />
+                {secondaryItems.map(renderNavItem)}
             </nav>
         </div>
     );

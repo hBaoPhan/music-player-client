@@ -5,7 +5,13 @@
 }
 
 .sidebar {
-    @apply w-64 bg-black shrink-0 overflow-y-auto pb-24;
+    @apply bg-black shrink-0 overflow-y-auto pb-24;
+    width: 256px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar.sidebar-narrow {
+    width: 72px;
 }
 
 /* .sidebar-content {} */
