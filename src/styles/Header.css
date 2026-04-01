@@ -9,7 +9,7 @@
 }
 
 .nav-btn {
-    @apply flex items-center justify-center w-8 h-8 text-gray-400 bg-black rounded-full cursor-not-allowed;
+    @apply flex items-center justify-center w-8 h-8 text-gray-400 bg-black rounded-full cursor-pointer;
 }
 
 .header-right {

@@ -11,7 +11,6 @@ const Header = () => {
     const { setCurrentSong, setIsPlaying, setSongQueue, songQueue } = usePlayer() || {};
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    // Search states
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -110,8 +109,8 @@ const Header = () => {
                                 {searchResults.map(song => (
                                     <li key={song.id} className="search-result-item" onClick={() => handlePlaySong(song)}>
                                         <div className="result-img-wrapper">
-                                            {song.thumbnail ? (
-                                                <img src={song.thumbnail} alt={song.title} />
+                                            {song.album ? (
+                                                <img src={song.album?.coverUrl} alt={song.title} />
                                             ) : (
                                                 <div className="fallback-img" />
                                             )}
