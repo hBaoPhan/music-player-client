@@ -47,7 +47,8 @@ const AddToPlaylistModal = ({ song, onClose }) => {
 
     const handleAddToPlaylist = async (playlistId) => {
         try {
-            await playlistService.addSongToPlaylist(playlistId, song.id);
+            const result = await playlistService.addSongToPlaylist(playlistId, song.id);
+            console.log('Backend trả về khi thêm bài hát:', result);
             alert('Đã thêm bài hát vào danh sách!');
             onClose();
         } catch (error) {
