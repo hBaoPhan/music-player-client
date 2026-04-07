@@ -1,5 +1,6 @@
-import React from 'react';
-import { FiPlay, FiHeart } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiPlay, FiHeart, FiPlus } from 'react-icons/fi';
+import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import userService from '../services/userService';
@@ -8,6 +9,7 @@ import '../styles/Home.css';
 const Favorites = () => {
     const { currentUser, getUser } = useAuth();
     const { setCurrentSong, setIsPlaying, setSongQueue } = usePlayer();
+    const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
 
     const handlePlaySong = (song, songsQueue) => {
         setCurrentSong(song);
@@ -56,6 +58,17 @@ const Favorites = () => {
                                 >
                                     <FiHeart className="text-2xl transition-colors fill-green-500 text-green-500 hover:text-red-500 hover:fill-red-500" />
                                 </button>
+
+                                <button
+                                    className="add-playlist-btn-overlay"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedSongForPlaylist(song);
+                                    }}
+                                    title="Thêm vào danh sách phát"
+                                >
+                                    <FiPlus />
+                                </button>
                             </div>
 
                             <h3 className="song-title">{song.title}</h3>
@@ -63,6 +76,13 @@ const Favorites = () => {
                         </div>
                     ))}
                 </div>
+            )}
+
+            {selectedSongForPlaylist && (
+                <AddToPlaylistModal 
+                    song={selectedSongForPlaylist} 
+                    onClose={() => setSelectedSongForPlaylist(null)} 
+                />
             )}
         </div>
     );

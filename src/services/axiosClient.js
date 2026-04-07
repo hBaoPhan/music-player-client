@@ -27,16 +27,24 @@ axiosClient.interceptors.response.use(
         return response.data;
     },
     (error) => {
-        const isAuthError = error.response && (error.response.status === 401 || error.response.status === 403);
         const isNotOnLoginPage = window.location.pathname !== '/login';
 
-        if (isAuthError && isNotOnLoginPage) {
-            console.error("Token hết hạn hoặc không có quyền truy cập!");
-            localStorage.removeItem('token');
-            window.location.href = '/login';
+        if (error.response) {
+            if (error.response.status === 401 && isNotOnLoginPage) {
+                console.error("Token hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại!");
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+
+            if (error.response.status === 403) {
+                console.error("Bạn không có quyền (Role) để thực hiện thao tác này!");
+                alert("Bạn không có quyền (Role) để thực hiện thao tác này!")
+            }
         }
+
         return Promise.reject(error);
     }
 );
+
 
 export default axiosClient;

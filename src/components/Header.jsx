@@ -42,8 +42,8 @@ const Header = () => {
             const keyword = searchTerm.toLowerCase();
             const results = allSongs.filter(song =>
                 (song.title && song.title.toLowerCase().includes(keyword)) ||
-                (song.artistName && song.artistName.toLowerCase().includes(keyword)) ||
-                (song.albumName && song.albumName.toLowerCase().includes(keyword))
+                (song.artist.name && song.artist.name.toLowerCase().includes(keyword)) ||
+                (song.album.title && song.album.title.toLowerCase().includes(keyword))
             );
             setSearchResults(results.slice(0, 5));
         }, 300);
@@ -109,8 +109,8 @@ const Header = () => {
                                 {searchResults.map(song => (
                                     <li key={song.id} className="search-result-item" onClick={() => handlePlaySong(song)}>
                                         <div className="result-img-wrapper">
-                                            {song.album ? (
-                                                <img src={song.album?.coverUrl} alt={song.title} />
+                                            {song.album.coverUrl ? (
+                                                <img src={song.album.coverUrl} alt={song.title} />
                                             ) : (
                                                 <div className="fallback-img" />
                                             )}
