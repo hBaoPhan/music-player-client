@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Login from './components/Login'
+import Register from './components/Register'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import MainLayout from './components/MainLayout'
@@ -11,6 +12,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
 

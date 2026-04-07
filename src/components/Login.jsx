@@ -38,13 +38,11 @@ const Login = () => {
             <div className="login-box">
 
                 <div className="text-center">
-                    <h2 className="title-main">Spotifour</h2>
+                    <h2 className="title-main">SPOTIFOUR</h2>
                     <p className="title-sub">Hòa mình vào thế giới âm nhạc của bạn</p>
                 </div>
 
                 <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-
-
 
                     <div className="space-y-4">
                         <div>
