@@ -178,7 +178,7 @@ const Playlist = () => {
                     className="create-playlist-main-btn"
                     onClick={() => setShowCreateModal(true)}
                 >
-                    <FiPlus className="mr-2" /> Tạo thư mục mới
+                    <FiPlus className="mr-2" /> Tạo danh sách phát mới
                 </button>
             </div>
 

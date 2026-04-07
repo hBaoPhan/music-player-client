@@ -25,7 +25,7 @@ const playlistService = {
     },
 
     removeSongFromPlaylist: async (playlistId, songId) => {
-        return await axiosClient.delete(`/playlist-songs/playlist/${playlistId}/song/${songId}`);
+        return await axiosClient.delete(`/playlists/${playlistId}/songs/${songId}`);
     }
 };
 
