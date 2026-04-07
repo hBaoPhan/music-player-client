@@ -24,8 +24,21 @@
     @apply flex-1 overflow-y-auto pb-24;
 }
 
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .page-wrapper {
     @apply p-8;
+    animation: pageFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .player-bar {

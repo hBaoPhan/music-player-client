@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import '../styles/MainLayout.css';
 import Sidebar from './Sidebar';
 import PlayerBar from './PlayerBar';
@@ -7,6 +7,7 @@ import Header from './Header';
 
 const MainLayout = () => {
     const [isCollapsed, setIsCollapsed] = useState(true);
+    const location = useLocation();
 
     const handleToggle = () => {
         setIsCollapsed((prev) => !prev);
@@ -23,7 +24,7 @@ const MainLayout = () => {
             </aside>
 
             <main className="main-content">
-                <div className="page-wrapper">
+                <div key={location.pathname} className="page-wrapper">
                     <Outlet />
                 </div>
             </main>
