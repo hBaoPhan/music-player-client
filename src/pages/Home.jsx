@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FiPlay, FiHeart } from 'react-icons/fi';
+import { FiPlay, FiHeart, FiPlus } from 'react-icons/fi';
+import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import songService from '../services/songService';
 import userService from '../services/userService';
 import '../styles/Home.css';
@@ -11,6 +12,7 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const { currentUser, getUser } = useAuth();
     const { currentSong, setCurrentSong, isPlaying, setIsPlaying, setSongQueue } = usePlayer();
+    const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
 
     const handlePlaySong = (song) => {
         setCurrentSong(song);
@@ -78,6 +80,17 @@ const Home = () => {
                                 >
                                     <FiHeart className={`text-2xl transition-colors ${favorited ? 'fill-green-500 text-green-500' : 'text-white hover:text-green-500'}`} />
                                 </button>
+
+                                <button
+                                    className="add-playlist-btn-overlay"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedSongForPlaylist(song);
+                                    }}
+                                    title="Thêm vào danh sách phát"
+                                >
+                                    <FiPlus />
+                                </button>
                             </div>
 
                             <h3 className="song-title">{song.title}</h3>
@@ -86,6 +99,13 @@ const Home = () => {
                     );
                 })}
             </div>
+
+            {selectedSongForPlaylist && (
+                <AddToPlaylistModal 
+                    song={selectedSongForPlaylist} 
+                    onClose={() => setSelectedSongForPlaylist(null)} 
+                />
+            )}
         </div>
     );
 };

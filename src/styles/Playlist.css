@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+.create-playlist-main-btn {
+    @apply flex items-center bg-emerald-500 text-white px-4 py-2 rounded-full font-semibold transition-all duration-200 border-none cursor-pointer hover:bg-emerald-600 hover:scale-105;
+}
+
+.playlists-grid {
+    @apply grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+}
+
+.playlist-card {
+    @apply bg-gray-800/40 p-4 rounded-xl cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:shadow-xl;
+}
+
+.playlist-icon-cover {
+    @apply w-full aspect-square rounded-lg flex justify-center items-center mb-4 relative overflow-hidden bg-gradient-to-br from-gray-700 to-gray-900;
+}
+
+.delete-playlist-btn {
+    @apply absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full opacity-0 transition-all duration-200 border-none cursor-pointer hover:bg-red-500 hover:scale-110;
+}
+
+.playlist-card:hover .delete-playlist-btn {
+    @apply opacity-100;
+}
+
+.playlist-card-title {
+    @apply text-white font-semibold text-base truncate whitespace-nowrap;
+}
+
+.back-button {
+    @apply flex items-center bg-transparent border-none text-gray-400 text-base cursor-pointer mb-6 p-0 transition-colors duration-200 hover:text-white;
+}
+
+.playlist-header {
+    @apply flex items-end gap-6 mb-8;
+}
+
+.playlist-icon-large {
+    @apply w-48 h-48 rounded-lg flex justify-center items-center shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-gradient-to-br from-indigo-500 to-purple-600;
+}
+
+.playlist-info h2 {
+    @apply text-white text-5xl font-extrabold mb-2 leading-tight;
+}
+
+.playlist-info p {
+    @apply text-gray-400 text-base;
+}
+
+/* Specific elements inside the modal when rendered in Playlist */
+.cancel-create-btn {
+    @apply px-4 py-2 rounded text-gray-300 hover:text-white transition-colors cursor-pointer;
+}
+
+.confirm-create-btn {
+    @apply px-4 py-2 bg-emerald-500 text-white rounded transition-colors disabled:opacity-50 hover:bg-emerald-600 cursor-pointer disabled:cursor-not-allowed;
+}
+
+/* Utility layout inside modal */
+.modal-actions {
+    @apply flex justify-end gap-2 mt-2;
+}
+
+.modal-input-group {
+    @apply flex flex-col gap-4;
+}
+
+/* Song removal button overlay specifically for playlist song cards */
+.remove-song-btn-overlay {
+    @apply absolute top-2 right-2 flex items-center justify-center p-2 rounded-full bg-black/40 backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100 hover:bg-red-500/80 cursor-pointer;
+}

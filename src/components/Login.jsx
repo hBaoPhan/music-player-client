@@ -21,7 +21,6 @@ const Login = () => {
 
         try {
             const response = await authService.login(username, password);
-            console.log(response) ///////////////////////// console log token ///////////////
             localStorage.setItem('token', response.token);
 
             await getUser();

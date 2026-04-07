@@ -11,7 +11,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
 
     const navItems = [
         { path: '/', icon: FiHome, label: 'Trang Chủ' },
-        { path: null, icon: FiList, label: 'Thư Viện' },
+        { path: '/playlist', icon: FiList, label: 'Thư Viện' },
     ];
 
     const secondaryItems = [

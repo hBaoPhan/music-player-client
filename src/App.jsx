@@ -5,6 +5,7 @@ import './App.css'
 import MainLayout from './components/MainLayout'
 import Home from './pages/Home'
 import Favorites from './pages/Favorites'
+import Playlist from './pages/Playlist'
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
 
-        {/* <Route path="playlist" element={<Playlist />} /> */}
+        <Route path="playlist" element={<Playlist />} />
         <Route path="favorites" element={<Favorites />} />
       </Route>
     </Routes>
