@@ -146,7 +146,7 @@ const Header = () => {
                         {isDropdownOpen && (
                             <div className="user-dropdown-menu">
                                 <div className="px-4 py-2 mb-1 border-b border-gray-700">
-                                    <p className="text-sm font-bold text-white truncate">{currentUser.username}</p>
+                                    <p className="text-sm font-bold text-white truncate">Người dùng: {currentUser.username}</p>
                                 </div>
                                 <button
                                     className="dropdown-item"

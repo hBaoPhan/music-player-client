@@ -8,6 +8,10 @@ const authService = {
 
     register: (username, password, email) => {
         return axiosClient.post('/auth/register', { username, password, email });
+    },
+
+    forgotPassword: (email) => {
+        return axiosClient.post('/auth/forgot-password', { email });
     }
 };
 

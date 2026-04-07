@@ -9,6 +9,7 @@
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -17,7 +18,7 @@
 
 .login-box {
     @apply w-full max-w-md p-8 space-y-8 bg-gray-800 rounded-xl shadow-2xl;
-    animation: boxFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: boxFadeIn 0.5s;
 }
 
 .title-main {

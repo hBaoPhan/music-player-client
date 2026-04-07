@@ -38,7 +38,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
     return (
         <div className={`sidebar-container ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
             <div className="sidebar-header">
-                <span className="brand-text">Spotifour</span>
+                <span className="brand-text">SPOTIFOUR</span>
                 <button
                     className="sidebar-toggle-btn"
                     onClick={onToggle}
