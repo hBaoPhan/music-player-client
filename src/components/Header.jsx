@@ -4,11 +4,14 @@ import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import songService from '../services/songService';
 import { useNavigate } from 'react-router-dom';
+import { FiKey } from 'react-icons/fi';
+import ChangePasswordModal from './ChangePasswordModal';
 
 const Header = () => {
     const { currentUser, logout } = useAuth();
     const { setCurrentSong, setIsPlaying, setSongQueue, songQueue } = usePlayer() || {};
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -77,7 +80,8 @@ const Header = () => {
     };
 
     return (
-        <header className="header-container">
+        <>
+            <header className="header-container">
             <div className="header-left">
                 <button className="nav-btn" onClick={() => navigate(-1)}><FiChevronLeft className="text-xl" /></button>
                 <button className="nav-btn" onClick={() => navigate(1)}><FiChevronRight className="text-xl" /></button>
@@ -151,6 +155,16 @@ const Header = () => {
                                     className="dropdown-item"
                                     onClick={() => {
                                         setIsDropdownOpen(false);
+                                        setShowChangePasswordModal(true);
+                                    }}
+                                >
+                                    <FiKey className="text-lg" />
+                                    <span>Đổi mật khẩu</span>
+                                </button>
+                                <button
+                                    className="dropdown-item"
+                                    onClick={() => {
+                                        setIsDropdownOpen(false);
                                         logout();
                                     }}
                                 >
@@ -168,6 +182,11 @@ const Header = () => {
                 )}
             </div>
         </header>
+
+        {showChangePasswordModal && (
+            <ChangePasswordModal onClose={() => setShowChangePasswordModal(false)} />
+        )}
+    </>
     );
 };
 

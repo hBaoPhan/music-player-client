@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://music-player-api-production.up.railway.app',
+        target: 'http://localhost:8080',
         changeOrigin: true,
       }
     }

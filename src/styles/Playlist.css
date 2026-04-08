@@ -10,7 +10,9 @@
     @apply bg-gray-800/40 p-4 rounded-xl cursor-pointer transition-all duration-300 hover:bg-gray-800 hover:shadow-xl;
 }
 
-.playlist-icon-cover {
+@reference "tailwindcss";
+
+.playlist-container {
     @apply w-full aspect-square rounded-lg flex justify-center items-center mb-4 relative overflow-hidden bg-gradient-to-br from-gray-700 to-gray-900;
 }
 

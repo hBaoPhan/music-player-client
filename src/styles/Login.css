@@ -1,5 +1,4 @@
-
-
+@reference "tailwindcss";
 
 .login-wrapper {
     @apply flex items-center justify-center min-h-screen bg-gray-900;
