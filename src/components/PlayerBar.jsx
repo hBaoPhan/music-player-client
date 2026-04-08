@@ -2,11 +2,13 @@ import React, { useRef, useEffect, useState } from 'react';
 import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX, FiHeart } from 'react-icons/fi';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import userService from '../services/userService';
 
 const PlayerBar = () => {
     const { currentSong, isPlaying, setIsPlaying, playNext, playPrev } = usePlayer();
     const { currentUser, getUser } = useAuth();
+    const { showToast } = useToast();
     const audioRef = useRef(null);
 
     const [currentTime, setCurrentTime] = useState(0);
@@ -73,7 +75,12 @@ const PlayerBar = () => {
     };
 
     const handleToggleFavorite = async () => {
-        if (!currentUser || !currentSong) return;
+        if (!currentUser) {
+            showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
+            return;
+        }
+
+        if (!currentSong) return;
         
         try {
             await userService.toggleFavorite(currentUser.id, currentSong.id);

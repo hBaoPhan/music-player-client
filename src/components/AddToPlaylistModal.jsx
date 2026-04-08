@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import playlistService from '../services/playlistService';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { FiX, FiPlus } from 'react-icons/fi';
 
 const AddToPlaylistModal = ({ song, onClose }) => {
     const { currentUser } = useAuth();
+    const { showToast } = useToast();
     const [playlists, setPlaylists] = useState([]);
     const [loading, setLoading] = useState(true);
     const [newPlaylistName, setNewPlaylistName] = useState('');
@@ -36,6 +38,7 @@ const AddToPlaylistModal = ({ song, onClose }) => {
             });
             console.log('Backend trả về danh sách mới:', newPlaylist);
             setPlaylists([...(Array.isArray(playlists) ? playlists : []), newPlaylist]);
+            showToast('Đã tạo danh sách phát mới!', 'success');
             setNewPlaylistName('');
         } catch (error) {
             console.error("Lỗi khi tạo playlist:", error);
@@ -48,11 +51,11 @@ const AddToPlaylistModal = ({ song, onClose }) => {
         try {
             const result = await playlistService.addSongToPlaylist(playlistId, song.id);
             console.log('Backend trả về khi thêm bài hát:', result);
-            alert('Đã thêm bài hát vào danh sách!');
+            showToast('Đã thêm bài hát vào danh sách phát!', 'success');
             onClose();
         } catch (error) {
             console.error("Lỗi khi thêm bài hát vào playlist:", error);
-            alert('Có lỗi xảy ra, thử lại sau!');
+            showToast('Không thể thêm bài hát vào danh sách!', 'error');
         }
     };
 

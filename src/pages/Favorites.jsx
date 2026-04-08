@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { FiPlay, FiHeart, FiPlus } from 'react-icons/fi';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { usePlayer } from '../context/PlayerContext';
 import userService from '../services/userService';
 
 const Favorites = () => {
     const { currentUser, getUser } = useAuth();
+    const { showToast } = useToast();
     const { setCurrentSong, setIsPlaying, setSongQueue } = usePlayer();
     const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
 
@@ -18,8 +20,10 @@ const Favorites = () => {
 
     const handleToggleFavorite = async (e, song) => {
         e.stopPropagation();
-        if (!currentUser) return;
-        
+        if (!currentUser) {
+            showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
+            return;
+        }
         try {
             await userService.toggleFavorite(currentUser.id, song.id);
             await getUser();
@@ -29,6 +33,10 @@ const Favorites = () => {
     };
 
     const favoriteSongs = currentUser?.favoriteSongs || [];
+
+    if (!currentUser) {
+        return <div className="loading-text">Vui lòng đăng nhập để xem bài hát yêu thích.</div>;
+    }
 
     return (
         <div className="home-container">
@@ -62,6 +70,10 @@ const Favorites = () => {
                                     className="add-playlist-btn-overlay"
                                     onClick={(e) => {
                                         e.stopPropagation();
+                                        if (!currentUser) {
+                                            showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
+                                            return;
+                                        }
                                         setSelectedSongForPlaylist(song);
                                     }}
                                     title="Thêm vào danh sách phát"

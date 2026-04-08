@@ -5,11 +5,13 @@ import songService from '../services/songService';
 import userService from '../services/userService';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const Home = () => {
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);
     const { currentUser, getUser } = useAuth();
+    const { showToast } = useToast();
     const { currentSong, setCurrentSong, isPlaying, setIsPlaying, setSongQueue } = usePlayer();
     const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
 
@@ -21,7 +23,10 @@ const Home = () => {
 
     const handleToggleFavorite = async (e, song) => {
         e.stopPropagation();
-        if (!currentUser) return;
+        if (!currentUser) {
+            showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
+            return;
+        }
 
         try {
             await userService.toggleFavorite(currentUser.id, song.id);
@@ -84,6 +89,10 @@ const Home = () => {
                                     className="add-playlist-btn-overlay"
                                     onClick={(e) => {
                                         e.stopPropagation();
+                                        if (!currentUser) {
+                                            showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
+                                            return;
+                                        }
                                         setSelectedSongForPlaylist(song);
                                     }}
                                     title="Thêm vào danh sách phát"

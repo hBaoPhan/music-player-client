@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FiPlay, FiTrash2, FiPlus, FiArrowLeft, FiMusic } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { usePlayer } from '../context/PlayerContext';
 import playlistService from '../services/playlistService';
 
 const Playlist = () => {
     const { currentUser } = useAuth();
+    const { showToast } = useToast();
     const { setCurrentSong, setIsPlaying, setSongQueue } = usePlayer();
 
     const [playlists, setPlaylists] = useState([]);
@@ -27,7 +29,7 @@ const Playlist = () => {
         setLoading(true);
         try {
             const data = await playlistService.getUserPlaylists(currentUser.id);
-            setPlaylists(Array.isArray(data) ? data : []);
+            setPlaylists(data || []);
         } catch (error) {
             console.error("Lỗi khi tải playlist:", error);
         } finally {
@@ -44,11 +46,13 @@ const Playlist = () => {
                 userId: currentUser.id
             });
             console.log('Backend trả về playlist:', newPlaylist);
-            setPlaylists([...(Array.isArray(playlists) ? playlists : []), newPlaylist]);
+            setPlaylists([...playlists, newPlaylist]);
+            showToast('Tạo danh sách phát thành công!', 'success');
             setNewPlaylistName('');
             setShowCreateModal(false);
         } catch (error) {
             console.error("Lỗi khi tạo playlist:", error);
+            showToast('Không thể tạo danh sách phát!', 'error');
         } finally {
             setCreating(false);
         }
@@ -61,11 +65,13 @@ const Playlist = () => {
         try {
             await playlistService.deletePlaylist(id);
             setPlaylists(playlists.filter(p => p.id !== id));
+            showToast('Đã xóa danh sách phát!', 'success');
             if (selectedPlaylist?.id === id) {
                 setSelectedPlaylist(null);
             }
         } catch (error) {
             console.error("Lỗi khi xóa playlist:", error);
+            showToast('Không thể xóa danh sách phát!', 'error');
         }
     };
 
@@ -90,8 +96,10 @@ const Playlist = () => {
         try {
             await playlistService.removeSongFromPlaylist(selectedPlaylist.id, songId);
             setPlaylistSongs(playlistSongs.filter(s => s.id !== songId));
+            showToast('Đã xóa bài hát khỏi danh sách phát!', 'success');
         } catch (error) {
             console.error("Lỗi khi xóa bài hát khỏi playlist:", error);
+            showToast('Không thể xóa bài hát khỏi danh sách!', 'error');
         }
     };
 
