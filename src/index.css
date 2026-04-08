@@ -1,1 +1,42 @@
 @import "tailwindcss";
+
+@theme {
+  --animate-bounce-in: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3) translateY(100px);
+    }
+
+    50% {
+      opacity: 0.9;
+      transform: scale(1.05) translateY(-10px);
+    }
+
+    70% {
+      transform: scale(0.9) translateY(5px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+}
+
+/* Base Utility for the custom animation */
+.animate-bounce-in {
+  animation: var(--animate-bounce-in);
+}
+
+/* Component Styles */
+@import "./styles/Header.css";
+@import "./styles/Sidebar.css";
+@import "./styles/MainLayout.css";
+@import "./styles/PlayerBar.css";
+@import "./styles/Home.css";
+@import "./styles/Playlist.css";
+@import "./styles/Login.css";
+@import "./styles/Toast.css";
+@import "./styles/AddToPlaylistModal.css";

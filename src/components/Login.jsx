@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import { useAuth } from '../context/AuthContext';
 
-import '../styles/Login.css';
-
 const Login = () => {
     const { setCurrentUser, getUser } = useAuth();
     const [username, setUsername] = useState('');

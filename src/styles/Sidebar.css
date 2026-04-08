@@ -1,4 +1,5 @@
-@import "tailwindcss";
+
+
 
 .sidebar-container {
     @apply bg-black h-full flex flex-col mt-3;

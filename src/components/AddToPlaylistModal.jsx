@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import playlistService from '../services/playlistService';
 import { useAuth } from '../context/AuthContext';
 import { FiX, FiPlus } from 'react-icons/fi';
-import '../styles/AddToPlaylistModal.css';
 
 const AddToPlaylistModal = ({ song, onClose }) => {
     const { currentUser } = useAuth();

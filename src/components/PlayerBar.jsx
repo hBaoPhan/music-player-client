@@ -3,7 +3,6 @@ import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX, FiHea
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import userService from '../services/userService';
-import '../styles/PlayerBar.css';
 
 const PlayerBar = () => {
     const { currentSong, isPlaying, setIsPlaying, playNext, playPrev } = usePlayer();

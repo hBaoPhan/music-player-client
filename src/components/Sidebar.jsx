@@ -1,11 +1,16 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FiHome, FiList, FiHeart, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi';
-import '../styles/Sidebar.css';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+
 
 const Sidebar = ({ isCollapsed, onToggle }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { currentUser } = useAuth();
+    const { showToast } = useToast();
+
 
     const isActive = (path) => location.pathname === path;
 
@@ -22,11 +27,23 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
         const Icon = item.icon;
         const active = item.path && isActive(item.path);
 
+        const handleNavClick = () => {
+            if (!item.path) return;
+
+            const restrictedPaths = ['/playlist', '/favorites'];
+            if (!currentUser && restrictedPaths.includes(item.path)) {
+                showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
+                return;
+            }
+
+            navigate(item.path);
+        };
+
         return (
             <div
                 key={item.label}
                 className={`nav-item ${active ? 'nav-item-active' : ''}`}
-                onClick={() => item.path && navigate(item.path)}
+                onClick={handleNavClick}
                 title={isCollapsed ? item.label : undefined}
             >
                 <Icon className="nav-item-icon" />

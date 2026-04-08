@@ -1,4 +1,5 @@
-@import "tailwindcss";
+
+
 
 .home-container {
     @apply space-y-8 pb-8;

@@ -3,7 +3,6 @@ import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX } from 'react-ic
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import songService from '../services/songService';
-import '../styles/Header.css';
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
@@ -134,7 +133,7 @@ const Header = () => {
 
 
             <div className="header-right">
-                {currentUser && (
+                {currentUser ? (
                     <div className="user-menu-wrapper">
                         <button
                             className="user-avatar-btn"
@@ -160,6 +159,11 @@ const Header = () => {
                                 </button>
                             </div>
                         )}
+                    </div>
+                ) : (
+                    <div className="auth-buttons-wrapper">
+                        <button className="register-btn" onClick={() => navigate('/register')}>Đăng ký</button>
+                        <button className="login-btn" onClick={() => navigate('/login')}>Đăng nhập</button>
                     </div>
                 )}
             </div>

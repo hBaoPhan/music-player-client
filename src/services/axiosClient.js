@@ -37,8 +37,11 @@ axiosClient.interceptors.response.use(
             }
 
             if (error.response.status === 403) {
-                console.error("Bạn không có quyền (Role) để thực hiện thao tác này!");
-                alert("Bạn không có quyền (Role) để thực hiện thao tác này!")
+                const token = localStorage.getItem('token');
+                if (token) {
+                    console.error("Bạn không có quyền để thực hiện thao tác này!");
+                    alert("Bạn không có quyền để thực hiện thao tác này!");
+                }
             }
         }
 

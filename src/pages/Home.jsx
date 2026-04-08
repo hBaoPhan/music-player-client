@@ -3,7 +3,6 @@ import { FiPlay, FiHeart, FiPlus } from 'react-icons/fi';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import songService from '../services/songService';
 import userService from '../services/userService';
-import '../styles/Home.css';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 

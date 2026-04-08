@@ -3,8 +3,6 @@ import { FiPlay, FiTrash2, FiPlus, FiArrowLeft, FiMusic } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import playlistService from '../services/playlistService';
-import '../styles/Home.css';
-import '../styles/Playlist.css';
 
 const Playlist = () => {
     const { currentUser } = useAuth();

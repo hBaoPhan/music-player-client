@@ -4,7 +4,6 @@ import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import userService from '../services/userService';
-import '../styles/Home.css';
 
 const Favorites = () => {
     const { currentUser, getUser } = useAuth();
