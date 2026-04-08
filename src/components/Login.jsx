@@ -29,7 +29,7 @@ const Login = () => {
             await getUser();
             navigate('/');
         } catch (err) {
-            setError('Tên đăng nhập hoặc mật khẩu không chính xác!');
+            setError('Tên đăng nhập/email hoặc mật khẩu không chính xác!');
             console.error("Lỗi đăng nhập:", err);
         } finally {
             setLoading(false);
@@ -98,7 +98,7 @@ const Login = () => {
                     <form className="mt-8 space-y-6" onSubmit={handleLogin}>
                         <div className="space-y-4">
                             <div>
-                                <label className="input-label">Tên đăng nhập</label>
+                                <label className="input-label">Tên đăng nhập hoặc Email</label>
                                 <input
                                     type="text"
                                     required
@@ -137,15 +137,15 @@ const Login = () => {
 
                 <div className="flex flex-col gap-3 mt-6">
                     {isForgotPassword ? (
-                        <p 
-                            className='text-sm text-center text-gray-400 cursor-pointer hover:underline' 
+                        <p
+                            className='text-sm text-center text-gray-400 cursor-pointer hover:underline'
                             onClick={() => { setIsForgotPassword(false); setError(''); setSuccess(''); }}
                         >
                             Quay lại đăng nhập
                         </p>
                     ) : (
-                        <p 
-                            className='text-sm text-center text-gray-400 cursor-pointer hover:underline' 
+                        <p
+                            className='text-sm text-center text-gray-400 cursor-pointer hover:underline'
                             onClick={() => { setIsForgotPassword(true); setError(''); setSuccess(''); }}
                         >
                             Quên mật khẩu?

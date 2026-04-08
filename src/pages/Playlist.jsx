@@ -198,7 +198,7 @@ const Playlist = () => {
                             className="playlist-card group"
                             onClick={() => playlist && handleSelectPlaylist(playlist)}
                         >
-                            <div className="playlist-icon-cover bg-gradient-to-br from-gray-700 to-gray-900">
+                            <div className="playlist-container">
                                 <FiMusic className="text-gray-400 text-4xl" />
                                 <button
                                     className="delete-playlist-btn"
