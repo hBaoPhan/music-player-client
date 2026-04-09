@@ -9,6 +9,12 @@ const userService = {
     },
     updateProfile: async (userId, profileData) => {
         return axiosClient.put(`/users/${userId}`, profileData);
+    },
+    getAllUsers: async () => {
+        return axiosClient.get('/users');
+    },
+    deleteUser: async (userId) => {
+        return axiosClient.delete(`/users/${userId}`);
     }
 };
 

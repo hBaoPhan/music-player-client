@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiHome, FiList, FiHeart, FiChevronsLeft, FiChevronsRight } from 'react-icons/fi';
+import { FiHome, FiList, FiHeart, FiChevronsLeft, FiChevronsRight, FiMusic, FiUsers, FiShield } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -8,7 +8,7 @@ import { useToast } from '../context/ToastContext';
 const Sidebar = ({ isCollapsed, onToggle }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { currentUser } = useAuth();
+    const { currentUser, isAdmin } = useAuth();
     const { showToast } = useToast();
 
 
@@ -21,6 +21,11 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
 
     const secondaryItems = [
         { path: '/favorites', icon: FiHeart, label: 'Bài Hát Yêu Thích' },
+    ];
+
+    const adminItems = [
+        { path: '/admin/songs', icon: FiMusic, label: 'Quản Lý Nhạc' },
+        { path: '/admin/users', icon: FiUsers, label: 'Quản Lý Người Dùng' },
     ];
 
     const renderNavItem = (item) => {
@@ -73,6 +78,17 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
                 {navItems.map(renderNavItem)}
                 <div className="divider" />
                 {secondaryItems.map(renderNavItem)}
+
+                {isAdmin && (
+                    <>
+                        <div className="divider" />
+                        <div className="admin-section-label" title={isCollapsed ? 'Quản trị' : undefined}>
+                            <FiShield className="admin-label-icon" />
+                            <span className="nav-label">Quản Trị</span>
+                        </div>
+                        {adminItems.map(renderNavItem)}
+                    </>
+                )}
             </nav>
         </div>
     );
