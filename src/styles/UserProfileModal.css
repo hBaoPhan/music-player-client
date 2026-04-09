@@ -1,0 +1,159 @@
+@reference "tailwindcss";
+
+/* ===== PROFILE MODAL OVERLAY ===== */
+/* Reuses the same fade-in overlay pattern as ChangePasswordModal */
+.profile-modal-overlay {
+    @apply fixed inset-0 bg-black/80 z-9999 flex items-center justify-center p-4 overflow-y-auto;
+    animation: profileFadeIn 0.3s ease-out;
+}
+
+/* ===== MODAL CONTAINER ===== */
+/* Dark glassmorphism card with gradient background and scroll support */
+.profile-modal-content {
+    @apply bg-gray-900 border border-gray-800 z-9999 rounded-3xl p-8 w-full max-w-lg shadow-2xl relative my-auto;
+    background: linear-gradient(145deg, #1f2937 0%, #111827 100%);
+    @apply max-h-[calc(100vh-2rem)] overflow-y-auto;
+    animation: profileZoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ===== KEYFRAMES ===== */
+@keyframes profileFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes profileZoomIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== CLOSE BUTTON ===== */
+.profile-modal-close-btn {
+    @apply absolute top-6 right-6 text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10;
+}
+
+/* ===== HEADER SECTION ===== */
+/* Centered avatar + username + role badge at the top of the modal */
+.profile-modal-header {
+    @apply flex flex-col items-center mb-6 pt-2;
+}
+
+/* Large circular avatar with purple gradient and initial letter */
+.profile-avatar-large {
+    @apply w-20 h-20 rounded-full flex items-center justify-center mb-3 shadow-lg;
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 50%, #6d28d9 100%);
+    box-shadow: 0 0 24px rgba(168, 85, 247, 0.3);
+}
+
+.profile-avatar-large span {
+    @apply text-3xl font-bold text-white;
+}
+
+.profile-modal-username {
+    @apply text-xl font-bold text-white;
+}
+
+/* Role label styled as a small muted badge */
+.profile-modal-role {
+    @apply text-xs text-gray-400 mt-1 bg-gray-800 px-3 py-1 rounded-full;
+}
+
+/* ===== TAB NAVIGATION ===== */
+/* Horizontal tab bar with bottom-border active indicator */
+.profile-tab-nav {
+    @apply flex gap-1 mb-6 bg-gray-800/50 rounded-xl p-1;
+}
+
+.profile-tab-btn {
+    @apply flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-medium text-gray-400 rounded-lg transition-all cursor-pointer;
+}
+
+/* Active tab gets green accent background and white text */
+.profile-tab-btn.active {
+    @apply bg-green-500/20 text-green-400;
+}
+
+.profile-tab-btn:not(.active):hover {
+    @apply text-white bg-gray-700/50;
+}
+
+/* ===== TAB CONTENT ===== */
+.profile-tab-content {
+    @apply min-h-[200px];
+}
+
+/* ===== FORM FIELDS ===== */
+.profile-info-group {
+    @apply mb-5;
+}
+
+/* Label with optional icon aligned inline */
+.profile-info-label {
+    @apply flex items-center gap-2 text-sm font-medium text-gray-400 mb-2 ml-1;
+}
+
+.profile-label-icon {
+    @apply text-green-400 text-base;
+}
+
+/* Read-only display value shown when not editing */
+.profile-info-value {
+    @apply text-white bg-gray-800/50 border border-gray-700/50 rounded-xl px-4 py-3 text-sm;
+}
+
+/* Editable input field with focus ring */
+.profile-info-input {
+    @apply w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all placeholder:text-gray-600;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.profile-actions {
+    @apply mt-8 flex gap-3;
+}
+
+/* Primary save/submit button — green, with icon */
+.profile-btn-save {
+    @apply flex-1 flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-black font-bold py-3 px-6 rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
+}
+
+/* Secondary cancel button */
+.profile-btn-cancel {
+    @apply flex-1 bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl transition-all active:scale-95 cursor-pointer;
+}
+
+/* Edit toggle button — outlined style */
+.profile-btn-edit {
+    @apply flex-1 flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl transition-all active:scale-95 border border-gray-600 hover:border-gray-500 cursor-pointer;
+}
+
+/* ===== ENHANCED DROPDOWN ===== */
+/* User info card shown inside the dropdown header */
+.dropdown-user-info {
+    @apply px-4 py-3 border-b border-gray-700/50;
+}
+
+.dropdown-user-header {
+    @apply flex items-center gap-3;
+}
+
+/* Small avatar circle in the dropdown */
+.dropdown-avatar-small {
+    @apply w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0;
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+}
+
+.dropdown-avatar-small span {
+    @apply text-sm font-bold text-white;
+}
+
+.dropdown-user-details {
+    @apply flex flex-col overflow-hidden;
+}
+
+.dropdown-user-name {
+    @apply text-sm font-bold text-white truncate;
+}
+
+.dropdown-user-email {
+    @apply text-xs text-gray-400 truncate;
+}

@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX } from 'react-icons/fi';
+import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiUser } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import songService from '../services/songService';
 import { useNavigate } from 'react-router-dom';
-import { FiKey } from 'react-icons/fi';
-import ChangePasswordModal from './ChangePasswordModal';
+import UserProfileModal from './UserProfileModal';
 
 const Header = () => {
     const { currentUser, logout } = useAuth();
     const { setCurrentSong, setIsPlaying, setSongQueue, songQueue } = usePlayer() || {};
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+    const [showProfileModal, setShowProfileModal] = useState(false);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const [allSongs, setAllSongs] = useState([]);
     const searchRef = useRef(null);
+    const dropdownRef = useRef(null);
 
     const navigate = useNavigate();
 
@@ -57,6 +57,9 @@ const Header = () => {
         const handleClickOutside = (event) => {
             if (searchRef.current && !searchRef.current.contains(event.target)) {
                 setIsSearching(false);
+            }
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -138,7 +141,7 @@ const Header = () => {
 
             <div className="header-right">
                 {currentUser ? (
-                    <div className="user-menu-wrapper">
+                    <div className="user-menu-wrapper" ref={dropdownRef}>
                         <button
                             className="user-avatar-btn"
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -148,19 +151,32 @@ const Header = () => {
 
                         {isDropdownOpen && (
                             <div className="user-dropdown-menu">
-                                <div className="px-4 py-2 mb-1 border-b border-gray-700">
-                                    <p className="text-sm font-bold text-white truncate">Người dùng: {currentUser.username}</p>
+                                {/* User info card */}
+                                <div className="dropdown-user-info">
+                                    <div className="dropdown-user-header">
+                                        <div className="dropdown-avatar-small">
+                                            <span>{getInitial(currentUser.username)}</span>
+                                        </div>
+                                        <div className="dropdown-user-details">
+                                            <span className="dropdown-user-name">{currentUser.username}</span>
+                                            <span className="dropdown-user-email">{currentUser.email}</span>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                {/* Profile / Change Password */}
                                 <button
                                     className="dropdown-item"
                                     onClick={() => {
                                         setIsDropdownOpen(false);
-                                        setShowChangePasswordModal(true);
+                                        setShowProfileModal(true);
                                     }}
                                 >
-                                    <FiKey className="text-lg" />
-                                    <span>Đổi mật khẩu</span>
+                                    <FiUser className="text-lg" />
+                                    <span>Tài khoản của tôi</span>
                                 </button>
+
+                                {/* Logout */}
                                 <button
                                     className="dropdown-item"
                                     onClick={() => {
@@ -183,8 +199,8 @@ const Header = () => {
             </div>
         </header>
 
-        {showChangePasswordModal && (
-            <ChangePasswordModal onClose={() => setShowChangePasswordModal(false)} />
+        {showProfileModal && (
+            <UserProfileModal onClose={() => setShowProfileModal(false)} />
         )}
     </>
     );

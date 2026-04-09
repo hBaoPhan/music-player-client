@@ -6,6 +6,9 @@ const userService = {
     },
     getFavoriteSongs: async (userId) => {
         return axiosClient.get(`/users/${userId}/favorites`);
+    },
+    updateProfile: async (userId, profileData) => {
+        return axiosClient.put(`/users/${userId}`, profileData);
     }
 };
 
