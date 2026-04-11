@@ -61,10 +61,15 @@ const UserProfileModal = ({ onClose }) => {
 
         setProfileLoading(true);
         try {
-            await userService.updateProfile(currentUser.id, {
+            const result = await userService.updateProfile(currentUser.id, {
                 username: profileData.username,
                 email: profileData.email
             });
+
+            if (result && result.token) {
+                localStorage.setItem('token', result.token);
+            }
+
             showToast('Cập nhật thông tin thành công!', 'success');
             setIsEditingProfile(false);
             await getUser();
