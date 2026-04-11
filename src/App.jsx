@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import Login from './components/Login'
 import Register from './components/Register'
+import OAuth2RedirectHandler from './components/OAuth2RedirectHandler'
+import AdminRoute from './components/AdminRoute'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import MainLayout from './components/MainLayout'
