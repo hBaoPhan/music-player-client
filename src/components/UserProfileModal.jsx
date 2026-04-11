@@ -84,8 +84,8 @@ const UserProfileModal = ({ onClose }) => {
             return;
         }
 
-        if (passwordData.newPassword.length < 6) {
-            showToast('Mật khẩu mới phải có ít nhất 6 ký tự!', 'error');
+        if (passwordData.newPassword.length < 8) {
+            showToast('Mật khẩu mới phải có ít nhất 8 ký tự!', 'error');
             return;
         }
 
