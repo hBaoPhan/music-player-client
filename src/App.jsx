@@ -9,6 +9,8 @@ import MainLayout from './components/MainLayout'
 import Home from './pages/Home'
 import Favorites from './pages/Favorites'
 import Playlist from './pages/Playlist'
+import AdminSongs from './pages/AdminSongs'
+import AdminUsers from './pages/AdminUsers'
 
 function App() {
   return (
@@ -21,6 +23,11 @@ function App() {
 
         <Route path="playlist" element={<Playlist />} />
         <Route path="favorites" element={<Favorites />} />
+
+        <Route element={<AdminRoute />}>
+          <Route path="admin/songs" element={<AdminSongs />} />
+          <Route path="admin/users" element={<AdminUsers />} />
+        </Route>
       </Route>
     </Routes>
   )
