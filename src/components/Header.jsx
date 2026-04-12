@@ -45,7 +45,7 @@ const Header = () => {
             const results = allSongs.filter(song =>
                 (song.title && song.title.toLowerCase().includes(keyword)) ||
                 (song.artist.name && song.artist.name.toLowerCase().includes(keyword)) ||
-                (song.album.title && song.album.title.toLowerCase().includes(keyword))
+                (song.album?.title && song.album?.title.toLowerCase().includes(keyword))
             );
             setSearchResults(results.slice(0, 5));
         }, 300);
@@ -85,124 +85,124 @@ const Header = () => {
     return (
         <>
             <header className="header-container">
-            <div className="header-left">
-                <button className="nav-btn" onClick={() => navigate(-1)}><FiChevronLeft className="text-xl" /></button>
-                <button className="nav-btn" onClick={() => navigate(1)}><FiChevronRight className="text-xl" /></button>
-            </div>
+                <div className="header-left">
+                    <button className="nav-btn" onClick={() => navigate(-1)}><FiChevronLeft className="text-xl" /></button>
+                    <button className="nav-btn" onClick={() => navigate(1)}><FiChevronRight className="text-xl" /></button>
+                </div>
 
-            <div className="header-search-container" ref={searchRef}>
-                <div className="search-input-wrapper group">
-                    <FiSearch className="search-icon" />
-                    <input
-                        type="text"
-                        className="search-input"
-                        placeholder="Bạn muốn nghe gì?"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onFocus={() => setIsSearching(true)}
-                    />
-                    {searchTerm && (
-                        <button className="search-clear-btn" onClick={() => setSearchTerm('')}>
-                            <FiX />
-                        </button>
+                <div className="header-search-container" ref={searchRef}>
+                    <div className="search-input-wrapper group">
+                        <FiSearch className="search-icon" />
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Bạn muốn nghe gì?"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onFocus={() => setIsSearching(true)}
+                        />
+                        {searchTerm && (
+                            <button className="search-clear-btn" onClick={() => setSearchTerm('')}>
+                                <FiX />
+                            </button>
+                        )}
+                    </div>
+
+                    {isSearching && searchTerm.trim() !== '' && (
+                        <div className="search-dropdown-menu">
+                            {searchResults.length > 0 ? (
+                                <ul className="search-result-list">
+                                    {searchResults.map(song => (
+                                        <li key={song.id} className="search-result-item" onClick={() => handlePlaySong(song)}>
+                                            <div className="result-img-wrapper">
+                                                {song.album.coverUrl ? (
+                                                    <img src={song.album.coverUrl} alt={song.title} />
+                                                ) : (
+                                                    <div className="fallback-img" />
+                                                )}
+                                            </div>
+                                            <div className="result-info">
+                                                <p className="result-title">{song.title}</p>
+                                                <p className="result-artist">{song.artist.name || 'Unknown Artist'}</p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="search-no-result">
+                                    Không tìm thấy kết quả cho "{searchTerm}"
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
 
-                {isSearching && searchTerm.trim() !== '' && (
-                    <div className="search-dropdown-menu">
-                        {searchResults.length > 0 ? (
-                            <ul className="search-result-list">
-                                {searchResults.map(song => (
-                                    <li key={song.id} className="search-result-item" onClick={() => handlePlaySong(song)}>
-                                        <div className="result-img-wrapper">
-                                            {song.album.coverUrl ? (
-                                                <img src={song.album.coverUrl} alt={song.title} />
-                                            ) : (
-                                                <div className="fallback-img" />
-                                            )}
-                                        </div>
-                                        <div className="result-info">
-                                            <p className="result-title">{song.title}</p>
-                                            <p className="result-artist">{song.artist.name || 'Unknown Artist'}</p>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <div className="search-no-result">
-                                Không tìm thấy kết quả cho "{searchTerm}"
-                            </div>
-                        )}
-                    </div>
-                )}
-            </div>
 
 
+                <div className="header-right">
+                    {currentUser ? (
+                        <div className="user-menu-wrapper" ref={dropdownRef}>
+                            <button
+                                className="user-avatar-btn"
+                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            >
+                                <span className="avatar-fallback">{getInitial(currentUser.username)}</span>
+                            </button>
 
-            <div className="header-right">
-                {currentUser ? (
-                    <div className="user-menu-wrapper" ref={dropdownRef}>
-                        <button
-                            className="user-avatar-btn"
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        >
-                            <span className="avatar-fallback">{getInitial(currentUser.username)}</span>
-                        </button>
-
-                        {isDropdownOpen && (
-                            <div className="user-dropdown-menu">
-                                {/* User info card */}
-                                <div className="dropdown-user-info">
-                                    <div className="dropdown-user-header">
-                                        <div className="dropdown-avatar-small">
-                                            <span>{getInitial(currentUser.username)}</span>
-                                        </div>
-                                        <div className="dropdown-user-details">
-                                            <span className="dropdown-user-name">{currentUser.username}</span>
-                                            <span className="dropdown-user-email">{currentUser.email}</span>
+                            {isDropdownOpen && (
+                                <div className="user-dropdown-menu">
+                                    {/* User info card */}
+                                    <div className="dropdown-user-info">
+                                        <div className="dropdown-user-header">
+                                            <div className="dropdown-avatar-small">
+                                                <span>{getInitial(currentUser.username)}</span>
+                                            </div>
+                                            <div className="dropdown-user-details">
+                                                <span className="dropdown-user-name">{currentUser.username}</span>
+                                                <span className="dropdown-user-email">{currentUser.email}</span>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    {/* Profile / Change Password */}
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                            setIsDropdownOpen(false);
+                                            setShowProfileModal(true);
+                                        }}
+                                    >
+                                        <FiUser className="text-lg" />
+                                        <span>Tài khoản của tôi</span>
+                                    </button>
+
+                                    {/* Logout */}
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                            setIsDropdownOpen(false);
+                                            logout();
+                                        }}
+                                    >
+                                        <FiLogOut className="text-lg" />
+                                        <span>Đăng xuất</span>
+                                    </button>
                                 </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="auth-buttons-wrapper">
+                            <button className="register-btn" onClick={() => navigate('/register')}>Đăng ký</button>
+                            <button className="login-btn" onClick={() => navigate('/login')}>Đăng nhập</button>
+                        </div>
+                    )}
+                </div>
+            </header>
 
-                                {/* Profile / Change Password */}
-                                <button
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                        setIsDropdownOpen(false);
-                                        setShowProfileModal(true);
-                                    }}
-                                >
-                                    <FiUser className="text-lg" />
-                                    <span>Tài khoản của tôi</span>
-                                </button>
-
-                                {/* Logout */}
-                                <button
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                        setIsDropdownOpen(false);
-                                        logout();
-                                    }}
-                                >
-                                    <FiLogOut className="text-lg" />
-                                    <span>Đăng xuất</span>
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                ) : (
-                    <div className="auth-buttons-wrapper">
-                        <button className="register-btn" onClick={() => navigate('/register')}>Đăng ký</button>
-                        <button className="login-btn" onClick={() => navigate('/login')}>Đăng nhập</button>
-                    </div>
-                )}
-            </div>
-        </header>
-
-        {showProfileModal && (
-            <UserProfileModal onClose={() => setShowProfileModal(false)} />
-        )}
-    </>
+            {showProfileModal && (
+                <UserProfileModal onClose={() => setShowProfileModal(false)} />
+            )}
+        </>
     );
 };
 

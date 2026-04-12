@@ -21,6 +21,14 @@ const Home = () => {
         setSongQueue(songs);
     };
 
+    useEffect(() => {
+        const hasShownWarning = sessionStorage.getItem('hasShownStudyWarning');
+        if (!hasShownWarning) {
+            showToast('Ứng dụng chỉ phục vụ mục đích học tập!', 'warning');
+            sessionStorage.setItem('hasShownStudyWarning', 'true');
+        }
+    }, [])
+
     const handleToggleFavorite = async (e, song) => {
         e.stopPropagation();
         if (!currentUser) {
@@ -109,9 +117,9 @@ const Home = () => {
             </div>
 
             {selectedSongForPlaylist && (
-                <AddToPlaylistModal 
-                    song={selectedSongForPlaylist} 
-                    onClose={() => setSelectedSongForPlaylist(null)} 
+                <AddToPlaylistModal
+                    song={selectedSongForPlaylist}
+                    onClose={() => setSelectedSongForPlaylist(null)}
                 />
             )}
         </div>

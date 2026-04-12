@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiMusic, FiSearch } from 'react-icons/fi';
 import songService from '../services/songService';
+import artistService from '../services/artistService';
+import albumService from '../services/albumService';
 import { useToast } from '../context/ToastContext';
 
 const AdminSongs = () => {
@@ -10,29 +12,37 @@ const AdminSongs = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editingSong, setEditingSong] = useState(null);
+    const [artists, setArtists] = useState([]);
+    const [albums, setAlbums] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
         audioUrl: '',
         duration: '',
-        category: '',
+        genre: 'OTHER',
         artist: { id: '' },
         album: { id: '' }
     });
 
-    const fetchSongs = async () => {
+    const fetchData = async () => {
         try {
             setLoading(true);
-            const data = await songService.getAllSongs();
-            setSongs(data);
+            const [songsData, artistsData, albumsData] = await Promise.all([
+                songService.getAllSongs(),
+                artistService.getAllArtists(),
+                albumService.getAllAlbums()
+            ]);
+            setSongs(songsData);
+            setArtists(artistsData);
+            setAlbums(albumsData);
         } catch (error) {
-            showToast('Lỗi khi tải danh sách bài hát!', 'error');
+            showToast('Lỗi khi tải dữ liệu!', 'error');
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchSongs();
+        fetchData();
     }, []);
 
     const filteredSongs = songs.filter(song => {
@@ -60,7 +70,7 @@ const AdminSongs = () => {
             title: '',
             audioUrl: '',
             duration: '',
-            category: '',
+            genre: 'OTHER',
             artist: { id: '' },
             album: { id: '' }
         });
@@ -78,7 +88,7 @@ const AdminSongs = () => {
             title: song.title || '',
             audioUrl: song.audioUrl || '',
             duration: song.duration || '',
-            category: song.category || '',
+            genre: song.genre || 'OTHER',
             artist: { id: song.artist?.id || '' },
             album: { id: song.album?.id || '' }
         });
@@ -97,7 +107,7 @@ const AdminSongs = () => {
             title: formData.title,
             audioUrl: formData.audioUrl,
             duration: formData.duration ? parseInt(formData.duration) : null,
-            category: formData.category,
+            genre: formData.genre,
             artist: formData.artist.id ? { id: parseInt(formData.artist.id) } : null,
             album: formData.album.id ? { id: parseInt(formData.album.id) } : null
         };
@@ -112,7 +122,7 @@ const AdminSongs = () => {
             }
             setShowModal(false);
             resetForm();
-            fetchSongs();
+            fetchData();
         } catch (error) {
             const message = error.response?.data || 'Đã có lỗi xảy ra!';
             showToast(typeof message === 'string' ? message : 'Thao tác thất bại!', 'error');
@@ -124,7 +134,7 @@ const AdminSongs = () => {
         try {
             await songService.deleteSong(songId);
             showToast('Xóa bài hát thành công!', 'success');
-            fetchSongs();
+            fetchData();
         } catch (error) {
             showToast('Xóa bài hát thất bại!', 'error');
         }
@@ -202,8 +212,8 @@ const AdminSongs = () => {
                                         <td>{song.artist?.name || '—'}</td>
                                         <td>{song.album?.title || '—'}</td>
                                         <td>
-                                            {song.category ? (
-                                                <span className="admin-category-tag">{song.category}</span>
+                                            {song.genre ? (
+                                                <span className="admin-genre-tag">{song.genre}</span>
                                             ) : '—'}
                                         </td>
                                         <td>{formatDuration(song.duration)}</td>
@@ -257,17 +267,42 @@ const AdminSongs = () => {
                                 </div>
                                 <div className="admin-form-group">
                                     <label className="admin-form-label">Thể loại</label>
-                                    <input type="text" name="category" className="admin-form-input" value={formData.category} onChange={handleChange} />
+                                    <select name="genre" className="admin-form-input" value={formData.genre} onChange={handleChange}>
+                                        <option value="POP">Pop</option>
+                                        <option value="ROCK">Rock</option>
+                                        <option value="HIPHOP">Hip-hop</option>
+                                        <option value="RNB">R&B</option>
+                                        <option value="EDM">EDM</option>
+                                        <option value="JAZZ">Jazz</option>
+                                        <option value="CLASSICAL">Classical</option>
+                                        <option value="LOFI">Lofi</option>
+                                        <option value="KPOP">K-Pop</option>
+                                        <option value="VPOP">V-Pop</option>
+                                        <option value="ACOUSTIC">Acoustic</option>
+                                        <option value="INDIE">Indie</option>
+                                        <option value="REMIX">Remix</option>
+                                        <option value="OTHER">Other</option>
+                                    </select>
                                 </div>
                             </div>
                             <div className="admin-form-row">
                                 <div className="admin-form-group">
-                                    <label className="admin-form-label">Artist ID</label>
-                                    <input type="number" name="artistId" className="admin-form-input" value={formData.artist.id} onChange={handleChange} />
+                                    <label className="admin-form-label">Nghệ sĩ</label>
+                                    <select name="artistId" className="admin-form-input" value={formData.artist.id} onChange={handleChange}>
+                                        <option value="">-- Chọn nghệ sĩ --</option>
+                                        {artists.map(artist => (
+                                            <option key={artist.id} value={artist.id}>{artist.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className="admin-form-group">
-                                    <label className="admin-form-label">Album ID</label>
-                                    <input type="number" name="albumId" className="admin-form-input" value={formData.album.id} onChange={handleChange} />
+                                    <label className="admin-form-label">Album</label>
+                                    <select name="albumId" className="admin-form-input" value={formData.album.id} onChange={handleChange}>
+                                        <option value="">-- Chọn album --</option>
+                                        {albums.map(album => (
+                                            <option key={album.id} value={album.id}>{album.title}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
                             <div className="admin-modal-footer">

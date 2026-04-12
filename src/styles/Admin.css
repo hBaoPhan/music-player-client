@@ -106,7 +106,7 @@
 }
 
 
-.admin-category-tag {
+.admin-genre-tag {
     @apply text-xs bg-purple-500/20 text-purple-300 px-2.5 py-1 rounded-full;
 }
 

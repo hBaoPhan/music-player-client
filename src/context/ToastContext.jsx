@@ -17,7 +17,7 @@ export const ToastProvider = ({ children }) => {
             {children}
             {toast && (
                 <div className="toast-container">
-                    <div className={`toast-content ${toast.type === 'error' ? 'toast-error' : 'toast-success'}`}>
+                    <div className={`toast-content toast-${toast.type}`}>
                         <span className="toast-message">{toast.message}</span>
                     </div>
                 </div>

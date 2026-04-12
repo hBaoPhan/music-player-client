@@ -34,6 +34,10 @@
     @apply bg-green-500/90 border-green-400;
 }
 
+.toast-warning {
+    @apply bg-amber-500/90 border-amber-400
+}
+
 .toast-error {
     @apply bg-red-500/90 border-red-400;
 }
