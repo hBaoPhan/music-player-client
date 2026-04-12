@@ -1,3 +1,4 @@
+import '../styles/Playlist.css';
 import React, { useState, useEffect } from 'react';
 import { FiPlay, FiTrash2, FiPlus, FiArrowLeft, FiMusic } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';

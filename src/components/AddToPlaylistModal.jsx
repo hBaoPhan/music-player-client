@@ -1,3 +1,4 @@
+import '../styles/AddToPlaylistModal.css';
 import React, { useState, useEffect } from 'react';
 import playlistService from '../services/playlistService';
 import { useAuth } from '../context/AuthContext';

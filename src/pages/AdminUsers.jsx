@@ -1,3 +1,4 @@
+import '../styles/Admin.css';
 import React, { useState, useEffect } from 'react';
 import { FiTrash2, FiUsers, FiSearch, FiShield, FiUser } from 'react-icons/fi';
 import userService from '../services/userService';

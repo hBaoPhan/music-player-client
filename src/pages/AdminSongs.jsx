@@ -1,3 +1,4 @@
+import '../styles/Admin.css';
 import React, { useState, useEffect } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiX, FiMusic, FiSearch } from 'react-icons/fi';
 import songService from '../services/songService';

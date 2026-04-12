@@ -1,3 +1,4 @@
+import '../styles/UserProfileModal.css';
 import React, { useState } from 'react';
 import { FiX, FiUser, FiKey, FiMail, FiEdit3, FiCheck } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';

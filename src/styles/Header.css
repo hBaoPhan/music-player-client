@@ -33,11 +33,12 @@
 }
 
 .user-avatar-btn {
-    @apply flex items-center justify-center w-10 h-10 transition-transform bg-purple-300 rounded-full cursor-pointer hover:scale-105 focus:outline-none ring-4 ring-black;
+    @apply flex items-center justify-center w-10 h-10 transition-transform rounded-full cursor-pointer hover:scale-105 focus:outline-none;
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 50%, #6d28d9 100%);
 }
 
 .avatar-fallback {
-    @apply text-base font-bold text-black;
+    @apply text-base font-bold text-white;
 }
 
 .user-dropdown-menu {
@@ -104,6 +105,14 @@
 
 .result-artist {
     @apply text-xs text-gray-400 truncate mt-0.5;
+}
+
+.result-album {
+    @apply text-[10px] text-gray-500 truncate max-w-[100px];
+}
+
+.result-genre {
+    @apply text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full whitespace-nowrap;
 }
 
 .search-no-result {
