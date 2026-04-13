@@ -9,7 +9,6 @@ import albumService from '../services/albumService';
 import { useToast } from '../context/ToastContext';
 import '../styles/Admin.css';
 
-/* ─────────────────────── CONSTANTS ─────────────────────── */
 const GENRES = [
     'POP', 'ROCK', 'HIPHOP', 'RNB', 'EDM',
     'JAZZ', 'CLASSICAL', 'LOFI', 'KPOP', 'VPOP',
@@ -17,16 +16,15 @@ const GENRES = [
 ];
 
 const TABS = [
-    { key: 'songs',   label: 'Bài hát', icon: FiMusic },
-    { key: 'artists', label: 'Nghệ sĩ', icon: FiUser  },
-    { key: 'albums',  label: 'Albums',  icon: FiDisc  },
+    { key: 'songs', label: 'Bài hát', icon: FiMusic },
+    { key: 'artists', label: 'Nghệ sĩ', icon: FiUser },
+    { key: 'albums', label: 'Albums', icon: FiDisc },
 ];
 
-const EMPTY_SONG   = { title: '', audioUrl: '', duration: '', genre: 'OTHER', artist: { id: '' }, album: { id: '' } };
+const EMPTY_SONG = { title: '', audioUrl: '', duration: '', genre: 'OTHER', artist: { id: '' }, album: { id: '' } };
 const EMPTY_ARTIST = { name: '', bio: '', avatarUrl: '' };
-const EMPTY_ALBUM  = { title: '', coverUrl: '', artist: { id: '' } };
+const EMPTY_ALBUM = { title: '', coverUrl: '', releaseDate: '', artist: { id: '' } };
 
-/* ─────────────────────── HELPERS ─────────────────────── */
 const formatDuration = (seconds) => {
     if (!seconds) return '--:--';
     const m = Math.floor(seconds / 60);
@@ -34,9 +32,6 @@ const formatDuration = (seconds) => {
     return `${m}:${s.toString().padStart(2, '0')}`;
 };
 
-/* ═══════════════════════════════════════════════════════════
-   MODAL — reusable shell
-═══════════════════════════════════════════════════════════ */
 const Modal = ({ title, onClose, children }) => (
     <div className="admin-modal-overlay" onClick={onClose}>
         <div className="admin-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -47,14 +42,11 @@ const Modal = ({ title, onClose, children }) => (
     </div>
 );
 
-/* ═══════════════════════════════════════════════════════════
-   TAB: SONGS
-═══════════════════════════════════════════════════════════ */
 const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
-    const [search, setSearch]       = useState('');
+    const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [editing, setEditing]     = useState(null);
-    const [form, setForm]           = useState(EMPTY_SONG);
+    const [editing, setEditing] = useState(null);
+    const [form, setForm] = useState(EMPTY_SONG);
 
     const filtered = songs.filter(s => {
         const kw = search.toLowerCase();
@@ -66,15 +58,15 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     });
 
     const openCreate = () => { setEditing(null); setForm(EMPTY_SONG); setShowModal(true); };
-    const openEdit   = (song) => {
+    const openEdit = (song) => {
         setEditing(song);
         setForm({
-            title:    song.title    || '',
+            title: song.title || '',
             audioUrl: song.audioUrl || '',
             duration: song.duration || '',
-            genre:    song.genre    || 'OTHER',
-            artist:   { id: song.artist?.id || '' },
-            album:    { id: song.album?.id  || '' },
+            genre: song.genre || 'OTHER',
+            artist: { id: song.artist?.id || '' },
+            album: { id: song.album?.id || '' },
         });
         setShowModal(true);
     };
@@ -90,12 +82,12 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
         e.preventDefault();
         if (!form.title.trim()) { showToast('Tên bài hát không được để trống!', 'error'); return; }
         const payload = {
-            title:    form.title,
+            title: form.title,
             audioUrl: form.audioUrl,
             duration: form.duration ? parseInt(form.duration) : null,
-            genre:    form.genre,
-            artist:   form.artist.id ? { id: parseInt(form.artist.id) } : null,
-            album:    form.album.id  ? { id: parseInt(form.album.id)  } : null,
+            genre: form.genre,
+            artist: form.artist.id ? { id: parseInt(form.artist.id) } : null,
+            album: form.album.id ? { id: parseInt(form.album.id) } : null,
         };
         try {
             if (editing) {
@@ -172,7 +164,7 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
                                     </div>
                                 </td>
                                 <td>{song.artist?.name || '—'}</td>
-                                <td>{song.album?.title  || '—'}</td>
+                                <td>{song.album?.title || '—'}</td>
                                 <td>{song.genre ? <span className="admin-genre-tag">{song.genre}</span> : '—'}</td>
                                 <td>{formatDuration(song.duration)}</td>
                                 <td>{song.playCount ?? 0}</td>
@@ -247,15 +239,15 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
    TAB: ARTISTS
 ═══════════════════════════════════════════════════════════ */
 const ArtistsTab = ({ artists, onRefresh, showToast }) => {
-    const [search, setSearch]       = useState('');
+    const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [editing, setEditing]     = useState(null);
-    const [form, setForm]           = useState(EMPTY_ARTIST);
+    const [editing, setEditing] = useState(null);
+    const [form, setForm] = useState(EMPTY_ARTIST);
 
     const filtered = artists.filter(a => a.name?.toLowerCase().includes(search.toLowerCase()));
 
     const openCreate = () => { setEditing(null); setForm(EMPTY_ARTIST); setShowModal(true); };
-    const openEdit   = (artist) => { setEditing(artist); setForm({ name: artist.name || '', bio: artist.bio || '', avatarUrl: artist.avatarUrl || '' }); setShowModal(true); };
+    const openEdit = (artist) => { setEditing(artist); setForm({ name: artist.name || '', bio: artist.bio || '', avatarUrl: artist.avatarUrl || '' }); setShowModal(true); };
 
     const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -380,10 +372,10 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
    TAB: ALBUMS
 ═══════════════════════════════════════════════════════════ */
 const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
-    const [search, setSearch]       = useState('');
+    const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [editing, setEditing]     = useState(null);
-    const [form, setForm]           = useState(EMPTY_ALBUM);
+    const [editing, setEditing] = useState(null);
+    const [form, setForm] = useState(EMPTY_ALBUM);
 
     const filtered = albums.filter(a =>
         a.title?.toLowerCase().includes(search.toLowerCase()) ||
@@ -391,9 +383,14 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
     );
 
     const openCreate = () => { setEditing(null); setForm(EMPTY_ALBUM); setShowModal(true); };
-    const openEdit   = (album) => {
+    const openEdit = (album) => {
         setEditing(album);
-        setForm({ title: album.title || '', coverUrl: album.coverUrl || '', artist: { id: album.artist?.id || '' } });
+        setForm({
+            title: album.title || '',
+            coverUrl: album.coverUrl || '',
+            releaseDate: album.releaseDate || '',
+            artist: { id: album.artist?.id || '' },
+        });
         setShowModal(true);
     };
 
@@ -407,9 +404,10 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
         e.preventDefault();
         if (!form.title.trim()) { showToast('Tên album không được để trống!', 'error'); return; }
         const payload = {
-            title:    form.title,
+            title: form.title,
             coverUrl: form.coverUrl,
-            artist:   form.artist.id ? { id: parseInt(form.artist.id) } : null,
+            releaseDate: form.releaseDate || null,
+            artist: form.artist.id ? { id: parseInt(form.artist.id) } : null,
         };
         try {
             if (editing) {
@@ -510,12 +508,25 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                             <label className="admin-form-label">Cover URL</label>
                             <input id="album-coverUrl" type="text" name="coverUrl" className="admin-form-input" value={form.coverUrl} onChange={handleChange} placeholder="https://..." />
                         </div>
-                        <div className="admin-form-group">
-                            <label className="admin-form-label">Nghệ sĩ</label>
-                            <select id="album-artist" name="artistId" className="admin-form-input" value={form.artist.id} onChange={handleChange}>
-                                <option value="">-- Chọn nghệ sĩ --</option>
-                                {artists.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-                            </select>
+                        <div className="admin-form-row">
+                            <div className="admin-form-group">
+                                <label className="admin-form-label">Nghệ sĩ</label>
+                                <select id="album-artist" name="artistId" className="admin-form-input" value={form.artist.id} onChange={handleChange}>
+                                    <option value="">-- Chọn nghệ sĩ --</option>
+                                    {artists.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="admin-form-group">
+                                <label className="admin-form-label">Ngày phát hành</label>
+                                <input
+                                    id="album-releaseDate"
+                                    type="date"
+                                    name="releaseDate"
+                                    className="admin-form-input"
+                                    value={form.releaseDate}
+                                    onChange={handleChange}
+                                />
+                            </div>
                         </div>
                         <div className="admin-modal-footer">
                             <button type="button" className="admin-btn-cancel" onClick={() => setShowModal(false)}>Hủy</button>
@@ -534,10 +545,10 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
 const AdminSongs = () => {
     const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState('songs');
-    const [songs,     setSongs]     = useState([]);
-    const [artists,   setArtists]   = useState([]);
-    const [albums,    setAlbums]    = useState([]);
-    const [loading,   setLoading]   = useState(true);
+    const [songs, setSongs] = useState([]);
+    const [artists, setArtists] = useState([]);
+    const [albums, setAlbums] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const fetchData = useCallback(async () => {
         try {
@@ -590,9 +601,9 @@ const AdminSongs = () => {
                 <div className="admin-loading">Đang tải...</div>
             ) : (
                 <div className="admin-tab-content">
-                    {activeTab === 'songs'   && <SongsTab   songs={songs}   artists={artists} albums={albums} onRefresh={fetchData} showToast={showToast} />}
-                    {activeTab === 'artists' && <ArtistsTab artists={artists}                                 onRefresh={fetchData} showToast={showToast} />}
-                    {activeTab === 'albums'  && <AlbumsTab  albums={albums}  artists={artists}                onRefresh={fetchData} showToast={showToast} />}
+                    {activeTab === 'songs' && <SongsTab songs={songs} artists={artists} albums={albums} onRefresh={fetchData} showToast={showToast} />}
+                    {activeTab === 'artists' && <ArtistsTab artists={artists} onRefresh={fetchData} showToast={showToast} />}
+                    {activeTab === 'albums' && <AlbumsTab albums={albums} artists={artists} onRefresh={fetchData} showToast={showToast} />}
                 </div>
             )}
         </div>

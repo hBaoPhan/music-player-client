@@ -299,3 +299,80 @@
 .admin-td-bio {
     @apply text-gray-400 max-w-xs truncate;
 }
+
+/* ══════════════════════════════════════
+   Role-Edit Modal
+══════════════════════════════════════ */
+.admin-role-modal {
+    @apply max-w-sm;   /* narrower than the default form modal */
+}
+
+/* User info header inside the modal */
+.admin-role-user-info {
+    @apply flex items-center gap-3 mb-6 p-4 bg-gray-800/50 rounded-2xl;
+}
+
+.admin-role-avatar {
+    @apply w-11 h-11 text-base;
+}
+
+.admin-role-username {
+    @apply text-white font-semibold text-sm;
+}
+
+.admin-role-email {
+    @apply text-gray-400 text-xs mt-0.5;
+}
+
+.admin-role-label {
+    @apply text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3;
+}
+
+/* Role option cards */
+.admin-role-options {
+    @apply flex flex-col gap-3 mb-2;
+}
+
+.admin-role-option {
+    @apply w-full flex items-center gap-4 p-4 rounded-2xl border border-gray-700
+           bg-gray-800/40 text-left cursor-pointer transition-all duration-200
+           hover:border-gray-500 hover:bg-gray-700/40 relative;
+}
+
+.admin-role-option--selected {
+    @apply border-transparent;
+}
+
+.admin-role-option--user.admin-role-option--selected {
+    background: linear-gradient(135deg, rgba(14,165,233,0.15) 0%, rgba(14,165,233,0.05) 100%);
+    @apply border-sky-500/40;
+}
+
+.admin-role-option--admin.admin-role-option--selected {
+    background: linear-gradient(135deg, rgba(245,158,11,0.15) 0%, rgba(245,158,11,0.05) 100%);
+    @apply border-amber-500/40;
+}
+
+.admin-role-option-icon {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0;
+}
+
+.admin-role-option-icon--user  { @apply bg-sky-500/20  text-sky-300;  }
+.admin-role-option-icon--admin { @apply bg-amber-500/20 text-amber-300; }
+
+.admin-role-option-name {
+    @apply text-white font-semibold text-sm;
+}
+
+.admin-role-option-desc {
+    @apply text-gray-400 text-xs mt-0.5;
+}
+
+.admin-role-option-check {
+    @apply ml-auto text-green-400 font-bold text-base;
+}
+
+/* "Bạn" self-indicator tag */
+.admin-self-tag {
+    @apply text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full font-medium;
+}

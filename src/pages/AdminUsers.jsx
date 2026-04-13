@@ -1,38 +1,131 @@
 import '../styles/Admin.css';
 import React, { useState, useEffect } from 'react';
-import { FiTrash2, FiUsers, FiSearch, FiShield, FiUser } from 'react-icons/fi';
+import { FiTrash2, FiUsers, FiSearch, FiShield, FiUser, FiX, FiEdit2 } from 'react-icons/fi';
 import userService from '../services/userService';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 
-const AdminUsers = () => {
+/* ─── Role-Edit Modal ─── */
+const RoleModal = ({ user, onClose, onSaved }) => {
     const { showToast } = useToast();
-    const { currentUser } = useAuth();
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [selected, setSelected]   = useState(user.role);
+    const [loading,  setLoading]    = useState(false);
+
+    const handleSave = async () => {
+        if (selected === user.role) { onClose(); return; }
+        setLoading(true);
+        try {
+            await userService.updateUserRole(user.id, selected);
+            showToast(`Đã cập nhật role của "${user.username}" thành ${selected}!`, 'success');
+            onSaved();
+            onClose();
+        } catch (err) {
+            const msg = err.response?.data;
+            showToast(typeof msg === 'string' ? msg : 'Cập nhật role thất bại!', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="admin-modal-overlay" onClick={onClose}>
+            <div className="admin-modal-content admin-role-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="admin-modal-close" onClick={onClose} aria-label="Đóng"><FiX /></button>
+                <h3 className="admin-modal-title">Thay đổi vai trò</h3>
+
+                <div className="admin-role-user-info">
+                    <div className="admin-user-avatar admin-role-avatar">
+                        <span>{user.username?.charAt(0).toUpperCase() || 'U'}</span>
+                    </div>
+                    <div>
+                        <p className="admin-role-username">{user.username}</p>
+                        <p className="admin-role-email">{user.email}</p>
+                    </div>
+                </div>
+
+                <p className="admin-role-label">Chọn vai trò mới:</p>
+
+                <div className="admin-role-options">
+                    {/* USER option */}
+                    <button
+                        id="role-option-user"
+                        type="button"
+                        className={`admin-role-option${selected === 'USER' ? ' admin-role-option--selected admin-role-option--user' : ''}`}
+                        onClick={() => setSelected('USER')}
+                    >
+                        <div className="admin-role-option-icon admin-role-option-icon--user">
+                            <FiUser />
+                        </div>
+                        <div>
+                            <p className="admin-role-option-name">User</p>
+                            <p className="admin-role-option-desc">Người dùng thông thường</p>
+                        </div>
+                        {selected === 'USER' && <span className="admin-role-option-check">✓</span>}
+                    </button>
+
+                    {/* ADMIN option */}
+                    <button
+                        id="role-option-admin"
+                        type="button"
+                        className={`admin-role-option${selected === 'ADMIN' ? ' admin-role-option--selected admin-role-option--admin' : ''}`}
+                        onClick={() => setSelected('ADMIN')}
+                    >
+                        <div className="admin-role-option-icon admin-role-option-icon--admin">
+                            <FiShield />
+                        </div>
+                        <div>
+                            <p className="admin-role-option-name">Admin</p>
+                            <p className="admin-role-option-desc">Toàn quyền quản trị</p>
+                        </div>
+                        {selected === 'ADMIN' && <span className="admin-role-option-check">✓</span>}
+                    </button>
+                </div>
+
+                <div className="admin-modal-footer">
+                    <button type="button" className="admin-btn-cancel" onClick={onClose}>Hủy</button>
+                    <button
+                        id="btn-save-role"
+                        type="button"
+                        className="admin-btn-submit"
+                        onClick={handleSave}
+                        disabled={loading}
+                    >
+                        {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+/* ─── Main Page ─── */
+const AdminUsers = () => {
+    const { showToast }    = useToast();
+    const { currentUser }  = useAuth();
+    const [users, setUsers]           = useState([]);
+    const [loading, setLoading]       = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [roleTarget, setRoleTarget] = useState(null); // user being edited
 
     const fetchUsers = async () => {
         try {
             setLoading(true);
             const data = await userService.getAllUsers();
             setUsers(data);
-        } catch (error) {
+        } catch {
             showToast('Lỗi khi tải danh sách người dùng!', 'error');
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+    useEffect(() => { fetchUsers(); }, []);
 
     const filteredUsers = users.filter(user => {
         const keyword = searchTerm.toLowerCase();
         return (
             (user.username && user.username.toLowerCase().includes(keyword)) ||
-            (user.email && user.email.toLowerCase().includes(keyword))
+            (user.email    && user.email.toLowerCase().includes(keyword))
         );
     });
 
@@ -46,7 +139,7 @@ const AdminUsers = () => {
             await userService.deleteUser(userId);
             showToast('Xóa người dùng thành công!', 'success');
             fetchUsers();
-        } catch (error) {
+        } catch {
             showToast('Xóa người dùng thất bại!', 'error');
         }
     };
@@ -55,18 +148,18 @@ const AdminUsers = () => {
         if (role === 'ADMIN') {
             return (
                 <span className="admin-role-badge admin-role-admin">
-                    <FiShield />
-                    Admin
+                    <FiShield /> Admin
                 </span>
             );
         }
         return (
             <span className="admin-role-badge admin-role-user">
-                <FiUser />
-                User
+                <FiUser /> User
             </span>
         );
     };
+
+    const isSelf = (userId) => currentUser && currentUser.id === userId;
 
     return (
         <div className="admin-page">
@@ -80,6 +173,7 @@ const AdminUsers = () => {
                     <div className="admin-search-box">
                         <FiSearch className="admin-search-icon" />
                         <input
+                            id="search-users"
                             type="text"
                             className="admin-search-input"
                             placeholder="Tìm kiếm người dùng..."
@@ -115,17 +209,31 @@ const AdminUsers = () => {
                                                     <span>{user.username?.charAt(0).toUpperCase() || 'U'}</span>
                                                 </div>
                                                 <span className="admin-user-name">{user.username}</span>
+                                                {isSelf(user.id) && (
+                                                    <span className="admin-self-tag">Bạn</span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="admin-td-email">{user.email}</td>
                                         <td>{getRoleBadge(user.role)}</td>
                                         <td>
                                             <div className="admin-row-actions">
+                                                {/* Edit role button — disabled for self */}
                                                 <button
+                                                    id={`btn-edit-role-${user.id}`}
+                                                    className="admin-edit-btn"
+                                                    onClick={() => setRoleTarget(user)}
+                                                    title="Thay đổi vai trò"
+                                                    disabled={isSelf(user.id)}
+                                                >
+                                                    <FiEdit2 />
+                                                </button>
+                                                <button
+                                                    id={`btn-delete-user-${user.id}`}
                                                     className="admin-delete-btn"
                                                     onClick={() => handleDelete(user.id, user.username)}
                                                     title="Xóa"
-                                                    disabled={currentUser && currentUser.id === user.id}
+                                                    disabled={isSelf(user.id)}
                                                 >
                                                     <FiTrash2 />
                                                 </button>
@@ -143,6 +251,14 @@ const AdminUsers = () => {
                         </tbody>
                     </table>
                 </div>
+            )}
+
+            {roleTarget && (
+                <RoleModal
+                    user={roleTarget}
+                    onClose={() => setRoleTarget(null)}
+                    onSaved={fetchUsers}
+                />
             )}
         </div>
     );
