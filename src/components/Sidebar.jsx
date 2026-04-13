@@ -77,7 +77,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
 
             <nav className="nav-menu">
                 {navItems.map(renderNavItem)}
-                <div className="divider" />
+                {/* <div className="divider" /> */}
                 {secondaryItems.map(renderNavItem)}
 
                 {isAdmin && (

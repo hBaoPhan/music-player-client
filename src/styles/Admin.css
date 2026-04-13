@@ -245,3 +245,57 @@
     @apply justify-center px-0;
     gap: 0;
 }
+
+/* ─── Tab navigation ─── */
+.admin-tab-bar {
+    @apply flex items-center gap-1 mt-5 border-b border-gray-800 pb-0;
+}
+
+.admin-tab-btn {
+    @apply flex items-center gap-2 px-5 py-3 text-sm font-medium text-gray-400
+           rounded-t-xl border border-transparent border-b-0
+           transition-all cursor-pointer relative;
+}
+
+.admin-tab-btn:hover {
+    @apply text-white bg-gray-800/50;
+}
+
+.admin-tab-btn--active {
+    @apply text-green-400 bg-gray-900 border-gray-800;
+    box-shadow: 0 1px 0 #111827; /* hides bottom border so tab looks "connected" */
+    margin-bottom: -1px;
+}
+
+.admin-tab-icon {
+    @apply text-base flex-shrink-0;
+}
+
+.admin-tab-count {
+    @apply text-xs bg-gray-700 text-gray-300 px-2 py-0.5 rounded-full;
+}
+
+.admin-tab-btn--active .admin-tab-count {
+    @apply bg-green-500/20 text-green-300;
+}
+
+/* ─── Tab content area ─── */
+.admin-tab-content {
+    @apply flex flex-col gap-4 pt-5;
+    animation: adminTabFadeIn 0.2s ease-out;
+}
+
+@keyframes adminTabFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ─── Textarea inside form ─── */
+.admin-form-textarea {
+    @apply resize-none leading-relaxed;
+}
+
+/* ─── Bio cell truncate ─── */
+.admin-td-bio {
+    @apply text-gray-400 max-w-xs truncate;
+}

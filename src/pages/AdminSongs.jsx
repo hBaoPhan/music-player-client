@@ -1,319 +1,598 @@
-import '../styles/Admin.css';
-import React, { useState, useEffect } from 'react';
-import { FiPlus, FiEdit2, FiTrash2, FiX, FiMusic, FiSearch } from 'react-icons/fi';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+    FiPlus, FiEdit2, FiTrash2, FiX,
+    FiMusic, FiSearch, FiUser, FiDisc
+} from 'react-icons/fi';
 import songService from '../services/songService';
 import artistService from '../services/artistService';
 import albumService from '../services/albumService';
 import { useToast } from '../context/ToastContext';
+import '../styles/Admin.css';
 
-const AdminSongs = () => {
-    const { showToast } = useToast();
-    const [songs, setSongs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
+/* ─────────────────────── CONSTANTS ─────────────────────── */
+const GENRES = [
+    'POP', 'ROCK', 'HIPHOP', 'RNB', 'EDM',
+    'JAZZ', 'CLASSICAL', 'LOFI', 'KPOP', 'VPOP',
+    'ACOUSTIC', 'INDIE', 'REMIX', 'OTHER',
+];
+
+const TABS = [
+    { key: 'songs',   label: 'Bài hát', icon: FiMusic },
+    { key: 'artists', label: 'Nghệ sĩ', icon: FiUser  },
+    { key: 'albums',  label: 'Albums',  icon: FiDisc  },
+];
+
+const EMPTY_SONG   = { title: '', audioUrl: '', duration: '', genre: 'OTHER', artist: { id: '' }, album: { id: '' } };
+const EMPTY_ARTIST = { name: '', bio: '', avatarUrl: '' };
+const EMPTY_ALBUM  = { title: '', coverUrl: '', artist: { id: '' } };
+
+/* ─────────────────────── HELPERS ─────────────────────── */
+const formatDuration = (seconds) => {
+    if (!seconds) return '--:--';
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+};
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL — reusable shell
+═══════════════════════════════════════════════════════════ */
+const Modal = ({ title, onClose, children }) => (
+    <div className="admin-modal-overlay" onClick={onClose}>
+        <div className="admin-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="admin-modal-close" onClick={onClose} aria-label="Đóng"><FiX /></button>
+            <h3 className="admin-modal-title">{title}</h3>
+            {children}
+        </div>
+    </div>
+);
+
+/* ═══════════════════════════════════════════════════════════
+   TAB: SONGS
+═══════════════════════════════════════════════════════════ */
+const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
+    const [search, setSearch]       = useState('');
     const [showModal, setShowModal] = useState(false);
-    const [editingSong, setEditingSong] = useState(null);
-    const [artists, setArtists] = useState([]);
-    const [albums, setAlbums] = useState([]);
-    const [formData, setFormData] = useState({
-        title: '',
-        audioUrl: '',
-        duration: '',
-        genre: 'OTHER',
-        artist: { id: '' },
-        album: { id: '' }
-    });
+    const [editing, setEditing]     = useState(null);
+    const [form, setForm]           = useState(EMPTY_SONG);
 
-    const fetchData = async () => {
-        try {
-            setLoading(true);
-            const [songsData, artistsData, albumsData] = await Promise.all([
-                songService.getAllSongs(),
-                artistService.getAllArtists(),
-                albumService.getAllAlbums()
-            ]);
-            setSongs(songsData);
-            setArtists(artistsData);
-            setAlbums(albumsData);
-        } catch (error) {
-            showToast('Lỗi khi tải dữ liệu!', 'error');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const filteredSongs = songs.filter(song => {
-        const keyword = searchTerm.toLowerCase();
+    const filtered = songs.filter(s => {
+        const kw = search.toLowerCase();
         return (
-            (song.title && song.title.toLowerCase().includes(keyword)) ||
-            (song.artist?.name && song.artist.name.toLowerCase().includes(keyword)) ||
-            (song.album?.title && song.album.title.toLowerCase().includes(keyword))
+            s.title?.toLowerCase().includes(kw) ||
+            s.artist?.name?.toLowerCase().includes(kw) ||
+            s.album?.title?.toLowerCase().includes(kw)
         );
     });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        if (name === 'artistId') {
-            setFormData({ ...formData, artist: { id: value } });
-        } else if (name === 'albumId') {
-            setFormData({ ...formData, album: { id: value } });
-        } else {
-            setFormData({ ...formData, [name]: value });
-        }
-    };
-
-    const resetForm = () => {
-        setFormData({
-            title: '',
-            audioUrl: '',
-            duration: '',
-            genre: 'OTHER',
-            artist: { id: '' },
-            album: { id: '' }
-        });
-        setEditingSong(null);
-    };
-
-    const openCreateModal = () => {
-        resetForm();
-        setShowModal(true);
-    };
-
-    const openEditModal = (song) => {
-        setEditingSong(song);
-        setFormData({
-            title: song.title || '',
+    const openCreate = () => { setEditing(null); setForm(EMPTY_SONG); setShowModal(true); };
+    const openEdit   = (song) => {
+        setEditing(song);
+        setForm({
+            title:    song.title    || '',
             audioUrl: song.audioUrl || '',
             duration: song.duration || '',
-            genre: song.genre || 'OTHER',
-            artist: { id: song.artist?.id || '' },
-            album: { id: song.album?.id || '' }
+            genre:    song.genre    || 'OTHER',
+            artist:   { id: song.artist?.id || '' },
+            album:    { id: song.album?.id  || '' },
         });
         setShowModal(true);
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'artistId') setForm(f => ({ ...f, artist: { id: value } }));
+        else if (name === 'albumId') setForm(f => ({ ...f, album: { id: value } }));
+        else setForm(f => ({ ...f, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!formData.title.trim()) {
-            showToast('Tên bài hát không được để trống!', 'error');
-            return;
-        }
-
+        if (!form.title.trim()) { showToast('Tên bài hát không được để trống!', 'error'); return; }
         const payload = {
-            title: formData.title,
-            audioUrl: formData.audioUrl,
-            duration: formData.duration ? parseInt(formData.duration) : null,
-            genre: formData.genre,
-            artist: formData.artist.id ? { id: parseInt(formData.artist.id) } : null,
-            album: formData.album.id ? { id: parseInt(formData.album.id) } : null
+            title:    form.title,
+            audioUrl: form.audioUrl,
+            duration: form.duration ? parseInt(form.duration) : null,
+            genre:    form.genre,
+            artist:   form.artist.id ? { id: parseInt(form.artist.id) } : null,
+            album:    form.album.id  ? { id: parseInt(form.album.id)  } : null,
         };
-
         try {
-            if (editingSong) {
-                await songService.updateSong(editingSong.id, payload);
+            if (editing) {
+                await songService.updateSong(editing.id, payload);
                 showToast('Cập nhật bài hát thành công!', 'success');
             } else {
                 await songService.createSong(payload);
                 showToast('Thêm bài hát thành công!', 'success');
             }
             setShowModal(false);
-            resetForm();
-            fetchData();
-        } catch (error) {
-            const message = error.response?.data || 'Đã có lỗi xảy ra!';
-            showToast(typeof message === 'string' ? message : 'Thao tác thất bại!', 'error');
+            onRefresh();
+        } catch (err) {
+            const msg = err.response?.data;
+            showToast(typeof msg === 'string' ? msg : 'Thao tác thất bại!', 'error');
         }
     };
 
-    const handleDelete = async (songId) => {
+    const handleDelete = async (id) => {
         if (!window.confirm('Bạn có chắc muốn xóa bài hát này?')) return;
         try {
-            await songService.deleteSong(songId);
+            await songService.deleteSong(id);
             showToast('Xóa bài hát thành công!', 'success');
-            fetchData();
-        } catch (error) {
+            onRefresh();
+        } catch {
             showToast('Xóa bài hát thất bại!', 'error');
         }
     };
 
-    const formatDuration = (seconds) => {
-        if (!seconds) return '--:--';
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m}:${s.toString().padStart(2, '0')}`;
+    return (
+        <>
+            <div className="admin-actions-bar">
+                <div className="admin-search-box">
+                    <FiSearch className="admin-search-icon" />
+                    <input
+                        id="search-songs"
+                        type="text"
+                        className="admin-search-input"
+                        placeholder="Tìm kiếm bài hát..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
+                <button id="btn-add-song" className="admin-add-btn" onClick={openCreate}>
+                    <FiPlus /><span>Thêm bài hát</span>
+                </button>
+            </div>
+
+            <div className="admin-table-wrapper">
+                <table className="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên bài hát</th>
+                            <th>Nghệ sĩ</th>
+                            <th>Album</th>
+                            <th>Thể loại</th>
+                            <th>Thời lượng</th>
+                            <th>Lượt nghe</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filtered.length > 0 ? filtered.map(song => (
+                            <tr key={song.id}>
+                                <td className="admin-td-id">{song.id}</td>
+                                <td>
+                                    <div className="admin-song-cell">
+                                        <div className="admin-song-thumb">
+                                            {song.album?.coverUrl
+                                                ? <img src={song.album.coverUrl} alt={song.title} />
+                                                : <div className="admin-song-thumb-fallback"><FiMusic /></div>}
+                                        </div>
+                                        <span className="admin-song-name">{song.title}</span>
+                                    </div>
+                                </td>
+                                <td>{song.artist?.name || '—'}</td>
+                                <td>{song.album?.title  || '—'}</td>
+                                <td>{song.genre ? <span className="admin-genre-tag">{song.genre}</span> : '—'}</td>
+                                <td>{formatDuration(song.duration)}</td>
+                                <td>{song.playCount ?? 0}</td>
+                                <td>
+                                    <div className="admin-row-actions">
+                                        <button id={`btn-edit-song-${song.id}`} className="admin-edit-btn" onClick={() => openEdit(song)} title="Sửa"><FiEdit2 /></button>
+                                        <button id={`btn-delete-song-${song.id}`} className="admin-delete-btn" onClick={() => handleDelete(song.id)} title="Xóa"><FiTrash2 /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        )) : (
+                            <tr><td colSpan="8" className="admin-empty-row">Không tìm thấy bài hát nào</td></tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
+            {showModal && (
+                <Modal
+                    title={editing ? 'Sửa bài hát' : 'Thêm bài hát mới'}
+                    onClose={() => setShowModal(false)}
+                >
+                    <form onSubmit={handleSubmit}>
+                        <div className="admin-form-group">
+                            <label className="admin-form-label">Tên bài hát</label>
+                            <input id="song-title" type="text" name="title" className="admin-form-input" value={form.title} onChange={handleChange} required />
+                        </div>
+                        <div className="admin-form-group">
+                            <label className="admin-form-label">URL âm thanh</label>
+                            <input id="song-audioUrl" type="text" name="audioUrl" className="admin-form-input" value={form.audioUrl} onChange={handleChange} />
+                        </div>
+                        <div className="admin-form-row">
+                            <div className="admin-form-group">
+                                <label className="admin-form-label">Thời lượng (giây)</label>
+                                <input id="song-duration" type="number" name="duration" className="admin-form-input" value={form.duration} onChange={handleChange} />
+                            </div>
+                            <div className="admin-form-group">
+                                <label className="admin-form-label">Thể loại</label>
+                                <select id="song-genre" name="genre" className="admin-form-input" value={form.genre} onChange={handleChange}>
+                                    {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="admin-form-row">
+                            <div className="admin-form-group">
+                                <label className="admin-form-label">Nghệ sĩ</label>
+                                <select id="song-artist" name="artistId" className="admin-form-input" value={form.artist.id} onChange={handleChange}>
+                                    <option value="">-- Chọn nghệ sĩ --</option>
+                                    {artists.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="admin-form-group">
+                                <label className="admin-form-label">Album</label>
+                                <select id="song-album" name="albumId" className="admin-form-input" value={form.album.id} onChange={handleChange}>
+                                    <option value="">-- Chọn album --</option>
+                                    {albums.map(a => <option key={a.id} value={a.id}>{a.title}</option>)}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="admin-modal-footer">
+                            <button type="button" className="admin-btn-cancel" onClick={() => setShowModal(false)}>Hủy</button>
+                            <button type="submit" className="admin-btn-submit">{editing ? 'Cập nhật' : 'Thêm mới'}</button>
+                        </div>
+                    </form>
+                </Modal>
+            )}
+        </>
+    );
+};
+
+/* ═══════════════════════════════════════════════════════════
+   TAB: ARTISTS
+═══════════════════════════════════════════════════════════ */
+const ArtistsTab = ({ artists, onRefresh, showToast }) => {
+    const [search, setSearch]       = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const [editing, setEditing]     = useState(null);
+    const [form, setForm]           = useState(EMPTY_ARTIST);
+
+    const filtered = artists.filter(a => a.name?.toLowerCase().includes(search.toLowerCase()));
+
+    const openCreate = () => { setEditing(null); setForm(EMPTY_ARTIST); setShowModal(true); };
+    const openEdit   = (artist) => { setEditing(artist); setForm({ name: artist.name || '', bio: artist.bio || '', avatarUrl: artist.avatarUrl || '' }); setShowModal(true); };
+
+    const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!form.name.trim()) { showToast('Tên nghệ sĩ không được để trống!', 'error'); return; }
+        try {
+            if (editing) {
+                await artistService.updateArtist(editing.id, form);
+                showToast('Cập nhật nghệ sĩ thành công!', 'success');
+            } else {
+                await artistService.createArtist(form);
+                showToast('Thêm nghệ sĩ thành công!', 'success');
+            }
+            setShowModal(false);
+            onRefresh();
+        } catch (err) {
+            const msg = err.response?.data;
+            showToast(typeof msg === 'string' ? msg : 'Thao tác thất bại!', 'error');
+        }
     };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Bạn có chắc muốn xóa nghệ sĩ này?')) return;
+        try {
+            await artistService.deleteArtist(id);
+            showToast('Xóa nghệ sĩ thành công!', 'success');
+            onRefresh();
+        } catch {
+            showToast('Xóa nghệ sĩ thất bại!', 'error');
+        }
+    };
+
+    return (
+        <>
+            <div className="admin-actions-bar">
+                <div className="admin-search-box">
+                    <FiSearch className="admin-search-icon" />
+                    <input
+                        id="search-artists"
+                        type="text"
+                        className="admin-search-input"
+                        placeholder="Tìm kiếm nghệ sĩ..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
+                <button id="btn-add-artist" className="admin-add-btn" onClick={openCreate}>
+                    <FiPlus /><span>Thêm nghệ sĩ</span>
+                </button>
+            </div>
+
+            <div className="admin-table-wrapper">
+                <table className="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nghệ sĩ</th>
+                            <th>Bio</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filtered.length > 0 ? filtered.map(artist => (
+                            <tr key={artist.id}>
+                                <td className="admin-td-id">{artist.id}</td>
+                                <td>
+                                    <div className="admin-song-cell">
+                                        <div className="admin-song-thumb">
+                                            {artist.avatarUrl
+                                                ? <img src={artist.avatarUrl} alt={artist.name} />
+                                                : <div className="admin-song-thumb-fallback"><FiUser /></div>}
+                                        </div>
+                                        <span className="admin-song-name">{artist.name}</span>
+                                    </div>
+                                </td>
+                                <td className="admin-td-bio">{artist.bio || '—'}</td>
+                                <td>
+                                    <div className="admin-row-actions">
+                                        <button id={`btn-edit-artist-${artist.id}`} className="admin-edit-btn" onClick={() => openEdit(artist)} title="Sửa"><FiEdit2 /></button>
+                                        <button id={`btn-delete-artist-${artist.id}`} className="admin-delete-btn" onClick={() => handleDelete(artist.id)} title="Xóa"><FiTrash2 /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        )) : (
+                            <tr><td colSpan="4" className="admin-empty-row">Không tìm thấy nghệ sĩ nào</td></tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
+            {showModal && (
+                <Modal
+                    title={editing ? 'Sửa nghệ sĩ' : 'Thêm nghệ sĩ mới'}
+                    onClose={() => setShowModal(false)}
+                >
+                    <form onSubmit={handleSubmit}>
+                        <div className="admin-form-group">
+                            <label className="admin-form-label">Tên nghệ sĩ</label>
+                            <input id="artist-name" type="text" name="name" className="admin-form-input" value={form.name} onChange={handleChange} required />
+                        </div>
+                        <div className="admin-form-group">
+                            <label className="admin-form-label">Avatar URL</label>
+                            <input id="artist-avatarUrl" type="text" name="avatarUrl" className="admin-form-input" value={form.avatarUrl} onChange={handleChange} placeholder="https://..." />
+                        </div>
+                        <div className="admin-form-group">
+                            <label className="admin-form-label">Bio</label>
+                            <textarea id="artist-bio" name="bio" className="admin-form-input admin-form-textarea" value={form.bio} onChange={handleChange} rows={3} placeholder="Giới thiệu về nghệ sĩ..." />
+                        </div>
+                        <div className="admin-modal-footer">
+                            <button type="button" className="admin-btn-cancel" onClick={() => setShowModal(false)}>Hủy</button>
+                            <button type="submit" className="admin-btn-submit">{editing ? 'Cập nhật' : 'Thêm mới'}</button>
+                        </div>
+                    </form>
+                </Modal>
+            )}
+        </>
+    );
+};
+
+/* ═══════════════════════════════════════════════════════════
+   TAB: ALBUMS
+═══════════════════════════════════════════════════════════ */
+const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
+    const [search, setSearch]       = useState('');
+    const [showModal, setShowModal] = useState(false);
+    const [editing, setEditing]     = useState(null);
+    const [form, setForm]           = useState(EMPTY_ALBUM);
+
+    const filtered = albums.filter(a =>
+        a.title?.toLowerCase().includes(search.toLowerCase()) ||
+        a.artist?.name?.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const openCreate = () => { setEditing(null); setForm(EMPTY_ALBUM); setShowModal(true); };
+    const openEdit   = (album) => {
+        setEditing(album);
+        setForm({ title: album.title || '', coverUrl: album.coverUrl || '', artist: { id: album.artist?.id || '' } });
+        setShowModal(true);
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'artistId') setForm(f => ({ ...f, artist: { id: value } }));
+        else setForm(f => ({ ...f, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!form.title.trim()) { showToast('Tên album không được để trống!', 'error'); return; }
+        const payload = {
+            title:    form.title,
+            coverUrl: form.coverUrl,
+            artist:   form.artist.id ? { id: parseInt(form.artist.id) } : null,
+        };
+        try {
+            if (editing) {
+                await albumService.updateAlbum(editing.id, payload);
+                showToast('Cập nhật album thành công!', 'success');
+            } else {
+                await albumService.createAlbum(payload);
+                showToast('Thêm album thành công!', 'success');
+            }
+            setShowModal(false);
+            onRefresh();
+        } catch (err) {
+            const msg = err.response?.data;
+            showToast(typeof msg === 'string' ? msg : 'Thao tác thất bại!', 'error');
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Bạn có chắc muốn xóa album này?')) return;
+        try {
+            await albumService.deleteAlbum(id);
+            showToast('Xóa album thành công!', 'success');
+            onRefresh();
+        } catch {
+            showToast('Xóa album thất bại!', 'error');
+        }
+    };
+
+    return (
+        <>
+            <div className="admin-actions-bar">
+                <div className="admin-search-box">
+                    <FiSearch className="admin-search-icon" />
+                    <input
+                        id="search-albums"
+                        type="text"
+                        className="admin-search-input"
+                        placeholder="Tìm kiếm album..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+                </div>
+                <button id="btn-add-album" className="admin-add-btn" onClick={openCreate}>
+                    <FiPlus /><span>Thêm album</span>
+                </button>
+            </div>
+
+            <div className="admin-table-wrapper">
+                <table className="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Album</th>
+                            <th>Nghệ sĩ</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filtered.length > 0 ? filtered.map(album => (
+                            <tr key={album.id}>
+                                <td className="admin-td-id">{album.id}</td>
+                                <td>
+                                    <div className="admin-song-cell">
+                                        <div className="admin-song-thumb">
+                                            {album.coverUrl
+                                                ? <img src={album.coverUrl} alt={album.title} />
+                                                : <div className="admin-song-thumb-fallback"><FiDisc /></div>}
+                                        </div>
+                                        <span className="admin-song-name">{album.title}</span>
+                                    </div>
+                                </td>
+                                <td>{album.artist?.name || '—'}</td>
+                                <td>
+                                    <div className="admin-row-actions">
+                                        <button id={`btn-edit-album-${album.id}`} className="admin-edit-btn" onClick={() => openEdit(album)} title="Sửa"><FiEdit2 /></button>
+                                        <button id={`btn-delete-album-${album.id}`} className="admin-delete-btn" onClick={() => handleDelete(album.id)} title="Xóa"><FiTrash2 /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        )) : (
+                            <tr><td colSpan="4" className="admin-empty-row">Không tìm thấy album nào</td></tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
+            {showModal && (
+                <Modal
+                    title={editing ? 'Sửa album' : 'Thêm album mới'}
+                    onClose={() => setShowModal(false)}
+                >
+                    <form onSubmit={handleSubmit}>
+                        <div className="admin-form-group">
+                            <label className="admin-form-label">Tên album</label>
+                            <input id="album-title" type="text" name="title" className="admin-form-input" value={form.title} onChange={handleChange} required />
+                        </div>
+                        <div className="admin-form-group">
+                            <label className="admin-form-label">Cover URL</label>
+                            <input id="album-coverUrl" type="text" name="coverUrl" className="admin-form-input" value={form.coverUrl} onChange={handleChange} placeholder="https://..." />
+                        </div>
+                        <div className="admin-form-group">
+                            <label className="admin-form-label">Nghệ sĩ</label>
+                            <select id="album-artist" name="artistId" className="admin-form-input" value={form.artist.id} onChange={handleChange}>
+                                <option value="">-- Chọn nghệ sĩ --</option>
+                                {artists.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                            </select>
+                        </div>
+                        <div className="admin-modal-footer">
+                            <button type="button" className="admin-btn-cancel" onClick={() => setShowModal(false)}>Hủy</button>
+                            <button type="submit" className="admin-btn-submit">{editing ? 'Cập nhật' : 'Thêm mới'}</button>
+                        </div>
+                    </form>
+                </Modal>
+            )}
+        </>
+    );
+};
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE: ADMIN CATALOG (Songs + Artists + Albums)
+═══════════════════════════════════════════════════════════ */
+const AdminSongs = () => {
+    const { showToast } = useToast();
+    const [activeTab, setActiveTab] = useState('songs');
+    const [songs,     setSongs]     = useState([]);
+    const [artists,   setArtists]   = useState([]);
+    const [albums,    setAlbums]    = useState([]);
+    const [loading,   setLoading]   = useState(true);
+
+    const fetchData = useCallback(async () => {
+        try {
+            setLoading(true);
+            const [songsData, artistsData, albumsData] = await Promise.all([
+                songService.getAllSongs(),
+                artistService.getAllArtists(),
+                albumService.getAllAlbums(),
+            ]);
+            setSongs(songsData);
+            setArtists(artistsData);
+            setAlbums(albumsData);
+        } catch {
+            showToast('Lỗi khi tải dữ liệu!', 'error');
+        } finally {
+            setLoading(false);
+        }
+    }, [showToast]);
+
+    useEffect(() => { fetchData(); }, [fetchData]);
+
+    const counts = { songs: songs.length, artists: artists.length, albums: albums.length };
 
     return (
         <div className="admin-page">
             <div className="admin-page-header">
                 <div className="admin-title-section">
                     <FiMusic className="admin-title-icon" />
-                    <h1 className="admin-title">Quản Lý Nhạc</h1>
-                    <span className="admin-count-badge">{songs.length} bài hát</span>
+                    <h1 className="admin-title">Quản Lý Catalog</h1>
                 </div>
-                <div className="admin-actions-bar">
-                    <div className="admin-search-box">
-                        <FiSearch className="admin-search-icon" />
-                        <input
-                            type="text"
-                            className="admin-search-input"
-                            placeholder="Tìm kiếm bài hát..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                    <button className="admin-add-btn" onClick={openCreateModal}>
-                        <FiPlus />
-                        <span>Thêm bài hát</span>
-                    </button>
+
+                {/* Tab navigation */}
+                <div className="admin-tab-bar">
+                    {TABS.map(({ key, label, icon: Icon }) => (
+                        <button
+                            key={key}
+                            id={`tab-${key}`}
+                            className={`admin-tab-btn${activeTab === key ? ' admin-tab-btn--active' : ''}`}
+                            onClick={() => setActiveTab(key)}
+                        >
+                            <Icon className="admin-tab-icon" />
+                            <span>{label}</span>
+                            <span className="admin-tab-count">{counts[key]}</span>
+                        </button>
+                    ))}
                 </div>
             </div>
 
             {loading ? (
                 <div className="admin-loading">Đang tải...</div>
             ) : (
-                <div className="admin-table-wrapper">
-                    <table className="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Tên bài hát</th>
-                                <th>Nghệ sĩ</th>
-                                <th>Album</th>
-                                <th>Thể loại</th>
-                                <th>Thời lượng</th>
-                                <th>Lượt nghe</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredSongs.length > 0 ? (
-                                filteredSongs.map(song => (
-                                    <tr key={song.id}>
-                                        <td className="admin-td-id">{song.id}</td>
-                                        <td>
-                                            <div className="admin-song-cell">
-                                                <div className="admin-song-thumb">
-                                                    {song.album?.coverUrl ? (
-                                                        <img src={song.album.coverUrl} alt={song.title} />
-                                                    ) : (
-                                                        <div className="admin-song-thumb-fallback">
-                                                            <FiMusic />
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <span className="admin-song-name">{song.title}</span>
-                                            </div>
-                                        </td>
-                                        <td>{song.artist?.name || '—'}</td>
-                                        <td>{song.album?.title || '—'}</td>
-                                        <td>
-                                            {song.genre ? (
-                                                <span className="admin-genre-tag">{song.genre}</span>
-                                            ) : '—'}
-                                        </td>
-                                        <td>{formatDuration(song.duration)}</td>
-                                        <td>{song.playCount ?? 0}</td>
-                                        <td>
-                                            <div className="admin-row-actions">
-                                                <button className="admin-edit-btn" onClick={() => openEditModal(song)} title="Sửa">
-                                                    <FiEdit2 />
-                                                </button>
-                                                <button className="admin-delete-btn" onClick={() => handleDelete(song.id)} title="Xóa">
-                                                    <FiTrash2 />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="8" className="admin-empty-row">
-                                        Không tìm thấy bài hát nào
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-
-            {showModal && (
-                <div className="admin-modal-overlay" onClick={() => setShowModal(false)}>
-                    <div className="admin-modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="admin-modal-close" onClick={() => setShowModal(false)}>
-                            <FiX />
-                        </button>
-                        <h3 className="admin-modal-title">
-                            {editingSong ? 'Sửa bài hát' : 'Thêm bài hát mới'}
-                        </h3>
-                        <form onSubmit={handleSubmit}>
-                            <div className="admin-form-group">
-                                <label className="admin-form-label">Tên bài hát</label>
-                                <input type="text" name="title" className="admin-form-input" value={formData.title} onChange={handleChange} required />
-                            </div>
-                            <div className="admin-form-group">
-                                <label className="admin-form-label">URL âm thanh</label>
-                                <input type="text" name="audioUrl" className="admin-form-input" value={formData.audioUrl} onChange={handleChange} />
-                            </div>
-                            <div className="admin-form-row">
-                                <div className="admin-form-group">
-                                    <label className="admin-form-label">Thời lượng (giây)</label>
-                                    <input type="number" name="duration" className="admin-form-input" value={formData.duration} onChange={handleChange} />
-                                </div>
-                                <div className="admin-form-group">
-                                    <label className="admin-form-label">Thể loại</label>
-                                    <select name="genre" className="admin-form-input" value={formData.genre} onChange={handleChange}>
-                                        <option value="POP">Pop</option>
-                                        <option value="ROCK">Rock</option>
-                                        <option value="HIPHOP">Hip-hop</option>
-                                        <option value="RNB">R&B</option>
-                                        <option value="EDM">EDM</option>
-                                        <option value="JAZZ">Jazz</option>
-                                        <option value="CLASSICAL">Classical</option>
-                                        <option value="LOFI">Lofi</option>
-                                        <option value="KPOP">K-Pop</option>
-                                        <option value="VPOP">V-Pop</option>
-                                        <option value="ACOUSTIC">Acoustic</option>
-                                        <option value="INDIE">Indie</option>
-                                        <option value="REMIX">Remix</option>
-                                        <option value="OTHER">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="admin-form-row">
-                                <div className="admin-form-group">
-                                    <label className="admin-form-label">Nghệ sĩ</label>
-                                    <select name="artistId" className="admin-form-input" value={formData.artist.id} onChange={handleChange}>
-                                        <option value="">-- Chọn nghệ sĩ --</option>
-                                        {artists.map(artist => (
-                                            <option key={artist.id} value={artist.id}>{artist.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="admin-form-group">
-                                    <label className="admin-form-label">Album</label>
-                                    <select name="albumId" className="admin-form-input" value={formData.album.id} onChange={handleChange}>
-                                        <option value="">-- Chọn album --</option>
-                                        {albums.map(album => (
-                                            <option key={album.id} value={album.id}>{album.title}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="admin-modal-footer">
-                                <button type="button" className="admin-btn-cancel" onClick={() => setShowModal(false)}>Hủy</button>
-                                <button type="submit" className="admin-btn-submit">
-                                    {editingSong ? 'Cập nhật' : 'Thêm mới'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                <div className="admin-tab-content">
+                    {activeTab === 'songs'   && <SongsTab   songs={songs}   artists={artists} albums={albums} onRefresh={fetchData} showToast={showToast} />}
+                    {activeTab === 'artists' && <ArtistsTab artists={artists}                                 onRefresh={fetchData} showToast={showToast} />}
+                    {activeTab === 'albums'  && <AlbumsTab  albums={albums}  artists={artists}                onRefresh={fetchData} showToast={showToast} />}
                 </div>
             )}
         </div>
