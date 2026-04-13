@@ -1,12 +1,11 @@
 import axiosClient from './axiosClient';
 
 const artistService = {
-    getAllArtists: () => {
-        return axiosClient.get('/artists');
-    },
-    getArtistById: (id) => {
-        return axiosClient.get(`/artists/${id}`);
-    }
+    getAllArtists: () => axiosClient.get('/artists'),
+    getArtistById: (id) => axiosClient.get(`/artists/${id}`),
+    createArtist: (data) => axiosClient.post('/artists', data),
+    updateArtist: (id, data) => axiosClient.put(`/artists/${id}`, data),
+    deleteArtist: (id) => axiosClient.delete(`/artists/${id}`),
 };
 
 export default artistService;
