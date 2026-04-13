@@ -1,3 +1,4 @@
+import '../styles/Sidebar.css';
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FiHome, FiList, FiHeart, FiChevronsLeft, FiChevronsRight, FiMusic, FiUsers, FiShield } from 'react-icons/fi';

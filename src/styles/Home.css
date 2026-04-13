@@ -1,22 +1,38 @@
-
-
-
 @reference "tailwindcss";
 
 .home-container {
     @apply space-y-8 pb-8;
 }
 
-.section-title {
-    @apply text-2xl font-bold text-white mb-6 hover:underline cursor-pointer;
+.section-header {
+    @apply flex items-center justify-between mb-6;
 }
 
-.song-grid {
-    @apply grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+.section-title {
+    @apply text-2xl font-bold text-white hover:underline cursor-pointer m-0;
+}
+
+.slider-nav {
+    @apply flex items-center gap-3 hidden md:flex;
+}
+
+.slider-btn {
+    @apply flex items-center justify-center w-10 h-10 text-gray-400 bg-gray-800/50 rounded-full hover:bg-gray-700 hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed;
+}
+
+.song-slider-track {
+    @apply grid gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - (4 * 1.5rem)) / 5); /* 5 items per row */
+    scrollbar-width: none; /* hide scrollbar firefox */
+}
+
+.song-slider-track::-webkit-scrollbar {
+    display: none; /* hide scrollbar chrome/safari */
 }
 
 .song-card {
-    @apply p-4 transition-all duration-300 bg-gray-800/40 rounded-xl cursor-pointer hover:bg-gray-800 hover:shadow-xl;
+    @apply snap-start p-4 transition-all duration-300 bg-gray-800/40 rounded-xl cursor-pointer hover:bg-gray-800 hover:shadow-xl;
 }
 
 .song-image-wrapper {
@@ -41,6 +57,22 @@
 
 .song-artist {
     @apply mt-1 text-sm text-gray-400 truncate;
+}
+
+.song-bottom-info {
+    @apply flex flex-col gap-0.5 w-full;
+}
+
+.song-meta-row {
+    @apply flex items-center justify-between gap-2 mt-1.5 w-full;
+}
+
+.song-album {
+    @apply text-[13px] text-gray-500 truncate flex-1;
+}
+
+.song-genre {
+    @apply text-[11px] font-semibold tracking-wider uppercase bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full whitespace-nowrap border border-purple-500/30 shadow-sm shadow-purple-500/10;
 }
 
 .loading-text {

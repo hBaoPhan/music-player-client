@@ -15,6 +15,10 @@ export const PlayerProvider = ({ children }) => {
             setCurrentSong(songQueue[currentIndex + 1]);
             setIsPlaying(true);
         }
+        if (currentIndex === songQueue.length - 1) {
+            setCurrentSong(songQueue[0])
+            setIsPlaying(true)
+        }
     };
 
     const playPrev = () => {
@@ -24,6 +28,10 @@ export const PlayerProvider = ({ children }) => {
         if (currentIndex > 0) {
             setCurrentSong(songQueue[currentIndex - 1]);
             setIsPlaying(true);
+        }
+        if (currentIndex === 0) {
+            setCurrentSong(songQueue[songQueue.length - 1])
+            setIsPlaying(true)
         }
     };
 

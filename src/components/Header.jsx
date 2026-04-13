@@ -1,3 +1,4 @@
+import '../styles/Header.css';
 import React, { useState, useEffect, useRef } from 'react';
 import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiUser } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
@@ -115,7 +116,7 @@ const Header = () => {
                                     {searchResults.map(song => (
                                         <li key={song.id} className="search-result-item" onClick={() => handlePlaySong(song)}>
                                             <div className="result-img-wrapper">
-                                                {song.album.coverUrl ? (
+                                                {song.album?.coverUrl ? (
                                                     <img src={song.album.coverUrl} alt={song.title} />
                                                 ) : (
                                                     <div className="fallback-img" />
@@ -123,7 +124,11 @@ const Header = () => {
                                             </div>
                                             <div className="result-info">
                                                 <p className="result-title">{song.title}</p>
-                                                <p className="result-artist">{song.artist.name || 'Unknown Artist'}</p>
+                                                <p className="result-artist">{song.artist?.name || 'Unknown Artist'}</p>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <span className="result-album">{song.album?.title || 'Single'}</span>
+                                                    {song.genre && <span className="result-genre">{song.genre}</span>}
+                                                </div>
                                             </div>
                                         </li>
                                     ))}
@@ -151,7 +156,6 @@ const Header = () => {
 
                             {isDropdownOpen && (
                                 <div className="user-dropdown-menu">
-                                    {/* User info card */}
                                     <div className="dropdown-user-info">
                                         <div className="dropdown-user-header">
                                             <div className="dropdown-avatar-small">
