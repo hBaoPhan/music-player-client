@@ -125,7 +125,7 @@ const Home = () => {
                                 <h3 className="song-title">{song.title}</h3>
                                 <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
                                 <div className="song-meta-row">
-                                    <span className="song-album">Album: {song.album?.title || "Single"}</span>
+                                    <span className="song-album"> {song.album?.title ? `Album: ${song.album?.title}` : "Single"}</span>
                                     {song.genre && <span className="song-genre">{song.genre}</span>}
                                 </div>
                             </div>

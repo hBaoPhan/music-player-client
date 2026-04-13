@@ -239,7 +239,7 @@ const UserProfileModal = ({ onClose }) => {
                                     placeholder="••••••••"
                                     value={passwordData.oldPassword}
                                     onChange={handlePasswordChange}
-                                    required
+
                                 />
                             </div>
 
