@@ -1,3 +1,4 @@
+import '../styles/Playlist.css';
 import React, { useState, useEffect } from 'react';
 import { FiPlay, FiTrash2, FiPlus, FiArrowLeft, FiMusic } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
@@ -165,8 +166,14 @@ const Playlist = () => {
                                     </button>
                                 </div>
 
-                                <h3 className="song-title">{song.title}</h3>
-                                <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
+                                <div className="song-bottom-info mt-3">
+                                    <h3 className="song-title">{song.title}</h3>
+                                    <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
+                                    <div className="song-meta-row">
+                                        <span className="song-album">Album: {song.album?.title || "Single"}</span>
+                                        {song.genre && <span className="song-genre">{song.genre}</span>}
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>

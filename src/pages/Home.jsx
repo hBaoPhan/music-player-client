@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { FiPlay, FiHeart, FiPlus } from 'react-icons/fi';
+import '../styles/Home.css';
+import React, { useState, useEffect, useRef } from 'react';
+import { FiPlay, FiHeart, FiPlus, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import songService from '../services/songService';
 import userService from '../services/userService';
@@ -10,6 +11,7 @@ import { useToast } from '../context/ToastContext';
 const Home = () => {
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const sliderRef = useRef(null);
     const { currentUser, getUser } = useAuth();
     const { showToast } = useToast();
     const { currentSong, setCurrentSong, isPlaying, setIsPlaying, setSongQueue } = usePlayer();
@@ -69,20 +71,30 @@ const Home = () => {
 
     return (
         <div className="home-container">
-            <h2 className="section-title">Dành cho {currentUser?.username}</h2>
+            <div className="section-header">
+                <h2 className="section-title">Dành cho {currentUser?.username}</h2>
+                <div className="slider-nav">
+                    <button className="slider-btn" onClick={() => sliderRef.current?.scrollBy({ left: -800, behavior: 'smooth' })}>
+                        <FiChevronLeft className="text-xl" />
+                    </button>
+                    <button className="slider-btn" onClick={() => sliderRef.current?.scrollBy({ left: 800, behavior: 'smooth' })}>
+                        <FiChevronRight className="text-xl" />
+                    </button>
+                </div>
+            </div>
 
-            <div className="song-grid">
+            <div className="song-slider-track" ref={sliderRef}>
                 {songs.map((song) => {
                     const favorited = isFavorite(song.id);
                     return (
-                        <div key={song.id} className="song-card group" onClick={() => { handlePlaySong(song) }}  >
+                        <div key={song.id} className="song-card group"   >
                             <div className="song-image-wrapper">
                                 <img
                                     src={song.album?.coverUrl || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80"}
                                     alt={song.title}
                                     className="song-image"
                                 />
-                                <button className="play-button-overlay">
+                                <button className="play-button-overlay" onClick={() => { handlePlaySong(song) }}>
                                     <FiPlay className="text-xl ml-1" />
                                 </button>
 
@@ -109,8 +121,14 @@ const Home = () => {
                                 </button>
                             </div>
 
-                            <h3 className="song-title">{song.title}</h3>
-                            <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
+                            <div className="song-bottom-info mt-3">
+                                <h3 className="song-title">{song.title}</h3>
+                                <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
+                                <div className="song-meta-row">
+                                    <span className="song-album"> {song.album?.title ? `Album: ${song.album?.title}` : "Single"}</span>
+                                    {song.genre && <span className="song-genre">{song.genre}</span>}
+                                </div>
+                            </div>
                         </div>
                     );
                 })}

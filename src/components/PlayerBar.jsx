@@ -1,3 +1,4 @@
+import '../styles/PlayerBar.css';
 import React, { useRef, useEffect, useState } from 'react';
 import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX, FiHeart } from 'react-icons/fi';
 import { usePlayer } from '../context/PlayerContext';

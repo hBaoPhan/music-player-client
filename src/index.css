@@ -1,13 +1,2 @@
 @import "tailwindcss";
-
-@import "./styles/Header.css";
-@import "./styles/Sidebar.css";
-@import "./styles/MainLayout.css";
-@import "./styles/PlayerBar.css";
-@import "./styles/Home.css";
-@import "./styles/Playlist.css";
-@import "./styles/Login.css";
-@import "./styles/Toast.css";
-@import "./styles/AddToPlaylistModal.css";
-@import "./styles/UserProfileModal.css";
-@import "./styles/Admin.css";
+
