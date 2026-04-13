@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const Login = () => {
     const { setCurrentUser, getUser } = useAuth();
+    const { showToast } = useToast();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
@@ -28,6 +30,11 @@ const Login = () => {
             localStorage.setItem('token', response.token);
 
             await getUser();
+
+            if (response.reactivated) {
+                showToast('Tài khoản của bạn đã được kích hoạt lại thành công! Chào mừng trở lại 🎵', 'success');
+            }
+
             navigate('/');
         } catch (err) {
             setError('Tên đăng nhập/email hoặc mật khẩu không chính xác!');
