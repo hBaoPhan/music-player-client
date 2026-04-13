@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const OAuth2RedirectHandler = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { getUser } = useAuth();
+    const { showToast } = useToast();
 
     useEffect(() => {
         const getUrlParameter = (name) => {
@@ -16,10 +18,14 @@ const OAuth2RedirectHandler = () => {
         };
 
         const token = getUrlParameter('token');
+        const reactivated = getUrlParameter('reactivated') === 'true';
 
         if (token) {
             localStorage.setItem('token', token);
             getUser().then(() => {
+                if (reactivated) {
+                    showToast('Tài khoản của bạn đã được kích hoạt lại thành công! Chào mừng trở lại 🎵', 'success');
+                }
                 navigate('/');
             }).catch(err => {
                 console.error('Lỗi khi lấy thông tin user sau OAuth2:', err);
@@ -28,7 +34,7 @@ const OAuth2RedirectHandler = () => {
         } else {
             navigate('/login');
         }
-    }, [location, navigate, getUser]);
+    }, [location, navigate, getUser, showToast]);
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-[#121212] text-white">
