@@ -23,7 +23,7 @@ const TABS = [
 
 const EMPTY_SONG = { title: '', audioUrl: '', duration: '', genre: 'OTHER', artist: { id: '' }, album: { id: '' } };
 const EMPTY_ARTIST = { name: '', bio: '', avatarUrl: '' };
-const EMPTY_ALBUM = { title: '', coverUrl: '', releaseDate: '', artist: { id: '' } };
+const EMPTY_ALBUM = { title: '', coverUrl: '', releaseDate: '', type: 'ALBUM', artist: { id: '' } };
 
 const formatDuration = (seconds) => {
     if (!seconds) return '--:--';
@@ -399,6 +399,7 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
             title: album.title || '',
             coverUrl: album.coverUrl || '',
             releaseDate: album.releaseDate || '',
+            type: album.type || 'ALBUM',
             artist: { id: album.artist?.id || '' },
         });
         setShowModal(true);
@@ -417,6 +418,7 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
             title: form.title,
             coverUrl: form.coverUrl,
             releaseDate: form.releaseDate || null,
+            type: form.type,
             artist: form.artist.id ? { id: parseInt(form.artist.id) } : null,
         };
         try {
@@ -471,6 +473,7 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                         <tr>
                             <th>ID</th>
                             <th>Album</th>
+                            <th>Loại</th>
                             <th>Nghệ sĩ</th>
                             <th>Thao tác</th>
                         </tr>
@@ -489,6 +492,7 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                                         <span className="admin-song-name">{album.title}</span>
                                     </div>
                                 </td>
+                                <td>{album.type}</td>
                                 <td>{album.artist?.name || '—'}</td>
                                 <td>
                                     <div className="admin-row-actions">
@@ -520,12 +524,22 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                         </div>
                         <div className="admin-form-row">
                             <div className="admin-form-group">
+                                <label className="admin-form-label">Loại (Type)</label>
+                                <select id="album-type" name="type" className="admin-form-input" value={form.type} onChange={handleChange}>
+                                    <option value="ALBUM">ALBUM</option>
+                                    <option value="SINGLE">SINGLE</option>
+                                    <option value="EP">EP</option>
+                                </select>
+                            </div>
+                            <div className="admin-form-group">
                                 <label className="admin-form-label">Nghệ sĩ</label>
                                 <select id="album-artist" name="artistId" className="admin-form-input" value={form.artist.id} onChange={handleChange}>
                                     <option value="">-- Chọn nghệ sĩ --</option>
                                     {artists.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                                 </select>
                             </div>
+                        </div>
+                        <div className="admin-form-row">
                             <div className="admin-form-group">
                                 <label className="admin-form-label">Ngày phát hành</label>
                                 <input
@@ -536,6 +550,9 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                                     value={form.releaseDate}
                                     onChange={handleChange}
                                 />
+                            </div>
+                            <div className="admin-form-group">
+                                {/* Empty space placeholder for form alignment */}
                             </div>
                         </div>
                         <div className="admin-modal-footer">

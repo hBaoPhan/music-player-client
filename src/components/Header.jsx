@@ -189,7 +189,7 @@ const Header = () => {
                                                         <p className="result-title">{song.title}</p>
                                                         <p className="result-artist">{song.artist?.name || 'Unknown Artist'}</p>
                                                         <div className="flex items-center gap-2 mt-0.5">
-                                                            <span className="result-album">{song.album?.title || 'Single'}</span>
+                                                            <span className="result-album">{song.album?.type == "SINGLE" ? "Single" : `${song.album.type}: ${song.album.title}`}</span>
                                                             {song.genre && <span className="result-genre">{song.genre}</span>}
                                                         </div>
                                                     </div>
