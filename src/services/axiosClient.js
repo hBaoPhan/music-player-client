@@ -7,6 +7,21 @@ const axiosClient = axios.create({
     },
 });
 
+// Queue status
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
 //REQUEST INTERCEPTOR
 axiosClient.interceptors.request.use(
     (config) => {
@@ -26,14 +41,62 @@ axiosClient.interceptors.response.use(
     (response) => {
         return response.data;
     },
-    (error) => {
+    async (error) => {
+        const originalRequest = error.config;
         const isNotOnLoginPage = window.location.pathname !== '/login';
 
         if (error.response) {
-            if (error.response.status === 401 && isNotOnLoginPage) {
-                console.error("Token hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại!");
-                localStorage.removeItem('token');
-                window.location.href = '/login';
+            if (error.response.status === 401 && !originalRequest._retry && isNotOnLoginPage) {
+                if (isRefreshing) {
+                    return new Promise(function(resolve, reject) {
+                        failedQueue.push({ resolve, reject });
+                    }).then(token => {
+                        originalRequest.headers.Authorization = 'Bearer ' + token;
+                        return axiosClient(originalRequest);
+                    }).catch(err => {
+                        return Promise.reject(err);
+                    });
+                }
+
+                originalRequest._retry = true;
+                isRefreshing = true;
+
+                const refreshText = localStorage.getItem('refreshToken');
+                if (!refreshText) {
+                    console.error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!");
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('refreshToken');
+                    window.location.href = '/login';
+                    return Promise.reject(error);
+                }
+
+                try {
+                    const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`, {
+                        refreshToken: refreshText
+                    });
+                    
+                    const newToken = response.data.token;
+                    const newRefreshToken = response.data.refreshToken;
+
+                    localStorage.setItem('token', newToken);
+                    localStorage.setItem('refreshToken', newRefreshToken);
+                    
+                    axiosClient.defaults.headers.common['Authorization'] = 'Bearer ' + newToken;
+                    originalRequest.headers.Authorization = 'Bearer ' + newToken;
+
+                    processQueue(null, newToken);
+                    
+                    return axiosClient(originalRequest);
+                } catch (refreshError) {
+                    processQueue(refreshError, null);
+                    console.error("Refresh token hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại!");
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('refreshToken');
+                    window.location.href = '/login';
+                    return Promise.reject(refreshError);
+                } finally {
+                    isRefreshing = false;
+                }
             }
 
             if (error.response.status === 403) {

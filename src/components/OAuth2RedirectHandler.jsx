@@ -18,10 +18,12 @@ const OAuth2RedirectHandler = () => {
         };
 
         const token = getUrlParameter('token');
+        const refreshToken = getUrlParameter('refreshToken');
         const reactivated = getUrlParameter('reactivated') === 'true';
 
         if (token) {
             localStorage.setItem('token', token);
+            if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
             getUser().then(() => {
                 if (reactivated) {
                     showToast('Tài khoản của bạn đã được kích hoạt lại thành công! Chào mừng trở lại 🎵', 'success');

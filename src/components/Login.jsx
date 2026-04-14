@@ -28,6 +28,9 @@ const Login = () => {
         try {
             const response = await authService.login(username, password);
             localStorage.setItem('token', response.token);
+            if (response.refreshToken) {
+                localStorage.setItem('refreshToken', response.refreshToken);
+            }
 
             await getUser();
 
