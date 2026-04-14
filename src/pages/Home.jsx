@@ -1,17 +1,22 @@
 import '../styles/Home.css';
 import React, { useState, useEffect, useRef } from 'react';
-import { FiPlay, FiHeart, FiPlus, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiPlay, FiHeart, FiPlus, FiChevronLeft, FiChevronRight, FiDisc } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import songService from '../services/songService';
 import userService from '../services/userService';
+import albumService from '../services/albumService';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
 const Home = () => {
     const [songs, setSongs] = useState([]);
+    const [albums, setAlbums] = useState([]);
     const [loading, setLoading] = useState(true);
     const sliderRef = useRef(null);
+    const albumSliderRef = useRef(null);
+    const navigate = useNavigate();
     const { currentUser, getUser } = useAuth();
     const { showToast } = useToast();
     const { currentSong, setCurrentSong, isPlaying, setIsPlaying, setSongQueue } = usePlayer();
@@ -51,18 +56,22 @@ const Home = () => {
     };
 
     useEffect(() => {
-        const fetchSongs = async () => {
+        const fetchData = async () => {
             try {
-                const data = await songService.getAllSongs();
-                setSongs(data);
+                const [songsData, albumsData] = await Promise.all([
+                    songService.getAllSongs(),
+                    albumService.getAllAlbums()
+                ]);
+                setSongs(songsData);
+                setAlbums(albumsData);
             } catch (error) {
-                console.error("Lỗi khi tải danh sách bài hát:", error);
+                console.error("Lỗi khi tải dữ liệu trang chủ:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchSongs();
+        fetchData();
     }, []);
 
     if (loading) {
@@ -125,13 +134,55 @@ const Home = () => {
                                 <h3 className="song-title">{song.title}</h3>
                                 <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
                                 <div className="song-meta-row">
-                                    <span className="song-album"> {song.album?.title ? `Album: ${song.album?.title}` : "Single"}</span>
+                                    <span className="song-album"> {song.album?.type == "SINGLE" ? "Single" : `${song.album?.type}: ${song.album?.title}`}</span>
                                     {song.genre && <span className="song-genre">{song.genre}</span>}
                                 </div>
                             </div>
                         </div>
                     );
                 })}
+            </div>
+
+            <div className="section-header mt-8">
+                <h2 className="section-title">Khám phá Albums</h2>
+                <div className="slider-nav">
+                    <button className="slider-btn" onClick={() => albumSliderRef.current?.scrollBy({ left: -800, behavior: 'smooth' })}>
+                        <FiChevronLeft className="text-xl" />
+                    </button>
+                    <button className="slider-btn" onClick={() => albumSliderRef.current?.scrollBy({ left: 800, behavior: 'smooth' })}>
+                        <FiChevronRight className="text-xl" />
+                    </button>
+                </div>
+            </div>
+
+            <div className="song-slider-track" ref={albumSliderRef}>
+                {albums.map((album) => (
+                    <div key={album.id} className="song-card group" onClick={() => navigate(`/album/${album.id}`)}>
+                        <div className="song-image-wrapper">
+                            {album.coverUrl ? (
+                                <img
+                                    src={album.coverUrl}
+                                    alt={album.title}
+                                    className="song-image"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-purple-900 to-indigo-900 flex items-center justify-center">
+                                    <FiDisc className="text-4xl text-white/50" />
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="song-bottom-info mt-3">
+                            <h3 className="song-title">{album.title}</h3>
+                            <p className="song-artist">{album.artist?.name || "Unknown Artist"}</p>
+                            {album.releaseDate && (
+                                <div className="song-meta-row">
+                                    <span className="song-album">{new Date(album.releaseDate).getFullYear()}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
             </div>
 
             {selectedSongForPlaylist && (
