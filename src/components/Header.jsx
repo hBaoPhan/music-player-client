@@ -1,23 +1,29 @@
 import '../styles/Header.css';
 import React, { useState, useEffect, useRef } from 'react';
-import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiUser, FiChevronDown } from 'react-icons/fi';
+import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiUser, FiChevronDown, FiHeart, FiPlus } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import songService from '../services/songService';
 import { useNavigate } from 'react-router-dom';
 import UserProfileModal from './UserProfileModal';
+import AddToPlaylistModal from './AddToPlaylistModal';
+import { useToast } from '../context/ToastContext';
+import userService from '../services/userService';
 
 const Header = () => {
-    const { currentUser, logout } = useAuth();
+    const { currentUser, logout, getUser } = useAuth();
     const { setCurrentSong, setIsPlaying, setSongQueue, songQueue } = usePlayer() || {};
+
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
-
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedGenre, setSelectedGenre] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const [allSongs, setAllSongs] = useState([]);
+    const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
+    const { showToast } = useToast();
     const searchRef = useRef(null);
     const dropdownRef = useRef(null);
 
@@ -93,6 +99,24 @@ const Header = () => {
         return name ? name.charAt(0).toUpperCase() : 'U';
     };
 
+    const handleToggleFavorite = async (e, song) => {
+        e.stopPropagation();
+        if (!currentUser) {
+            showToast('Vui lòng đăng nhập để sử dụng tính năng này!', 'error');
+            return;
+        }
+        try {
+            await userService.toggleFavorite(currentUser.id, song.id);
+            if (getUser) await getUser();
+        } catch (error) {
+            console.error("Lỗi khi thêm vào yêu thích:", error);
+        }
+    };
+
+    const isFavorite = (songId) => {
+        return currentUser?.favoriteSongs?.some(fav => fav.id === songId);
+    };
+
     return (
         <>
             <header className="header-container">
@@ -138,7 +162,7 @@ const Header = () => {
                                     setIsSearching(true);
                                 }}
                             >
-                                <option value=""></option>
+                                <option value="">Thể loại</option>
                                 {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
                             </select>
                             <FiChevronDown className="absolute right-4 text-white pointer-events-none text-lg" />
@@ -149,25 +173,54 @@ const Header = () => {
                         <div className="search-dropdown-menu">
                             {searchResults.length > 0 ? (
                                 <ul className="search-result-list">
-                                    {searchResults.map(song => (
-                                        <li key={song.id} className="search-result-item" onClick={() => handlePlaySong(song)}>
-                                            <div className="result-img-wrapper">
-                                                {song.album?.coverUrl ? (
-                                                    <img src={song.album.coverUrl} alt={song.title} />
-                                                ) : (
-                                                    <div className="fallback-img" />
-                                                )}
-                                            </div>
-                                            <div className="result-info">
-                                                <p className="result-title">{song.title}</p>
-                                                <p className="result-artist">{song.artist?.name || 'Unknown Artist'}</p>
-                                                <div className="flex items-center gap-2 mt-0.5">
-                                                    <span className="result-album">{song.album?.title || 'Single'}</span>
-                                                    {song.genre && <span className="result-genre">{song.genre}</span>}
+                                    {searchResults.map(song => {
+                                        const favorited = isFavorite(song.id);
+                                        return (
+                                            <li key={song.id} className="search-result-item group" onClick={() => handlePlaySong(song)}>
+                                                <div className="flex items-center gap-3 flex-1 overflow-hidden">
+                                                    <div className="result-img-wrapper">
+                                                        {song.album?.coverUrl ? (
+                                                            <img src={song.album.coverUrl} alt={song.title} />
+                                                        ) : (
+                                                            <div className="fallback-img" />
+                                                        )}
+                                                    </div>
+                                                    <div className="result-info">
+                                                        <p className="result-title">{song.title}</p>
+                                                        <p className="result-artist">{song.artist?.name || 'Unknown Artist'}</p>
+                                                        <div className="flex items-center gap-2 mt-0.5">
+                                                            <span className="result-album">{song.album?.title || 'Single'}</span>
+                                                            {song.genre && <span className="result-genre">{song.genre}</span>}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </li>
-                                    ))}
+
+                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        className="p-1.5 text-gray-400 hover:text-white transition-colors focus:outline-none"
+                                                        onClick={(e) => handleToggleFavorite(e, song)}
+                                                        title={favorited ? "Bỏ yêu thích" : "Thêm vào yêu thích"}
+                                                    >
+                                                        <FiHeart className={`text-lg ${favorited ? 'fill-green-500 text-green-500 hover:text-green-400 hover:fill-green-400' : ''}`} />
+                                                    </button>
+                                                    <button
+                                                        className="p-1.5 text-gray-400 hover:text-white transition-colors focus:outline-none"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (!currentUser) {
+                                                                showToast('Vui lòng đăng nhập để sử dụng tính năng này!', 'error');
+                                                                return;
+                                                            }
+                                                            setSelectedSongForPlaylist(song);
+                                                        }}
+                                                        title="Thêm vào danh sách phát"
+                                                    >
+                                                        <FiPlus className="text-xl" />
+                                                    </button>
+                                                </div>
+                                            </li>
+                                        )
+                                    })}
                                 </ul>
                             ) : (
                                 <div className="search-no-result">
@@ -241,6 +294,13 @@ const Header = () => {
 
             {showProfileModal && (
                 <UserProfileModal onClose={() => setShowProfileModal(false)} />
+            )}
+
+            {selectedSongForPlaylist && (
+                <AddToPlaylistModal
+                    song={selectedSongForPlaylist}
+                    onClose={() => setSelectedSongForPlaylist(null)}
+                />
             )}
         </>
     );

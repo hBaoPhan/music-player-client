@@ -82,7 +82,7 @@ const PlayerBar = () => {
         }
 
         if (!currentSong) return;
-        
+
         try {
             await userService.toggleFavorite(currentUser.id, currentSong.id);
             await getUser();
@@ -126,8 +126,8 @@ const PlayerBar = () => {
                     <span className="player-song-title">{currentSong.title}</span>
                     <span className="player-song-artist">{currentSong.artist?.name || "Unknown Artist"}</span>
                 </div>
-                <button 
-                    className="ml-4 focus:outline-none" 
+                <button
+                    className="ml-4 focus:outline-none"
                     onClick={handleToggleFavorite}
                 >
                     <FiHeart className={`text-xl transition-colors ${favorited ? 'fill-green-500 text-green-500' : 'text-gray-400 hover:text-white'}`} />
