@@ -1,6 +1,6 @@
 import '../styles/Header.css';
 import React, { useState, useEffect, useRef } from 'react';
-import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiUser } from 'react-icons/fi';
+import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiUser, FiChevronDown } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import songService from '../services/songService';
@@ -14,6 +14,7 @@ const Header = () => {
     const [showProfileModal, setShowProfileModal] = useState(false);
 
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedGenre, setSelectedGenre] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const [allSongs, setAllSongs] = useState([]);
@@ -21,6 +22,12 @@ const Header = () => {
     const dropdownRef = useRef(null);
 
     const navigate = useNavigate();
+
+    const GENRES = [
+        'POP', 'ROCK', 'HIPHOP', 'RNB', 'EDM',
+        'JAZZ', 'CLASSICAL', 'LOFI', 'KPOP', 'VPOP',
+        'ACOUSTIC', 'INDIE', 'REMIX', 'OTHER',
+    ];
 
     useEffect(() => {
         const fetchAllSongs = async () => {
@@ -34,25 +41,28 @@ const Header = () => {
         fetchAllSongs();
     }, []);
 
-    // load lại khi songs hoặc search khác
     useEffect(() => {
-        if (!searchTerm.trim()) {
+        if (!searchTerm.trim() && !selectedGenre) {
             setSearchResults([]);
             return;
         }
 
         const delayDebounce = setTimeout(() => {
             const keyword = searchTerm.toLowerCase();
-            const results = allSongs.filter(song =>
-                (song.title && song.title.toLowerCase().includes(keyword)) ||
-                (song.artist.name && song.artist.name.toLowerCase().includes(keyword)) ||
-                (song.album?.title && song.album?.title.toLowerCase().includes(keyword))
-            );
+            const results = allSongs.filter(song => {
+                const matchKeyword = !keyword || (
+                    (song.title && song.title.toLowerCase().includes(keyword)) ||
+                    (song.artist?.name && song.artist.name.toLowerCase().includes(keyword)) ||
+                    (song.album?.title && song.album?.title.toLowerCase().includes(keyword))
+                );
+                const matchGenre = !selectedGenre || song.genre === selectedGenre;
+                return matchKeyword && matchGenre;
+            });
             setSearchResults(results.slice(0, 5));
         }, 300);
 
         return () => clearTimeout(delayDebounce);
-    }, [searchTerm, allSongs]);
+    }, [searchTerm, selectedGenre, allSongs]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -92,24 +102,50 @@ const Header = () => {
                 </div>
 
                 <div className="header-search-container" ref={searchRef}>
-                    <div className="search-input-wrapper group">
-                        <FiSearch className="search-icon" />
-                        <input
-                            type="text"
-                            className="search-input"
-                            placeholder="Bạn muốn nghe gì?"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onFocus={() => setIsSearching(true)}
-                        />
-                        {searchTerm && (
-                            <button className="search-clear-btn" onClick={() => setSearchTerm('')}>
-                                <FiX />
-                            </button>
-                        )}
+                    <div className="search-input-wrapper group flex items-center gap-2">
+                        <div className="relative flex-1 flex items-center">
+                            <FiSearch className="search-icon" />
+                            <input
+                                type="text"
+                                className="search-input"
+                                placeholder="Bạn muốn nghe gì?"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onFocus={() => setIsSearching(true)}
+                            />
+                            {searchTerm && (
+                                <button className="search-clear-btn" onClick={() => setSearchTerm('')}>
+                                    <FiX />
+                                </button>
+                            )}
+                        </div>
+                        <div className="relative flex items-center">
+                            <select
+                                className="search-input"
+                                style={{
+                                    width: '110px',
+                                    paddingLeft: '1rem',
+                                    paddingRight: '2.5rem',
+                                    cursor: 'pointer',
+                                    flexShrink: 0,
+                                    appearance: 'none',
+                                    WebkitAppearance: 'none',
+                                    backgroundImage: 'none'
+                                }}
+                                value={selectedGenre}
+                                onChange={(e) => {
+                                    setSelectedGenre(e.target.value);
+                                    setIsSearching(true);
+                                }}
+                            >
+                                <option value=""></option>
+                                {GENRES.map(g => <option key={g} value={g}>{g}</option>)}
+                            </select>
+                            <FiChevronDown className="absolute right-4 text-white pointer-events-none text-lg" />
+                        </div>
                     </div>
 
-                    {isSearching && searchTerm.trim() !== '' && (
+                    {isSearching && (searchTerm.trim() !== '' || selectedGenre !== '') && (
                         <div className="search-dropdown-menu">
                             {searchResults.length > 0 ? (
                                 <ul className="search-result-list">

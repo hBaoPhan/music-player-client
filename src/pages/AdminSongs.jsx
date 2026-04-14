@@ -44,17 +44,20 @@ const Modal = ({ title, onClose, children }) => (
 
 const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     const [search, setSearch] = useState('');
+    const [genreFilter, setGenreFilter] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
     const [form, setForm] = useState(EMPTY_SONG);
 
     const filtered = songs.filter(s => {
         const kw = search.toLowerCase();
-        return (
+        const matchesSearch = (
             s.title?.toLowerCase().includes(kw) ||
             s.artist?.name?.toLowerCase().includes(kw) ||
             s.album?.title?.toLowerCase().includes(kw)
         );
+        const matchesGenre = genreFilter ? s.genre === genreFilter : true;
+        return matchesSearch && matchesGenre;
     });
 
     const openCreate = () => { setEditing(null); setForm(EMPTY_SONG); setShowModal(true); };
@@ -119,16 +122,29 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     return (
         <>
             <div className="admin-actions-bar">
-                <div className="admin-search-box">
-                    <FiSearch className="admin-search-icon" />
-                    <input
-                        id="search-songs"
-                        type="text"
+                <div className="admin-search-group" style={{ display: 'flex', gap: '10px', flex: 1 }}>
+                    <div className="admin-search-box" style={{ flex: 1, maxWidth: '300px' }}>
+                        <FiSearch className="admin-search-icon" />
+                        <input
+                            id="search-songs"
+                            type="text"
+                            className="admin-search-input"
+                            placeholder="Tìm kiếm bài hát..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+                    <select 
                         className="admin-search-input"
-                        placeholder="Tìm kiếm bài hát..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+                        style={{ width: '180px', paddingLeft: '1rem', cursor: 'pointer', backgroundColor: '#1f2937', color: 'white', border: '1px solid #374151', borderRadius: '8px' }}
+                        value={genreFilter}
+                        onChange={(e) => setGenreFilter(e.target.value)}
+                    >
+                        <option value="">Tất cả thể loại</option>
+                        {GENRES.map(g => (
+                            <option key={g} value={g}>{g}</option>
+                        ))}
+                    </select>
                 </div>
                 <button id="btn-add-song" className="admin-add-btn" onClick={openCreate}>
                     <FiPlus /><span>Thêm bài hát</span>
@@ -235,9 +251,6 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     );
 };
 
-/* ═══════════════════════════════════════════════════════════
-   TAB: ARTISTS
-═══════════════════════════════════════════════════════════ */
 const ArtistsTab = ({ artists, onRefresh, showToast }) => {
     const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -368,9 +381,6 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
     );
 };
 
-/* ═══════════════════════════════════════════════════════════
-   TAB: ALBUMS
-═══════════════════════════════════════════════════════════ */
 const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
     const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -539,9 +549,6 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
     );
 };
 
-/* ═══════════════════════════════════════════════════════════
-   PAGE: ADMIN CATALOG (Songs + Artists + Albums)
-═══════════════════════════════════════════════════════════ */
 const AdminSongs = () => {
     const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState('songs');
