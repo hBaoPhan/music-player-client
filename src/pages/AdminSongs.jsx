@@ -83,7 +83,10 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!form.title.trim()) { showToast('Tên bài hát không được để trống!', 'error'); return; }
+        if (!form.title.trim()) {
+            showToast('Tên bài hát không được để trống!', 'error');
+            return;
+        }
         const payload = {
             title: form.title,
             audioUrl: form.audioUrl,
@@ -134,7 +137,7 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-                    <select 
+                    <select
                         className="admin-search-input"
                         style={{ width: '180px', paddingLeft: '1rem', cursor: 'pointer', backgroundColor: '#1f2937', color: 'white', border: '1px solid #374151', borderRadius: '8px' }}
                         value={genreFilter}
