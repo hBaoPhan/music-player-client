@@ -1,5 +1,5 @@
 import '../styles/Home.css';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { FiPlay, FiHeart, FiPlus, FiChevronLeft, FiChevronRight, FiDisc } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
@@ -9,6 +9,17 @@ import albumService from '../services/albumService';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+
+const shuffleArray = (items = []) => {
+    const shuffled = [...items];
+
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
+    }
+
+    return shuffled;
+};
 
 const Home = () => {
     const [songs, setSongs] = useState([]);
@@ -21,12 +32,14 @@ const Home = () => {
     const { showToast } = useToast();
     const { currentSong, setCurrentSong, isPlaying, setIsPlaying, setSongQueue } = usePlayer();
     const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
+    const shuffledSongs = useMemo(() => shuffleArray(songs), [songs]);
+    const shuffledAlbums = useMemo(() => shuffleArray(albums), [albums]);
 
-    const handlePlaySong = (song) => {
+    const handlePlaySong = useCallback((song) => {
         setCurrentSong(song);
         setIsPlaying(true);
-        setSongQueue(songs);
-    };
+        setSongQueue(shuffledSongs);
+    }, [setCurrentSong, setIsPlaying, setSongQueue, shuffledSongs]);
 
     useEffect(() => {
         const hasShownWarning = sessionStorage.getItem('hasShownStudyWarning');
@@ -93,7 +106,7 @@ const Home = () => {
             </div>
 
             <div className="song-slider-track" ref={sliderRef}>
-                {songs.map((song) => {
+                {shuffledSongs.map((song) => {
                     const favorited = isFavorite(song.id);
                     return (
                         <div key={song.id} className="song-card group"   >
@@ -156,7 +169,7 @@ const Home = () => {
             </div>
 
             <div className="song-slider-track" ref={albumSliderRef}>
-                {albums.map((album) => (
+                {shuffledAlbums.map((album) => (
                     <div key={album.id} className="song-card group" onClick={() => navigate(`/album/${album.id}`)}>
                         <div className="song-image-wrapper">
                             {album.coverUrl ? (
