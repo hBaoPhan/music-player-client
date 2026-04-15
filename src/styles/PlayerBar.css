@@ -39,6 +39,14 @@
     @apply text-gray-400 hover:text-white transition-colors cursor-pointer;
 }
 
+.control-icon-btn {
+    @apply flex items-center justify-center;
+}
+
+.control-icon-btn-active .control-btn {
+    @apply text-green-500 hover:text-green-400;
+}
+
 .play-pause-btn {
     @apply flex items-center justify-center w-10 h-10 bg-white text-black rounded-full hover:scale-105 transition-transform cursor-pointer;
 }

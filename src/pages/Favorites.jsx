@@ -1,11 +1,22 @@
 import '../styles/Playlist.css';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { FiPlay, FiHeart, FiPlus } from 'react-icons/fi';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { usePlayer } from '../context/PlayerContext';
 import userService from '../services/userService';
+
+const shuffleArray = (items = []) => {
+    const shuffled = [...items];
+
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
+    }
+
+    return shuffled;
+};
 
 const Favorites = () => {
     const { currentUser, getUser } = useAuth();
@@ -34,6 +45,7 @@ const Favorites = () => {
     };
 
     const favoriteSongs = currentUser?.favoriteSongs || [];
+    const shuffledFavoriteSongs = useMemo(() => shuffleArray(favoriteSongs), [favoriteSongs]);
 
     if (!currentUser) {
         return <div className="loading-text">Vui lòng đăng nhập để xem bài hát yêu thích.</div>;
@@ -47,8 +59,8 @@ const Favorites = () => {
                 <p className="text-gray-400 text-lg">Bạn chưa có bài hát yêu thích nào. Hãy thả tim một bài hát để xem tại đây.</p>
             ) : (
                 <div className="song-grid">
-                    {favoriteSongs.map((song) => (
-                        <div key={song.id} className="song-card group" onClick={() => handlePlaySong(song, favoriteSongs)}>
+                    {shuffledFavoriteSongs.map((song) => (
+                        <div key={song.id} className="song-card group" onClick={() => handlePlaySong(song, shuffledFavoriteSongs)}>
                             <div className="song-image-wrapper">
                                 <img
                                     src={song.album?.coverUrl || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80"}
