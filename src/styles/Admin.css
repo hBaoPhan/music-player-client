@@ -28,8 +28,16 @@
     @apply flex items-center gap-3 flex-wrap;
 }
 
+.admin-search-group {
+    @apply flex items-center gap-2.5 flex-1 flex-wrap;
+}
+
 .admin-search-box {
     @apply flex items-center bg-gray-800 border border-gray-700 rounded-xl px-4 flex-1 max-w-sm;
+}
+
+.admin-search-box--songs {
+    @apply max-w-[300px];
 }
 
 .admin-search-icon {
@@ -38,6 +46,10 @@
 
 .admin-search-input {
     @apply bg-transparent border-none outline-none text-white text-sm py-3 w-full placeholder:text-gray-500;
+}
+
+.admin-filter-select {
+    @apply w-[180px] pl-4 cursor-pointer bg-gray-800 border border-gray-700 rounded-lg appearance-none;
 }
 
 .admin-add-btn {

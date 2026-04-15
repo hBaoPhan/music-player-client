@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
     FiPlus, FiEdit2, FiTrash2, FiX,
     FiMusic, FiSearch, FiUser, FiDisc
@@ -45,20 +45,37 @@ const Modal = ({ title, onClose, children }) => (
 const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     const [search, setSearch] = useState('');
     const [genreFilter, setGenreFilter] = useState('');
+    const [artistFilter, setArtistFilter] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
     const [form, setForm] = useState(EMPTY_SONG);
 
-    const filtered = songs.filter(s => {
-        const kw = search.toLowerCase();
-        const matchesSearch = (
-            s.title?.toLowerCase().includes(kw) ||
-            s.artist?.name?.toLowerCase().includes(kw) ||
-            s.album?.title?.toLowerCase().includes(kw)
-        );
-        const matchesGenre = genreFilter ? s.genre === genreFilter : true;
-        return matchesSearch && matchesGenre;
-    });
+    const artistOptions = useMemo(() => {
+        const uniqueArtists = new Map();
+        artists.forEach((artist) => {
+            if (artist?.id != null && artist?.name) {
+                uniqueArtists.set(String(artist.id), artist.name);
+            }
+        });
+        return Array.from(uniqueArtists, ([id, name]) => ({ id, name }));
+    }, [artists]);
+
+    const filtered = useMemo(() => {
+        const kw = search.trim().toLowerCase();
+        return songs.filter((song) => {
+            const matchesSearch = kw
+                ? (
+                    song.title?.toLowerCase().includes(kw) ||
+                    song.artist?.name?.toLowerCase().includes(kw) ||
+                    song.album?.title?.toLowerCase().includes(kw)
+                )
+                : true;
+            const matchesGenre = genreFilter ? song.genre === genreFilter : true;
+            const matchesArtist = artistFilter ? String(song.artist?.id ?? '') === artistFilter : true;
+
+            return matchesSearch && matchesGenre && matchesArtist;
+        });
+    }, [songs, search, genreFilter, artistFilter]);
 
     const openCreate = () => { setEditing(null); setForm(EMPTY_SONG); setShowModal(true); };
     const openEdit = (song) => {
@@ -125,8 +142,8 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     return (
         <>
             <div className="admin-actions-bar">
-                <div className="admin-search-group" style={{ display: 'flex', gap: '10px', flex: 1 }}>
-                    <div className="admin-search-box" style={{ flex: 1, maxWidth: '300px' }}>
+                <div className="admin-search-group">
+                    <div className="admin-search-box admin-search-box--songs">
                         <FiSearch className="admin-search-icon" />
                         <input
                             id="search-songs"
@@ -138,8 +155,19 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
                         />
                     </div>
                     <select
-                        className="admin-search-input"
-                        style={{ width: '180px', paddingLeft: '1rem', cursor: 'pointer', backgroundColor: '#1f2937', color: 'white', border: '1px solid #374151', borderRadius: '8px' }}
+                        id="filter-song-artist"
+                        className="admin-search-input admin-filter-select"
+                        value={artistFilter}
+                        onChange={(e) => setArtistFilter(e.target.value)}
+                    >
+                        <option value="">Nghệ sĩ</option>
+                        {artistOptions.map((artist) => (
+                            <option key={artist.id} value={artist.id}>{artist.name}</option>
+                        ))}
+                    </select>
+                    <select
+                        id="filter-song-genre"
+                        className="admin-search-input admin-filter-select"
                         value={genreFilter}
                         onChange={(e) => setGenreFilter(e.target.value)}
                     >
