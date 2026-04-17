@@ -1,10 +1,11 @@
 import '../styles/UserProfileModal.css';
 import React, { useState } from 'react';
-import { FiX, FiUser, FiKey, FiMail, FiEdit3, FiCheck } from 'react-icons/fi';
+import { FiUser, FiKey, FiMail, FiEdit3, FiCheck } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import authService from '../services/authService';
 import userService from '../services/userService';
+import BaseModal from './BaseModal';
 
 const UserProfileModal = ({ onClose }) => {
     const { currentUser, getUser } = useAuth();
@@ -121,12 +122,13 @@ const UserProfileModal = ({ onClose }) => {
     };
 
     return (
-        <div className="profile-modal-overlay" onClick={onClose}>
-            <div className="profile-modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="profile-modal-close-btn" onClick={onClose}>
-                    <FiX />
-                </button>
-
+        <BaseModal
+            isOpen={true}
+            onClose={onClose}
+            overlayClassName="profile-modal-overlay"
+            contentClassName="profile-modal-content"
+            closeBtnClassName="profile-modal-close-btn"
+        >
                 <div className="profile-modal-header">
                     <div className="profile-avatar-large">
                         <span>{currentUser?.username?.charAt(0).toUpperCase() || 'U'}</span>
@@ -282,8 +284,7 @@ const UserProfileModal = ({ onClose }) => {
                         </form>
                     )}
                 </div>
-            </div>
-        </div>
+        </BaseModal>
     );
 };
 

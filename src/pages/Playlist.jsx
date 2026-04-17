@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { usePlayer } from '../context/PlayerContext';
 import playlistService from '../services/playlistService';
 import SongCard from '../components/SongCard';
+import BaseModal from '../components/BaseModal';
 
 const shuffleArray = (items = []) => {
     const shuffled = [...items];
@@ -220,10 +221,15 @@ const Playlist = () => {
                 </div>
             )}
 
-            {showCreateModal && (
-                <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <h3 className="modal-title">Tạo danh sách mới</h3>
+            <BaseModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                title="Tạo danh sách mới"
+                overlayClassName="modal-overlay"
+                contentClassName="modal-content"
+                closeBtnClassName="admin-modal-close"
+                titleClassName="modal-title"
+            >
                         <div className="modal-input-group">
                             <input
                                 type="text"
@@ -249,9 +255,7 @@ const Playlist = () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            )}
+            </BaseModal>
         </div>
     );
 };

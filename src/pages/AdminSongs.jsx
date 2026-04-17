@@ -7,6 +7,7 @@ import songService from '../services/songService';
 import artistService from '../services/artistService';
 import albumService from '../services/albumService';
 import { useToast } from '../context/ToastContext';
+import BaseModal from '../components/BaseModal';
 import '../styles/Admin.css';
 
 const GENRES = [
@@ -32,15 +33,7 @@ const formatDuration = (seconds) => {
     return `${m}:${s.toString().padStart(2, '0')}`;
 };
 
-const Modal = ({ title, onClose, children }) => (
-    <div className="admin-modal-overlay" onClick={onClose}>
-        <div className="admin-modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="admin-modal-close" onClick={onClose} aria-label="Đóng"><FiX /></button>
-            <h3 className="admin-modal-title">{title}</h3>
-            {children}
-        </div>
-    </div>
-);
+
 
 const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     const [search, setSearch] = useState('');
@@ -230,7 +223,7 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
             </div>
 
             {showModal && (
-                <Modal
+                <BaseModal
                     title={editing ? 'Sửa bài hát' : 'Thêm bài hát mới'}
                     onClose={() => setShowModal(false)}
                 >
@@ -276,7 +269,7 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
                             <button type="submit" className="admin-btn-submit">{editing ? 'Cập nhật' : 'Thêm mới'}</button>
                         </div>
                     </form>
-                </Modal>
+                </BaseModal>
             )}
         </>
     );
@@ -384,7 +377,7 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
             </div>
 
             {showModal && (
-                <Modal
+                <BaseModal
                     title={editing ? 'Sửa nghệ sĩ' : 'Thêm nghệ sĩ mới'}
                     onClose={() => setShowModal(false)}
                 >
@@ -406,7 +399,7 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
                             <button type="submit" className="admin-btn-submit">{editing ? 'Cập nhật' : 'Thêm mới'}</button>
                         </div>
                     </form>
-                </Modal>
+                </BaseModal>
             )}
         </>
     );
@@ -540,7 +533,7 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
             </div>
 
             {showModal && (
-                <Modal
+                <BaseModal
                     title={editing ? 'Sửa album' : 'Thêm album mới'}
                     onClose={() => setShowModal(false)}
                 >
@@ -591,7 +584,7 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                             <button type="submit" className="admin-btn-submit">{editing ? 'Cập nhật' : 'Thêm mới'}</button>
                         </div>
                     </form>
-                </Modal>
+                </BaseModal>
             )}
         </>
     );

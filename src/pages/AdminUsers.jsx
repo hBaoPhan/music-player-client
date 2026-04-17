@@ -4,6 +4,7 @@ import { FiTrash2, FiUsers, FiSearch, FiShield, FiUser, FiX, FiEdit2 } from 'rea
 import userService from '../services/userService';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
+import BaseModal from '../components/BaseModal';
 
 /* ─── Role-Edit Modal ─── */
 const RoleModal = ({ user, onClose, onSaved }) => {
@@ -28,10 +29,11 @@ const RoleModal = ({ user, onClose, onSaved }) => {
     };
 
     return (
-        <div className="admin-modal-overlay" onClick={onClose}>
-            <div className="admin-modal-content admin-role-modal" onClick={(e) => e.stopPropagation()}>
-                <button className="admin-modal-close" onClick={onClose} aria-label="Đóng"><FiX /></button>
-                <h3 className="admin-modal-title">Thay đổi vai trò</h3>
+        <BaseModal 
+            onClose={onClose} 
+            title="Thay đổi vai trò" 
+            contentClassName="admin-modal-content admin-role-modal"
+        >
 
                 <div className="admin-role-user-info">
                     <div className="admin-user-avatar admin-role-avatar">
@@ -93,8 +95,7 @@ const RoleModal = ({ user, onClose, onSaved }) => {
                         {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
                     </button>
                 </div>
-            </div>
-        </div>
+        </BaseModal>
     );
 };
 

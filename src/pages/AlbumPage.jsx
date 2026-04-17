@@ -15,7 +15,7 @@ const AlbumPage = () => {
     const { currentUser, getUser } = useAuth();
     const { showToast } = useToast();
     const { setCurrentSong, setIsPlaying, setSongQueue } = usePlayer();
-    
+
     const [album, setAlbum] = useState(null);
     const [albumSongs, setAlbumSongs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ const AlbumPage = () => {
                 setLoading(true);
                 const albumData = await albumService.getAlbumById(id);
                 setAlbum(albumData);
-                
+
                 const allSongs = await songService.getAllSongs();
                 const filteredSongs = allSongs.filter(s => s.album?.id === parseInt(id));
                 setAlbumSongs(filteredSongs);
@@ -49,7 +49,7 @@ const AlbumPage = () => {
         setIsPlaying(true);
         setSongQueue(songsQueue);
     };
-    
+
 
     if (loading) {
         return <div className="loading-text">Đang tải thông tin album...</div>;
@@ -62,11 +62,11 @@ const AlbumPage = () => {
     return (
         <div className="home-container">
             <div className="flex items-end gap-6 mb-8 px-2">
-                <div className="w-48 h-48 flex-shrink-0 rounded-xl overflow-hidden shadow-2xl">
+                <div className="w-48 h-48 shrink-0 rounded-xl overflow-hidden shadow-2xl">
                     {album.coverUrl ? (
                         <img src={album.coverUrl} alt={album.title} className="w-full h-full object-cover" />
                     ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-purple-900 to-indigo-900 flex items-center justify-center">
+                        <div className="w-full h-full bg-linear-to-br from-purple-900 to-indigo-900 flex items-center justify-center">
                             <FiDisc className="text-6xl text-white/50" />
                         </div>
                     )}
@@ -93,9 +93,9 @@ const AlbumPage = () => {
             ) : (
                 <div className="song-grid">
                     {albumSongs.map((song) => (
-                        <SongCard 
-                            key={song.id} 
-                            song={song} 
+                        <SongCard
+                            key={song.id}
+                            song={song}
                             onClick={() => handlePlaySong(song, albumSongs)}
                             onAddToPlaylist={setSelectedSongForPlaylist}
                         />
@@ -104,9 +104,9 @@ const AlbumPage = () => {
             )}
 
             {selectedSongForPlaylist && (
-                <AddToPlaylistModal 
-                    song={selectedSongForPlaylist} 
-                    onClose={() => setSelectedSongForPlaylist(null)} 
+                <AddToPlaylistModal
+                    song={selectedSongForPlaylist}
+                    onClose={() => setSelectedSongForPlaylist(null)}
                 />
             )}
         </div>
