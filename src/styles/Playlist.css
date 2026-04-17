@@ -13,7 +13,7 @@
 @reference "tailwindcss";
 
 .playlist-container {
-    @apply w-full aspect-square rounded-lg flex justify-center items-center mb-4 relative overflow-hidden bg-gradient-to-br from-gray-700 to-gray-900;
+    @apply w-full aspect-square rounded-lg flex justify-center items-center mb-4 relative overflow-hidden bg-linear-to-br from-gray-700 to-gray-900;
 }
 
 .delete-playlist-btn {
@@ -37,7 +37,7 @@
 }
 
 .playlist-icon-large {
-    @apply w-48 h-48 rounded-lg flex justify-center items-center shadow-[0_10px_30px_rgba(0, 0, 0, 0.5)] bg-gradient-to-br from-indigo-500 to-purple-600;
+    @apply w-48 h-48 rounded-lg flex justify-center items-center shadow-[0_10px_30px_rgba(0, 0, 0, 0.5)] bg-linear-to-br from-indigo-500 to-purple-600;
 }
 
 .playlist-info h2 {

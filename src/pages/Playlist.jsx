@@ -144,7 +144,7 @@ const Playlist = () => {
                 </button>
 
                 <div className="playlist-header">
-                    <div className="playlist-icon-large bg-gradient-to-br from-indigo-500 to-purple-600">
+                    <div className="playlist-icon-large bg-linear-to-br from-indigo-500 to-purple-600">
                         <FiMusic className="text-white text-5xl" />
                     </div>
                     <div className="playlist-info">
@@ -160,9 +160,9 @@ const Playlist = () => {
                 ) : (
                     <div className="song-grid mt-8">
                         {shuffledPlaylistSongs.map((song) => (
-                            <SongCard 
-                                key={song.id} 
-                                song={song} 
+                            <SongCard
+                                key={song.id}
+                                song={song}
                                 onClick={() => handlePlaySong(song)}
                                 showFavorite={false}
                                 showAddToPlaylist={false}
@@ -230,31 +230,31 @@ const Playlist = () => {
                 closeBtnClassName="admin-modal-close"
                 titleClassName="modal-title"
             >
-                        <div className="modal-input-group">
-                            <input
-                                type="text"
-                                placeholder="Nhập tên danh sách..."
-                                value={newPlaylistName}
-                                onChange={(e) => setNewPlaylistName(e.target.value)}
-                                className="new-playlist-input"
-                                autoFocus
-                            />
-                            <div className="modal-actions">
-                                <button
-                                    className="cancel-create-btn"
-                                    onClick={() => setShowCreateModal(false)}
-                                >
-                                    Hủy
-                                </button>
-                                <button
-                                    className="confirm-create-btn"
-                                    onClick={handleCreatePlaylist}
-                                    disabled={creating || !newPlaylistName.trim()}
-                                >
-                                    Tạo mới
-                                </button>
-                            </div>
-                        </div>
+                <div className="modal-input-group">
+                    <input
+                        type="text"
+                        placeholder="Nhập tên danh sách..."
+                        value={newPlaylistName}
+                        onChange={(e) => setNewPlaylistName(e.target.value)}
+                        className="new-playlist-input"
+                        autoFocus
+                    />
+                    <div className="modal-actions">
+                        <button
+                            className="cancel-create-btn"
+                            onClick={() => setShowCreateModal(false)}
+                        >
+                            Hủy
+                        </button>
+                        <button
+                            className="confirm-create-btn"
+                            onClick={handleCreatePlaylist}
+                            disabled={creating || !newPlaylistName.trim()}
+                        >
+                            Tạo mới
+                        </button>
+                    </div>
+                </div>
             </BaseModal>
         </div>
     );

@@ -84,7 +84,7 @@
 }
 
 .result-img-wrapper {
-    @apply w-12 h-12 flex-shrink-0 bg-gray-800 rounded overflow-hidden;
+    @apply w-12 h-12 shrink-0 bg-gray-800 rounded overflow-hidden;
 }
 
 .result-img-wrapper img {
@@ -92,7 +92,7 @@
 }
 
 .fallback-img {
-    @apply w-full h-full bg-gradient-to-br from-purple-900 to-indigo-900;
+    @apply w-full h-full bg-linear-to-br from-purple-900 to-indigo-900;
 }
 
 .result-info {

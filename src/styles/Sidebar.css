@@ -20,7 +20,7 @@
 }
 
 .sidebar-toggle-btn {
-    @apply flex items-center justify-center w-9 h-9 text-gray-400 rounded-lg cursor-pointer transition-all duration-200 flex-shrink-0;
+    @apply flex items-center justify-center w-9 h-9 text-gray-400 rounded-lg cursor-pointer transition-all duration-200 shrink-0;
     background: transparent;
 }
 
@@ -61,7 +61,7 @@
 }
 
 .nav-item-icon {
-    @apply text-xl flex-shrink-0;
+    @apply text-xl shrink-0;
 }
 
 .sidebar-collapsed .nav-item {

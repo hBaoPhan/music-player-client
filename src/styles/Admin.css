@@ -41,7 +41,7 @@
 }
 
 .admin-search-icon {
-    @apply text-gray-400 mr-3 text-lg flex-shrink-0;
+    @apply text-gray-400 mr-3 text-lg shrink-0;
 }
 
 .admin-search-input {
@@ -101,7 +101,7 @@
 }
 
 .admin-song-thumb {
-    @apply w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800;
+    @apply w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-gray-800;
 }
 
 .admin-song-thumb img {
@@ -128,7 +128,7 @@
 }
 
 .admin-user-avatar {
-    @apply w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0;
+    @apply w-9 h-9 rounded-full flex items-center justify-center shrink-0;
     background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
 }
 
@@ -250,7 +250,7 @@
 }
 
 .admin-label-icon {
-    @apply text-base flex-shrink-0;
+    @apply text-base shrink-0;
 }
 
 .sidebar-collapsed .admin-section-label {
@@ -264,9 +264,7 @@
 }
 
 .admin-tab-btn {
-    @apply flex items-center gap-2 px-5 py-3 text-sm font-medium text-gray-400
-           rounded-t-xl border border-transparent border-b-0
-           transition-all cursor-pointer relative;
+    @apply flex items-center gap-2 px-5 py-3 text-sm font-medium text-gray-400 rounded-t-xl border border-transparent border-b-0 transition-all cursor-pointer relative;
 }
 
 .admin-tab-btn:hover {
@@ -275,12 +273,13 @@
 
 .admin-tab-btn--active {
     @apply text-green-400 bg-gray-900 border-gray-800;
-    box-shadow: 0 1px 0 #111827; /* hides bottom border so tab looks "connected" */
+    box-shadow: 0 1px 0 #111827;
+    /* hides bottom border so tab looks "connected" */
     margin-bottom: -1px;
 }
 
 .admin-tab-icon {
-    @apply text-base flex-shrink-0;
+    @apply text-base shrink-0;
 }
 
 .admin-tab-count {
@@ -298,8 +297,15 @@
 }
 
 @keyframes adminTabFadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0);   }
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ─── Textarea inside form ─── */
@@ -316,7 +322,8 @@
    Role-Edit Modal
 ══════════════════════════════════════ */
 .admin-role-modal {
-    @apply max-w-sm;   /* narrower than the default form modal */
+    @apply max-w-sm;
+    /* narrower than the default form modal */
 }
 
 /* User info header inside the modal */
@@ -346,9 +353,7 @@
 }
 
 .admin-role-option {
-    @apply w-full flex items-center gap-4 p-4 rounded-2xl border border-gray-700
-           bg-gray-800/40 text-left cursor-pointer transition-all duration-200
-           hover:border-gray-500 hover:bg-gray-700/40 relative;
+    @apply w-full flex items-center gap-4 p-4 rounded-2xl border border-gray-700 bg-gray-800/40 text-left cursor-pointer transition-all duration-200 hover:border-gray-500 hover:bg-gray-700/40 relative;
 }
 
 .admin-role-option--selected {
@@ -356,21 +361,26 @@
 }
 
 .admin-role-option--user.admin-role-option--selected {
-    background: linear-gradient(135deg, rgba(14,165,233,0.15) 0%, rgba(14,165,233,0.05) 100%);
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.05) 100%);
     @apply border-sky-500/40;
 }
 
 .admin-role-option--admin.admin-role-option--selected {
-    background: linear-gradient(135deg, rgba(245,158,11,0.15) 0%, rgba(245,158,11,0.05) 100%);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
     @apply border-amber-500/40;
 }
 
 .admin-role-option-icon {
-    @apply w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0;
+    @apply w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0;
 }
 
-.admin-role-option-icon--user  { @apply bg-sky-500/20  text-sky-300;  }
-.admin-role-option-icon--admin { @apply bg-amber-500/20 text-amber-300; }
+.admin-role-option-icon--user {
+    @apply bg-sky-500/20 text-sky-300;
+}
+
+.admin-role-option-icon--admin {
+    @apply bg-amber-500/20 text-amber-300;
+}
 
 .admin-role-option-name {
     @apply text-white font-semibold text-sm;
@@ -387,4 +397,4 @@
 /* "Bạn" self-indicator tag */
 .admin-self-tag {
     @apply text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full font-medium;
-}
+}
