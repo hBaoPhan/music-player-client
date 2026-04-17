@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { usePlayer } from '../context/PlayerContext';
 import playlistService from '../services/playlistService';
+import SongCard from '../components/SongCard';
 
 const shuffleArray = (items = []) => {
     const shuffled = [...items];
@@ -158,35 +159,22 @@ const Playlist = () => {
                 ) : (
                     <div className="song-grid mt-8">
                         {shuffledPlaylistSongs.map((song) => (
-                            <div key={song.id} className="song-card group" onClick={() => handlePlaySong(song)}>
-                                <div className="song-image-wrapper">
-                                    <img
-                                        src={song.album?.coverUrl || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80"}
-                                        alt={song.title}
-                                        className="song-image"
-                                    />
-                                    <button className="play-button-overlay">
-                                        <FiPlay className="text-xl ml-1" />
-                                    </button>
-
+                            <SongCard 
+                                key={song.id} 
+                                song={song} 
+                                onClick={() => handlePlaySong(song)}
+                                showFavorite={false}
+                                showAddToPlaylist={false}
+                                customAction={(s) => (
                                     <button
                                         className="remove-song-btn-overlay"
-                                        onClick={(e) => handleRemoveSong(e, song.id)}
+                                        onClick={(e) => handleRemoveSong(e, s.id)}
                                         title="Xóa khỏi playlist"
                                     >
                                         <FiTrash2 className="text-xl text-white" />
                                     </button>
-                                </div>
-
-                                <div className="song-bottom-info mt-3">
-                                    <h3 className="song-title">{song.title}</h3>
-                                    <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
-                                    <div className="song-meta-row">
-                                        <span className="song-album">Album: {song.album?.title || "Single"}</span>
-                                        {song.genre && <span className="song-genre">{song.genre}</span>}
-                                    </div>
-                                </div>
-                            </div>
+                                )}
+                            />
                         ))}
                     </div>
                 )}

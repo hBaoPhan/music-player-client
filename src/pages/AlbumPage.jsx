@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { FiPlay, FiHeart, FiPlus, FiDisc } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
+import SongCard from '../components/SongCard';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { usePlayer } from '../context/PlayerContext';
-import userService from '../services/userService';
 import songService from '../services/songService';
 import albumService from '../services/albumService';
 
@@ -50,23 +50,6 @@ const AlbumPage = () => {
         setSongQueue(songsQueue);
     };
     
-    const handleToggleFavorite = async (e, song) => {
-        e.stopPropagation();
-        if (!currentUser) {
-            showToast('Vui lòng đăng nhập để sử dụng tính năng này!', 'error');
-            return;
-        }
-        try {
-            await userService.toggleFavorite(currentUser.id, song.id);
-            await getUser();
-        } catch (error) {
-            console.error("Lỗi khi thay đổi yêu thích:", error);
-        }
-    };
-
-    const isFavorite = (songId) => {
-        return currentUser?.favoriteSongs?.some(fav => fav.id === songId);
-    };
 
     if (loading) {
         return <div className="loading-text">Đang tải thông tin album...</div>;
@@ -109,55 +92,14 @@ const AlbumPage = () => {
                 <p className="text-gray-400 text-lg px-2">Album này chưa có bài hát nào.</p>
             ) : (
                 <div className="song-grid">
-                    {albumSongs.map((song) => {
-                        const favorited = isFavorite(song.id);
-                        return (
-                            <div key={song.id} className="song-card group" onClick={() => handlePlaySong(song, albumSongs)}>
-                                <div className="song-image-wrapper">
-                                    <img
-                                        src={song.album?.coverUrl || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80"}
-                                        alt={song.title}
-                                        className="song-image"
-                                    />
-                                    <button className="play-button-overlay">
-                                        <FiPlay className="text-xl ml-1" />
-                                    </button>
-                                    
-                                    <button 
-                                        className="favorite-button-overlay" 
-                                        onClick={(e) => handleToggleFavorite(e, song)}
-                                        title={favorited ? "Gỡ khỏi danh sách yêu thích" : "Thêm vào yêu thích"}
-                                    >
-                                        <FiHeart className={`text-2xl transition-colors ${favorited ? 'fill-green-500 text-green-500 hover:text-red-500 hover:fill-red-500' : 'text-white hover:text-green-500'}`} />
-                                    </button>
-
-                                    <button
-                                        className="add-playlist-btn-overlay"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (!currentUser) {
-                                                showToast('Vui lòng đăng nhập để sử dụng tính năng này!', 'error');
-                                                return;
-                                            }
-                                            setSelectedSongForPlaylist(song);
-                                        }}
-                                        title="Thêm vào danh sách phát"
-                                    >
-                                        <FiPlus />
-                                    </button>
-                                </div>
-
-                                <div className="song-bottom-info mt-3">
-                                    <h3 className="song-title">{song.title}</h3>
-                                    <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
-                                    <div className="song-meta-row">
-                                        <span className="song-album">Album: {song.album?.title || "Single"}</span>
-                                        {song.genre && <span className="song-genre">{song.genre}</span>}
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
+                    {albumSongs.map((song) => (
+                        <SongCard 
+                            key={song.id} 
+                            song={song} 
+                            onClick={() => handlePlaySong(song, albumSongs)}
+                            onAddToPlaylist={setSelectedSongForPlaylist}
+                        />
+                    ))}
                 </div>
             )}
 
