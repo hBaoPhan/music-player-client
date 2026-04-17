@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import playlistService from '../services/playlistService';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { FiX, FiPlus } from 'react-icons/fi';
+import { FiPlus } from 'react-icons/fi';
+import BaseModal from './BaseModal';
 
 const AddToPlaylistModal = ({ song, onClose }) => {
     const { currentUser } = useAuth();
@@ -61,12 +62,15 @@ const AddToPlaylistModal = ({ song, onClose }) => {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="close-modal-btn" onClick={onClose}>
-                    <FiX />
-                </button>
-                <h3 className="modal-title">Thêm vào danh sách phát</h3>
+        <BaseModal
+            isOpen={true}
+            onClose={onClose}
+            title="Thêm vào danh sách phát"
+            overlayClassName="modal-overlay"
+            contentClassName="modal-content"
+            closeBtnClassName="close-modal-btn"
+            titleClassName="modal-title"
+        >
 
                 <div className="create-playlist-section">
                     <input
@@ -106,8 +110,7 @@ const AddToPlaylistModal = ({ song, onClose }) => {
                         })
                     )}
                 </div>
-            </div>
-        </div>
+        </BaseModal>
     );
 };
 

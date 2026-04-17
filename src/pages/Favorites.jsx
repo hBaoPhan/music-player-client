@@ -1,15 +1,23 @@
 import '../styles/Playlist.css';
-import React, { useState } from 'react';
-import { FiPlay, FiHeart, FiPlus } from 'react-icons/fi';
+import React, { useState, useMemo } from 'react';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
+import SongCard from '../components/SongCard';
 import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
 import { usePlayer } from '../context/PlayerContext';
-import userService from '../services/userService';
+
+const shuffleArray = (items = []) => {
+    const shuffled = [...items];
+
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
+    }
+
+    return shuffled;
+};
 
 const Favorites = () => {
-    const { currentUser, getUser } = useAuth();
-    const { showToast } = useToast();
+    const { currentUser } = useAuth();
     const { setCurrentSong, setIsPlaying, setSongQueue } = usePlayer();
     const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
 
@@ -19,21 +27,8 @@ const Favorites = () => {
         setSongQueue(songsQueue);
     };
 
-    const handleToggleFavorite = async (e, song) => {
-        e.stopPropagation();
-        if (!currentUser) {
-            showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
-            return;
-        }
-        try {
-            await userService.toggleFavorite(currentUser.id, song.id);
-            await getUser();
-        } catch (error) {
-            console.error("Lỗi khi loại bỏ yêu thích:", error);
-        }
-    };
-
     const favoriteSongs = currentUser?.favoriteSongs || [];
+    const shuffledFavoriteSongs = useMemo(() => shuffleArray(favoriteSongs), [favoriteSongs]);
 
     if (!currentUser) {
         return <div className="loading-text">Vui lòng đăng nhập để xem bài hát yêu thích.</div>;
@@ -47,51 +42,13 @@ const Favorites = () => {
                 <p className="text-gray-400 text-lg">Bạn chưa có bài hát yêu thích nào. Hãy thả tim một bài hát để xem tại đây.</p>
             ) : (
                 <div className="song-grid">
-                    {favoriteSongs.map((song) => (
-                        <div key={song.id} className="song-card group" onClick={() => handlePlaySong(song, favoriteSongs)}>
-                            <div className="song-image-wrapper">
-                                <img
-                                    src={song.album?.coverUrl || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80"}
-                                    alt={song.title}
-                                    className="song-image"
-                                />
-                                <button className="play-button-overlay">
-                                    <FiPlay className="text-xl ml-1" />
-                                </button>
-                                
-                                <button 
-                                    className="favorite-button-overlay" 
-                                    onClick={(e) => handleToggleFavorite(e, song)}
-                                    title="Gỡ khỏi danh sách yêu thích"
-                                >
-                                    <FiHeart className="text-2xl transition-colors fill-green-500 text-green-500 hover:text-red-500 hover:fill-red-500" />
-                                </button>
-
-                                <button
-                                    className="add-playlist-btn-overlay"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (!currentUser) {
-                                            showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
-                                            return;
-                                        }
-                                        setSelectedSongForPlaylist(song);
-                                    }}
-                                    title="Thêm vào danh sách phát"
-                                >
-                                    <FiPlus />
-                                </button>
-                            </div>
-
-                            <div className="song-bottom-info mt-3">
-                                <h3 className="song-title">{song.title}</h3>
-                                <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
-                                <div className="song-meta-row">
-                                    <span className="song-album">Album: {song.album?.title || "Single"}</span>
-                                    {song.genre && <span className="song-genre">{song.genre}</span>}
-                                </div>
-                            </div>
-                        </div>
+                    {shuffledFavoriteSongs.map((song) => (
+                        <SongCard 
+                            key={song.id} 
+                            song={song} 
+                            onClick={() => handlePlaySong(song, shuffledFavoriteSongs)}
+                            onAddToPlaylist={setSelectedSongForPlaylist}
+                        />
                     ))}
                 </div>
             )}

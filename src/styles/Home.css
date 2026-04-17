@@ -13,7 +13,7 @@
 }
 
 .slider-nav {
-    @apply flex items-center gap-3 hidden md:flex;
+    @apply hidden items-center gap-3 md:flex;
 }
 
 .slider-btn {
@@ -23,12 +23,12 @@
 .song-slider-track {
     @apply grid gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4;
     grid-auto-flow: column;
-    grid-auto-columns: calc((100% - (4 * 1.5rem)) / 5); /* 5 items per row */
-    scrollbar-width: none; /* hide scrollbar firefox */
+    grid-auto-columns: calc((100% - (4 * 1.5rem)) / 5);
+    scrollbar-width: none;
 }
 
 .song-slider-track::-webkit-scrollbar {
-    display: none; /* hide scrollbar chrome/safari */
+    display: none;
 }
 
 .song-card {

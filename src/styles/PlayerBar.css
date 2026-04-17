@@ -1,6 +1,3 @@
-
-
-
 @reference "tailwindcss";
 
 .player-container {
@@ -37,6 +34,14 @@
 
 .control-btn {
     @apply text-gray-400 hover:text-white transition-colors cursor-pointer;
+}
+
+.control-icon-btn {
+    @apply flex items-center justify-center;
+}
+
+.control-icon-btn-active .control-btn {
+    @apply text-green-500 hover:text-green-400;
 }
 
 .play-pause-btn {

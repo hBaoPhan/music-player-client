@@ -1,14 +1,26 @@
 import '../styles/Home.css';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { FiPlay, FiHeart, FiPlus, FiChevronLeft, FiChevronRight, FiDisc } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
+import SongCard from '../components/SongCard';
 import songService from '../services/songService';
 import userService from '../services/userService';
 import albumService from '../services/albumService';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+
+const shuffleArray = (items = []) => {
+    const shuffled = [...items];
+
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
+    }
+
+    return shuffled;
+};
 
 const Home = () => {
     const [songs, setSongs] = useState([]);
@@ -21,12 +33,14 @@ const Home = () => {
     const { showToast } = useToast();
     const { currentSong, setCurrentSong, isPlaying, setIsPlaying, setSongQueue } = usePlayer();
     const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
+    const shuffledSongs = useMemo(() => shuffleArray(songs), [songs]);
+    const shuffledAlbums = useMemo(() => shuffleArray(albums), [albums]);
 
-    const handlePlaySong = (song) => {
+    const handlePlaySong = useCallback((song) => {
         setCurrentSong(song);
         setIsPlaying(true);
-        setSongQueue(songs);
-    };
+        setSongQueue(shuffledSongs);
+    }, [setCurrentSong, setIsPlaying, setSongQueue, shuffledSongs]);
 
     useEffect(() => {
         const hasShownWarning = sessionStorage.getItem('hasShownStudyWarning');
@@ -36,24 +50,6 @@ const Home = () => {
         }
     }, [])
 
-    const handleToggleFavorite = async (e, song) => {
-        e.stopPropagation();
-        if (!currentUser) {
-            showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
-            return;
-        }
-
-        try {
-            await userService.toggleFavorite(currentUser.id, song.id);
-            await getUser();
-        } catch (error) {
-            console.error("Lỗi khi thêm vào yêu thích:", error);
-        }
-    };
-
-    const isFavorite = (songId) => {
-        return currentUser?.favoriteSongs?.some(fav => fav.id === songId);
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,7 +59,18 @@ const Home = () => {
                     albumService.getAllAlbums()
                 ]);
                 setSongs(songsData);
-                setAlbums(albumsData);
+
+                const albumsDataFiltered = albumsData.filter((album) => {
+                    let count = 0;
+                    songsData.forEach((song) => {
+                        if (album.id === song.album?.id) {
+                            count += 1;
+                        }
+                    });
+                    return count >= 2;
+                });
+
+                setAlbums(albumsDataFiltered);
             } catch (error) {
                 console.error("Lỗi khi tải dữ liệu trang chủ:", error);
             } finally {
@@ -93,54 +100,14 @@ const Home = () => {
             </div>
 
             <div className="song-slider-track" ref={sliderRef}>
-                {songs.map((song) => {
-                    const favorited = isFavorite(song.id);
-                    return (
-                        <div key={song.id} className="song-card group"   >
-                            <div className="song-image-wrapper">
-                                <img
-                                    src={song.album?.coverUrl || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80"}
-                                    alt={song.title}
-                                    className="song-image"
-                                />
-                                <button className="play-button-overlay" onClick={() => { handlePlaySong(song) }}>
-                                    <FiPlay className="text-xl ml-1" />
-                                </button>
-
-                                <button
-                                    className="favorite-button-overlay"
-                                    onClick={(e) => handleToggleFavorite(e, song)}
-                                >
-                                    <FiHeart className={`text-2xl transition-colors ${favorited ? 'fill-green-500 text-green-500' : 'text-white hover:text-green-500'}`} />
-                                </button>
-
-                                <button
-                                    className="add-playlist-btn-overlay"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (!currentUser) {
-                                            showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
-                                            return;
-                                        }
-                                        setSelectedSongForPlaylist(song);
-                                    }}
-                                    title="Thêm vào danh sách phát"
-                                >
-                                    <FiPlus />
-                                </button>
-                            </div>
-
-                            <div className="song-bottom-info mt-3">
-                                <h3 className="song-title">{song.title}</h3>
-                                <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
-                                <div className="song-meta-row">
-                                    <span className="song-album"> {song.album ? (song.album.type === "SINGLE" ? "Single" : `${song.album.type}: ${song.album.title}`) : "Unknown Album"}</span>
-                                    {song.genre && <span className="song-genre">{song.genre}</span>}
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
+                {shuffledSongs.map((song) => (
+                    <SongCard
+                        key={song.id}
+                        song={song}
+                        onClick={() => handlePlaySong(song)}
+                        onAddToPlaylist={setSelectedSongForPlaylist}
+                    />
+                ))}
             </div>
 
             <div className="section-header mt-8">
@@ -156,7 +123,7 @@ const Home = () => {
             </div>
 
             <div className="song-slider-track" ref={albumSliderRef}>
-                {albums.map((album) => (
+                {shuffledAlbums.map((album) => (
                     <div key={album.id} className="song-card group" onClick={() => navigate(`/album/${album.id}`)}>
                         <div className="song-image-wrapper">
                             {album.coverUrl ? (
@@ -166,7 +133,7 @@ const Home = () => {
                                     className="song-image"
                                 />
                             ) : (
-                                <div className="w-full h-full bg-gradient-to-br from-purple-900 to-indigo-900 flex items-center justify-center">
+                                <div className="w-full h-full bg-linear-to-br from-purple-900 to-indigo-900 flex items-center justify-center">
                                     <FiDisc className="text-4xl text-white/50" />
                                 </div>
                             )}

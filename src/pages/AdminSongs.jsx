@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
     FiPlus, FiEdit2, FiTrash2, FiX,
     FiMusic, FiSearch, FiUser, FiDisc
@@ -7,6 +7,9 @@ import songService from '../services/songService';
 import artistService from '../services/artistService';
 import albumService from '../services/albumService';
 import { useToast } from '../context/ToastContext';
+import BaseModal from '../components/BaseModal';
+import AdminSearchBox from '../components/AdminSearchBox';
+import AdminActionButtons from '../components/AdminActionButtons';
 import '../styles/Admin.css';
 
 const GENRES = [
@@ -32,33 +35,42 @@ const formatDuration = (seconds) => {
     return `${m}:${s.toString().padStart(2, '0')}`;
 };
 
-const Modal = ({ title, onClose, children }) => (
-    <div className="admin-modal-overlay" onClick={onClose}>
-        <div className="admin-modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="admin-modal-close" onClick={onClose} aria-label="Đóng"><FiX /></button>
-            <h3 className="admin-modal-title">{title}</h3>
-            {children}
-        </div>
-    </div>
-);
+
 
 const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     const [search, setSearch] = useState('');
     const [genreFilter, setGenreFilter] = useState('');
+    const [artistFilter, setArtistFilter] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
     const [form, setForm] = useState(EMPTY_SONG);
 
-    const filtered = songs.filter(s => {
-        const kw = search.toLowerCase();
-        const matchesSearch = (
-            s.title?.toLowerCase().includes(kw) ||
-            s.artist?.name?.toLowerCase().includes(kw) ||
-            s.album?.title?.toLowerCase().includes(kw)
-        );
-        const matchesGenre = genreFilter ? s.genre === genreFilter : true;
-        return matchesSearch && matchesGenre;
-    });
+    const artistOptions = useMemo(() => {
+        const uniqueArtists = new Map();
+        artists.forEach((artist) => {
+            if (artist?.id != null && artist?.name) {
+                uniqueArtists.set(String(artist.id), artist.name);
+            }
+        });
+        return Array.from(uniqueArtists, ([id, name]) => ({ id, name }));
+    }, [artists]);
+
+    const filtered = useMemo(() => {
+        const kw = search.trim().toLowerCase();
+        return songs.filter((song) => {
+            const matchesSearch = kw
+                ? (
+                    song.title?.toLowerCase().includes(kw) ||
+                    song.artist?.name?.toLowerCase().includes(kw) ||
+                    song.album?.title?.toLowerCase().includes(kw)
+                )
+                : true;
+            const matchesGenre = genreFilter ? song.genre === genreFilter : true;
+            const matchesArtist = artistFilter ? String(song.artist?.id ?? '') === artistFilter : true;
+
+            return matchesSearch && matchesGenre && matchesArtist;
+        });
+    }, [songs, search, genreFilter, artistFilter]);
 
     const openCreate = () => { setEditing(null); setForm(EMPTY_SONG); setShowModal(true); };
     const openEdit = (song) => {
@@ -125,21 +137,28 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     return (
         <>
             <div className="admin-actions-bar">
-                <div className="admin-search-group" style={{ display: 'flex', gap: '10px', flex: 1 }}>
-                    <div className="admin-search-box" style={{ flex: 1, maxWidth: '300px' }}>
-                        <FiSearch className="admin-search-icon" />
-                        <input
-                            id="search-songs"
-                            type="text"
-                            className="admin-search-input"
-                            placeholder="Tìm kiếm bài hát..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                    </div>
+                <div className="admin-search-group">
+                    <AdminSearchBox
+                        className="admin-search-box admin-search-box--songs"
+                        id="search-songs"
+                        placeholder="Tìm kiếm bài hát..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
                     <select
-                        className="admin-search-input"
-                        style={{ width: '180px', paddingLeft: '1rem', cursor: 'pointer', backgroundColor: '#1f2937', color: 'white', border: '1px solid #374151', borderRadius: '8px' }}
+                        id="filter-song-artist"
+                        className="admin-search-input admin-filter-select"
+                        value={artistFilter}
+                        onChange={(e) => setArtistFilter(e.target.value)}
+                    >
+                        <option value="">Nghệ sĩ</option>
+                        {artistOptions.map((artist) => (
+                            <option key={artist.id} value={artist.id}>{artist.name}</option>
+                        ))}
+                    </select>
+                    <select
+                        id="filter-song-genre"
+                        className="admin-search-input admin-filter-select"
                         value={genreFilter}
                         onChange={(e) => setGenreFilter(e.target.value)}
                     >
@@ -188,10 +207,12 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
                                 <td>{formatDuration(song.duration)}</td>
                                 <td>{song.playCount ?? 0}</td>
                                 <td>
-                                    <div className="admin-row-actions">
-                                        <button id={`btn-edit-song-${song.id}`} className="admin-edit-btn" onClick={() => openEdit(song)} title="Sửa"><FiEdit2 /></button>
-                                        <button id={`btn-delete-song-${song.id}`} className="admin-delete-btn" onClick={() => handleDelete(song.id)} title="Xóa"><FiTrash2 /></button>
-                                    </div>
+                                    <AdminActionButtons
+                                        editId={`btn-edit-song-${song.id}`}
+                                        deleteId={`btn-delete-song-${song.id}`}
+                                        onEdit={() => openEdit(song)}
+                                        onDelete={() => handleDelete(song.id)}
+                                    />
                                 </td>
                             </tr>
                         )) : (
@@ -202,7 +223,7 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
             </div>
 
             {showModal && (
-                <Modal
+                <BaseModal
                     title={editing ? 'Sửa bài hát' : 'Thêm bài hát mới'}
                     onClose={() => setShowModal(false)}
                 >
@@ -248,7 +269,7 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
                             <button type="submit" className="admin-btn-submit">{editing ? 'Cập nhật' : 'Thêm mới'}</button>
                         </div>
                     </form>
-                </Modal>
+                </BaseModal>
             )}
         </>
     );
@@ -300,17 +321,12 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
     return (
         <>
             <div className="admin-actions-bar">
-                <div className="admin-search-box">
-                    <FiSearch className="admin-search-icon" />
-                    <input
-                        id="search-artists"
-                        type="text"
-                        className="admin-search-input"
-                        placeholder="Tìm kiếm nghệ sĩ..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                </div>
+                <AdminSearchBox
+                    id="search-artists"
+                    placeholder="Tìm kiếm nghệ sĩ..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
                 <button id="btn-add-artist" className="admin-add-btn" onClick={openCreate}>
                     <FiPlus /><span>Thêm nghệ sĩ</span>
                 </button>
@@ -342,10 +358,12 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
                                 </td>
                                 <td className="admin-td-bio">{artist.bio || '—'}</td>
                                 <td>
-                                    <div className="admin-row-actions">
-                                        <button id={`btn-edit-artist-${artist.id}`} className="admin-edit-btn" onClick={() => openEdit(artist)} title="Sửa"><FiEdit2 /></button>
-                                        <button id={`btn-delete-artist-${artist.id}`} className="admin-delete-btn" onClick={() => handleDelete(artist.id)} title="Xóa"><FiTrash2 /></button>
-                                    </div>
+                                    <AdminActionButtons
+                                        editId={`btn-edit-artist-${artist.id}`}
+                                        deleteId={`btn-delete-artist-${artist.id}`}
+                                        onEdit={() => openEdit(artist)}
+                                        onDelete={() => handleDelete(artist.id)}
+                                    />
                                 </td>
                             </tr>
                         )) : (
@@ -356,7 +374,7 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
             </div>
 
             {showModal && (
-                <Modal
+                <BaseModal
                     title={editing ? 'Sửa nghệ sĩ' : 'Thêm nghệ sĩ mới'}
                     onClose={() => setShowModal(false)}
                 >
@@ -378,7 +396,7 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
                             <button type="submit" className="admin-btn-submit">{editing ? 'Cập nhật' : 'Thêm mới'}</button>
                         </div>
                     </form>
-                </Modal>
+                </BaseModal>
             )}
         </>
     );
@@ -454,17 +472,12 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
     return (
         <>
             <div className="admin-actions-bar">
-                <div className="admin-search-box">
-                    <FiSearch className="admin-search-icon" />
-                    <input
-                        id="search-albums"
-                        type="text"
-                        className="admin-search-input"
-                        placeholder="Tìm kiếm album..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                </div>
+                <AdminSearchBox
+                    id="search-albums"
+                    placeholder="Tìm kiếm album..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
                 <button id="btn-add-album" className="admin-add-btn" onClick={openCreate}>
                     <FiPlus /><span>Thêm album</span>
                 </button>
@@ -498,10 +511,12 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                                 <td>{album.type}</td>
                                 <td>{album.artist?.name || '—'}</td>
                                 <td>
-                                    <div className="admin-row-actions">
-                                        <button id={`btn-edit-album-${album.id}`} className="admin-edit-btn" onClick={() => openEdit(album)} title="Sửa"><FiEdit2 /></button>
-                                        <button id={`btn-delete-album-${album.id}`} className="admin-delete-btn" onClick={() => handleDelete(album.id)} title="Xóa"><FiTrash2 /></button>
-                                    </div>
+                                    <AdminActionButtons
+                                        editId={`btn-edit-album-${album.id}`}
+                                        deleteId={`btn-delete-album-${album.id}`}
+                                        onEdit={() => openEdit(album)}
+                                        onDelete={() => handleDelete(album.id)}
+                                    />
                                 </td>
                             </tr>
                         )) : (
@@ -512,7 +527,7 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
             </div>
 
             {showModal && (
-                <Modal
+                <BaseModal
                     title={editing ? 'Sửa album' : 'Thêm album mới'}
                     onClose={() => setShowModal(false)}
                 >
@@ -563,7 +578,7 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                             <button type="submit" className="admin-btn-submit">{editing ? 'Cập nhật' : 'Thêm mới'}</button>
                         </div>
                     </form>
-                </Modal>
+                </BaseModal>
             )}
         </>
     );

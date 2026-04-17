@@ -85,6 +85,7 @@ axiosClient.interceptors.response.use(
                     originalRequest.headers.Authorization = 'Bearer ' + newToken;
 
                     processQueue(null, newToken);
+                    console.log("token refreshed")
                     
                     return axiosClient(originalRequest);
                 } catch (refreshError) {

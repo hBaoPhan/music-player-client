@@ -48,19 +48,19 @@ const Header = () => {
     }, []);
 
     useEffect(() => {
-        if (!searchTerm.trim() && !selectedGenre) {
+        const keyword = searchTerm.trim().toLowerCase();
+
+        if (!keyword) {
             setSearchResults([]);
             return;
         }
 
         const delayDebounce = setTimeout(() => {
-            const keyword = searchTerm.toLowerCase();
             const results = allSongs.filter(song => {
-                const matchKeyword = !keyword || (
+                const matchKeyword =
                     (song.title && song.title.toLowerCase().includes(keyword)) ||
                     (song.artist?.name && song.artist.name.toLowerCase().includes(keyword)) ||
-                    (song.album?.title && song.album?.title.toLowerCase().includes(keyword))
-                );
+                    (song.album?.title && song.album?.title.toLowerCase().includes(keyword));
                 const matchGenre = !selectedGenre || song.genre === selectedGenre;
                 return matchKeyword && matchGenre;
             });
@@ -169,7 +169,7 @@ const Header = () => {
                         </div>
                     </div>
 
-                    {isSearching && (searchTerm.trim() !== '' || selectedGenre !== '') && (
+                    {isSearching && searchTerm.trim() !== '' && (
                         <div className="search-dropdown-menu">
                             {searchResults.length > 0 ? (
                                 <ul className="search-result-list">

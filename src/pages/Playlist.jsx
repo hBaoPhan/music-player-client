@@ -1,10 +1,23 @@
 import '../styles/Playlist.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { FiPlay, FiTrash2, FiPlus, FiArrowLeft, FiMusic } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { usePlayer } from '../context/PlayerContext';
 import playlistService from '../services/playlistService';
+import SongCard from '../components/SongCard';
+import BaseModal from '../components/BaseModal';
+
+const shuffleArray = (items = []) => {
+    const shuffled = [...items];
+
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
+    }
+
+    return shuffled;
+};
 
 const Playlist = () => {
     const { currentUser } = useAuth();
@@ -16,6 +29,7 @@ const Playlist = () => {
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
     const [playlistSongs, setPlaylistSongs] = useState([]);
     const [loadingSongs, setLoadingSongs] = useState(false);
+    const shuffledPlaylistSongs = useMemo(() => shuffleArray(playlistSongs), [playlistSongs]);
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState('');
@@ -107,7 +121,7 @@ const Playlist = () => {
     const handlePlaySong = (song) => {
         setCurrentSong(song);
         setIsPlaying(true);
-        setSongQueue(playlistSongs);
+        setSongQueue(shuffledPlaylistSongs);
     };
 
     if (loading && !selectedPlaylist) {
@@ -130,7 +144,7 @@ const Playlist = () => {
                 </button>
 
                 <div className="playlist-header">
-                    <div className="playlist-icon-large bg-gradient-to-br from-indigo-500 to-purple-600">
+                    <div className="playlist-icon-large bg-linear-to-br from-indigo-500 to-purple-600">
                         <FiMusic className="text-white text-5xl" />
                     </div>
                     <div className="playlist-info">
@@ -145,36 +159,23 @@ const Playlist = () => {
                     <p className="text-gray-400 text-lg mt-8">Danh sách này chưa có bài hát nào. Hãy tìm bài hát và thêm vào đây.</p>
                 ) : (
                     <div className="song-grid mt-8">
-                        {playlistSongs.map((song) => (
-                            <div key={song.id} className="song-card group" onClick={() => handlePlaySong(song)}>
-                                <div className="song-image-wrapper">
-                                    <img
-                                        src={song.album?.coverUrl || "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80"}
-                                        alt={song.title}
-                                        className="song-image"
-                                    />
-                                    <button className="play-button-overlay">
-                                        <FiPlay className="text-xl ml-1" />
-                                    </button>
-
+                        {shuffledPlaylistSongs.map((song) => (
+                            <SongCard
+                                key={song.id}
+                                song={song}
+                                onClick={() => handlePlaySong(song)}
+                                showFavorite={false}
+                                showAddToPlaylist={false}
+                                customAction={(s) => (
                                     <button
                                         className="remove-song-btn-overlay"
-                                        onClick={(e) => handleRemoveSong(e, song.id)}
+                                        onClick={(e) => handleRemoveSong(e, s.id)}
                                         title="Xóa khỏi playlist"
                                     >
                                         <FiTrash2 className="text-xl text-white" />
                                     </button>
-                                </div>
-
-                                <div className="song-bottom-info mt-3">
-                                    <h3 className="song-title">{song.title}</h3>
-                                    <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
-                                    <div className="song-meta-row">
-                                        <span className="song-album">Album: {song.album?.title || "Single"}</span>
-                                        {song.genre && <span className="song-genre">{song.genre}</span>}
-                                    </div>
-                                </div>
-                            </div>
+                                )}
+                            />
                         ))}
                     </div>
                 )}
@@ -220,38 +221,41 @@ const Playlist = () => {
                 </div>
             )}
 
-            {showCreateModal && (
-                <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
-                        <h3 className="modal-title">Tạo danh sách mới</h3>
-                        <div className="modal-input-group">
-                            <input
-                                type="text"
-                                placeholder="Nhập tên danh sách..."
-                                value={newPlaylistName}
-                                onChange={(e) => setNewPlaylistName(e.target.value)}
-                                className="new-playlist-input"
-                                autoFocus
-                            />
-                            <div className="modal-actions">
-                                <button
-                                    className="cancel-create-btn"
-                                    onClick={() => setShowCreateModal(false)}
-                                >
-                                    Hủy
-                                </button>
-                                <button
-                                    className="confirm-create-btn"
-                                    onClick={handleCreatePlaylist}
-                                    disabled={creating || !newPlaylistName.trim()}
-                                >
-                                    Tạo mới
-                                </button>
-                            </div>
-                        </div>
+            <BaseModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                title="Tạo danh sách mới"
+                overlayClassName="modal-overlay"
+                contentClassName="modal-content"
+                closeBtnClassName="admin-modal-close"
+                titleClassName="modal-title"
+            >
+                <div className="modal-input-group">
+                    <input
+                        type="text"
+                        placeholder="Nhập tên danh sách..."
+                        value={newPlaylistName}
+                        onChange={(e) => setNewPlaylistName(e.target.value)}
+                        className="new-playlist-input"
+                        autoFocus
+                    />
+                    <div className="modal-actions">
+                        <button
+                            className="cancel-create-btn"
+                            onClick={() => setShowCreateModal(false)}
+                        >
+                            Hủy
+                        </button>
+                        <button
+                            className="confirm-create-btn"
+                            onClick={handleCreatePlaylist}
+                            disabled={creating || !newPlaylistName.trim()}
+                        >
+                            Tạo mới
+                        </button>
                     </div>
                 </div>
-            )}
+            </BaseModal>
         </div>
     );
 };

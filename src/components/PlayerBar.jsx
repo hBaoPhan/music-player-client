@@ -1,13 +1,13 @@
 import '../styles/PlayerBar.css';
 import React, { useRef, useEffect, useState } from 'react';
-import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX, FiHeart } from 'react-icons/fi';
+import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX, FiHeart, FiShuffle } from 'react-icons/fi';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import userService from '../services/userService';
 
 const PlayerBar = () => {
-    const { currentSong, isPlaying, setIsPlaying, playNext, playPrev } = usePlayer();
+    const { currentSong, isPlaying, setIsPlaying, playNext, playPrev, isShuffle, setIsShuffle } = usePlayer();
     const { currentUser, getUser } = useAuth();
     const { showToast } = useToast();
     const audioRef = useRef(null);
@@ -136,6 +136,16 @@ const PlayerBar = () => {
 
             <div className="controls-wrapper">
                 <div className="buttons-group">
+                    <button
+                        type="button"
+                        className={`control-icon-btn ${isShuffle ? 'control-icon-btn-active' : ''}`}
+                        onClick={() => setIsShuffle((prev) => !prev)}
+                        title={isShuffle ? 'Tắt xáo trộn' : 'Bật xáo trộn'}
+                        aria-label={isShuffle ? 'Turn off shuffle' : 'Turn on shuffle'}
+                    >
+                        <FiShuffle className="control-btn text-xl" />
+                    </button>
+
                     <FiSkipBack className="control-btn text-xl" onClick={playPrev} />
 
                     <button onClick={togglePlay} className="play-pause-btn">
