@@ -1,16 +1,17 @@
 import '../styles/Admin.css';
 import React, { useState, useEffect } from 'react';
-import { FiTrash2, FiUsers, FiSearch, FiShield, FiUser, FiX, FiEdit2 } from 'react-icons/fi';
+import { FiUsers, FiShield, FiUser } from 'react-icons/fi';
 import userService from '../services/userService';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import BaseModal from '../components/BaseModal';
+import AdminSearchBox from '../components/AdminSearchBox';
+import AdminActionButtons from '../components/AdminActionButtons';
 
-/* ─── Role-Edit Modal ─── */
 const RoleModal = ({ user, onClose, onSaved }) => {
     const { showToast } = useToast();
-    const [selected, setSelected]   = useState(user.role);
-    const [loading,  setLoading]    = useState(false);
+    const [selected, setSelected] = useState(user.role);
+    const [loading, setLoading] = useState(false);
 
     const handleSave = async () => {
         if (selected === user.role) { onClose(); return; }
@@ -29,84 +30,81 @@ const RoleModal = ({ user, onClose, onSaved }) => {
     };
 
     return (
-        <BaseModal 
-            onClose={onClose} 
-            title="Thay đổi vai trò" 
+        <BaseModal
+            onClose={onClose}
+            title="Thay đổi vai trò"
             contentClassName="admin-modal-content admin-role-modal"
         >
 
-                <div className="admin-role-user-info">
-                    <div className="admin-user-avatar admin-role-avatar">
-                        <span>{user.username?.charAt(0).toUpperCase() || 'U'}</span>
+            <div className="admin-role-user-info">
+                <div className="admin-user-avatar admin-role-avatar">
+                    <span>{user.username?.charAt(0).toUpperCase() || 'U'}</span>
+                </div>
+                <div>
+                    <p className="admin-role-username">{user.username}</p>
+                    <p className="admin-role-email">{user.email}</p>
+                </div>
+            </div>
+
+            <p className="admin-role-label">Chọn vai trò mới:</p>
+
+            <div className="admin-role-options">
+                <button
+                    id="role-option-user"
+                    type="button"
+                    className={`admin-role-option${selected === 'USER' ? ' admin-role-option--selected admin-role-option--user' : ''}`}
+                    onClick={() => setSelected('USER')}
+                >
+                    <div className="admin-role-option-icon admin-role-option-icon--user">
+                        <FiUser />
                     </div>
                     <div>
-                        <p className="admin-role-username">{user.username}</p>
-                        <p className="admin-role-email">{user.email}</p>
+                        <p className="admin-role-option-name">User</p>
+                        <p className="admin-role-option-desc">Người dùng thông thường</p>
                     </div>
-                </div>
+                    {selected === 'USER' && <span className="admin-role-option-check">✓</span>}
+                </button>
 
-                <p className="admin-role-label">Chọn vai trò mới:</p>
+                <button
+                    id="role-option-admin"
+                    type="button"
+                    className={`admin-role-option${selected === 'ADMIN' ? ' admin-role-option--selected admin-role-option--admin' : ''}`}
+                    onClick={() => setSelected('ADMIN')}
+                >
+                    <div className="admin-role-option-icon admin-role-option-icon--admin">
+                        <FiShield />
+                    </div>
+                    <div>
+                        <p className="admin-role-option-name">Admin</p>
+                        <p className="admin-role-option-desc">Toàn quyền quản trị</p>
+                    </div>
+                    {selected === 'ADMIN' && <span className="admin-role-option-check">✓</span>}
+                </button>
+            </div>
 
-                <div className="admin-role-options">
-                    {/* USER option */}
-                    <button
-                        id="role-option-user"
-                        type="button"
-                        className={`admin-role-option${selected === 'USER' ? ' admin-role-option--selected admin-role-option--user' : ''}`}
-                        onClick={() => setSelected('USER')}
-                    >
-                        <div className="admin-role-option-icon admin-role-option-icon--user">
-                            <FiUser />
-                        </div>
-                        <div>
-                            <p className="admin-role-option-name">User</p>
-                            <p className="admin-role-option-desc">Người dùng thông thường</p>
-                        </div>
-                        {selected === 'USER' && <span className="admin-role-option-check">✓</span>}
-                    </button>
-
-                    {/* ADMIN option */}
-                    <button
-                        id="role-option-admin"
-                        type="button"
-                        className={`admin-role-option${selected === 'ADMIN' ? ' admin-role-option--selected admin-role-option--admin' : ''}`}
-                        onClick={() => setSelected('ADMIN')}
-                    >
-                        <div className="admin-role-option-icon admin-role-option-icon--admin">
-                            <FiShield />
-                        </div>
-                        <div>
-                            <p className="admin-role-option-name">Admin</p>
-                            <p className="admin-role-option-desc">Toàn quyền quản trị</p>
-                        </div>
-                        {selected === 'ADMIN' && <span className="admin-role-option-check">✓</span>}
-                    </button>
-                </div>
-
-                <div className="admin-modal-footer">
-                    <button type="button" className="admin-btn-cancel" onClick={onClose}>Hủy</button>
-                    <button
-                        id="btn-save-role"
-                        type="button"
-                        className="admin-btn-submit"
-                        onClick={handleSave}
-                        disabled={loading}
-                    >
-                        {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
-                    </button>
-                </div>
+            <div className="admin-modal-footer">
+                <button type="button" className="admin-btn-cancel" onClick={onClose}>Hủy</button>
+                <button
+                    id="btn-save-role"
+                    type="button"
+                    className="admin-btn-submit"
+                    onClick={handleSave}
+                    disabled={loading}
+                >
+                    {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
+                </button>
+            </div>
         </BaseModal>
     );
 };
 
-/* ─── Main Page ─── */
 const AdminUsers = () => {
-    const { showToast }    = useToast();
-    const { currentUser }  = useAuth();
-    const [users, setUsers]           = useState([]);
-    const [loading, setLoading]       = useState(true);
+    const { showToast } = useToast();
+    const { currentUser } = useAuth();
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [roleTarget, setRoleTarget] = useState(null); // user being edited
+    const [roleTarget, setRoleTarget] = useState(null);
 
     const fetchUsers = async () => {
         try {
@@ -126,7 +124,7 @@ const AdminUsers = () => {
         const keyword = searchTerm.toLowerCase();
         return (
             (user.username && user.username.toLowerCase().includes(keyword)) ||
-            (user.email    && user.email.toLowerCase().includes(keyword))
+            (user.email && user.email.toLowerCase().includes(keyword))
         );
     });
 
@@ -171,17 +169,12 @@ const AdminUsers = () => {
                     <span className="admin-count-badge">{users.length} người dùng</span>
                 </div>
                 <div className="admin-actions-bar">
-                    <div className="admin-search-box">
-                        <FiSearch className="admin-search-icon" />
-                        <input
-                            id="search-users"
-                            type="text"
-                            className="admin-search-input"
-                            placeholder="Tìm kiếm người dùng..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
+                    <AdminSearchBox
+                        id="search-users"
+                        placeholder="Tìm kiếm người dùng..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </div>
             </div>
 
@@ -218,27 +211,15 @@ const AdminUsers = () => {
                                         <td className="admin-td-email">{user.email}</td>
                                         <td>{getRoleBadge(user.role)}</td>
                                         <td>
-                                            <div className="admin-row-actions">
-                                                {/* Edit role button — disabled for self */}
-                                                <button
-                                                    id={`btn-edit-role-${user.id}`}
-                                                    className="admin-edit-btn"
-                                                    onClick={() => setRoleTarget(user)}
-                                                    title="Thay đổi vai trò"
-                                                    disabled={isSelf(user.id)}
-                                                >
-                                                    <FiEdit2 />
-                                                </button>
-                                                <button
-                                                    id={`btn-delete-user-${user.id}`}
-                                                    className="admin-delete-btn"
-                                                    onClick={() => handleDelete(user.id, user.username)}
-                                                    title="Xóa"
-                                                    disabled={isSelf(user.id)}
-                                                >
-                                                    <FiTrash2 />
-                                                </button>
-                                            </div>
+                                            <AdminActionButtons
+                                                editId={`btn-edit-role-${user.id}`}
+                                                deleteId={`btn-delete-user-${user.id}`}
+                                                editTitle="Thay đổi vai trò"
+                                                onEdit={() => setRoleTarget(user)}
+                                                onDelete={() => handleDelete(user.id, user.username)}
+                                                editDisabled={isSelf(user.id)}
+                                                deleteDisabled={isSelf(user.id)}
+                                            />
                                         </td>
                                     </tr>
                                 ))

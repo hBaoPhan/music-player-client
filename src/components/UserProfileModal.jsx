@@ -12,7 +12,6 @@ const UserProfileModal = ({ onClose }) => {
     const { showToast } = useToast();
     const [activeTab, setActiveTab] = useState('profile');
 
-    // Profile form state
     const [profileData, setProfileData] = useState({
         username: currentUser?.username || '',
         email: currentUser?.email || ''
@@ -20,7 +19,6 @@ const UserProfileModal = ({ onClose }) => {
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [profileLoading, setProfileLoading] = useState(false);
 
-    // Password form state
     const [passwordData, setPasswordData] = useState({
         oldPassword: '',
         newPassword: '',
@@ -129,161 +127,161 @@ const UserProfileModal = ({ onClose }) => {
             contentClassName="profile-modal-content"
             closeBtnClassName="profile-modal-close-btn"
         >
-                <div className="profile-modal-header">
-                    <div className="profile-avatar-large">
-                        <span>{currentUser?.username?.charAt(0).toUpperCase() || 'U'}</span>
-                    </div>
-                    <h3 className="profile-modal-username">{currentUser?.username}</h3>
-                    <p className="profile-modal-role">
-                        {currentUser?.role === 'ADMIN' ? 'Quản trị viên' : 'Người dùng'}
-                    </p>
+            <div className="profile-modal-header">
+                <div className="profile-avatar-large">
+                    <span>{currentUser?.username?.charAt(0).toUpperCase() || 'U'}</span>
                 </div>
+                <h3 className="profile-modal-username">{currentUser?.username}</h3>
+                <p className="profile-modal-role">
+                    {currentUser?.role === 'ADMIN' ? 'Quản trị viên' : 'Người dùng'}
+                </p>
+            </div>
 
-                <div className="profile-tab-nav">
-                    <button
-                        className={`profile-tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('profile')}
-                    >
-                        <FiUser />
-                        <span>Thông tin</span>
-                    </button>
-                    <button
-                        className={`profile-tab-btn ${activeTab === 'password' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('password')}
-                    >
-                        <FiKey />
-                        <span>Đổi mật khẩu</span>
-                    </button>
-                </div>
+            <div className="profile-tab-nav">
+                <button
+                    className={`profile-tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('profile')}
+                >
+                    <FiUser />
+                    <span>Thông tin</span>
+                </button>
+                <button
+                    className={`profile-tab-btn ${activeTab === 'password' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('password')}
+                >
+                    <FiKey />
+                    <span>Đổi mật khẩu</span>
+                </button>
+            </div>
 
-                <div className="profile-tab-content">
-                    {activeTab === 'profile' && (
-                        <form onSubmit={handleProfileSubmit}>
-                            <div className="profile-info-group">
-                                <label className="profile-info-label">
-                                    <FiUser className="profile-label-icon" />
-                                    Tên người dùng
-                                </label>
-                                {isEditingProfile ? (
-                                    <input
-                                        type="text"
-                                        name="username"
-                                        className="profile-info-input"
-                                        value={profileData.username}
-                                        onChange={handleProfileChange}
-                                        required
-                                    />
-                                ) : (
-                                    <p className="profile-info-value">{currentUser?.username}</p>
-                                )}
-                            </div>
+            <div className="profile-tab-content">
+                {activeTab === 'profile' && (
+                    <form onSubmit={handleProfileSubmit}>
+                        <div className="profile-info-group">
+                            <label className="profile-info-label">
+                                <FiUser className="profile-label-icon" />
+                                Tên người dùng
+                            </label>
+                            {isEditingProfile ? (
+                                <input
+                                    type="text"
+                                    name="username"
+                                    className="profile-info-input"
+                                    value={profileData.username}
+                                    onChange={handleProfileChange}
+                                    required
+                                />
+                            ) : (
+                                <p className="profile-info-value">{currentUser?.username}</p>
+                            )}
+                        </div>
 
-                            <div className="profile-info-group">
-                                <label className="profile-info-label">
-                                    <FiMail className="profile-label-icon" />
-                                    Email
-                                </label>
-                                {isEditingProfile ? (
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        className="profile-info-input"
-                                        value={profileData.email}
-                                        onChange={handleProfileChange}
-                                        required
-                                    />
-                                ) : (
-                                    <p className="profile-info-value">{currentUser?.email}</p>
-                                )}
-                            </div>
+                        <div className="profile-info-group">
+                            <label className="profile-info-label">
+                                <FiMail className="profile-label-icon" />
+                                Email
+                            </label>
+                            {isEditingProfile ? (
+                                <input
+                                    type="email"
+                                    name="email"
+                                    className="profile-info-input"
+                                    value={profileData.email}
+                                    onChange={handleProfileChange}
+                                    required
+                                />
+                            ) : (
+                                <p className="profile-info-value">{currentUser?.email}</p>
+                            )}
+                        </div>
 
-                            <div className="profile-actions">
-                                {isEditingProfile ? (
-                                    <>
-                                        <button
-                                            type="button"
-                                            className="profile-btn-cancel"
-                                            onClick={handleCancelEdit}
-                                        >
-                                            Hủy
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            className="profile-btn-save"
-                                            disabled={profileLoading}
-                                        >
-                                            <FiCheck />
-                                            {profileLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
-                                        </button>
-                                    </>
-                                ) : (
+                        <div className="profile-actions">
+                            {isEditingProfile ? (
+                                <>
                                     <button
                                         type="button"
-                                        className="profile-btn-edit"
-                                        onClick={() => setIsEditingProfile(true)}
+                                        className="profile-btn-cancel"
+                                        onClick={handleCancelEdit}
                                     >
-                                        <FiEdit3 />
-                                        Chỉnh sửa thông tin
+                                        Hủy
                                     </button>
-                                )}
-                            </div>
-                        </form>
-                    )}
-
-                    {activeTab === 'password' && (
-                        <form onSubmit={handlePasswordSubmit}>
-                            <div className="profile-info-group">
-                                <label className="profile-info-label">Mật khẩu hiện tại</label>
-                                <input
-                                    type="password"
-                                    name="oldPassword"
-                                    className="profile-info-input"
-                                    placeholder="••••••••"
-                                    value={passwordData.oldPassword}
-                                    onChange={handlePasswordChange}
-
-                                />
-                            </div>
-
-                            <div className="profile-info-group">
-                                <label className="profile-info-label">Mật khẩu mới</label>
-                                <input
-                                    type="password"
-                                    name="newPassword"
-                                    className="profile-info-input"
-                                    placeholder="••••••••"
-                                    value={passwordData.newPassword}
-                                    onChange={handlePasswordChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="profile-info-group">
-                                <label className="profile-info-label">Xác nhận mật khẩu mới</label>
-                                <input
-                                    type="password"
-                                    name="confirmPassword"
-                                    className="profile-info-input"
-                                    placeholder="••••••••"
-                                    value={passwordData.confirmPassword}
-                                    onChange={handlePasswordChange}
-                                    required
-                                />
-                            </div>
-
-                            <div className="profile-actions">
+                                    <button
+                                        type="submit"
+                                        className="profile-btn-save"
+                                        disabled={profileLoading}
+                                    >
+                                        <FiCheck />
+                                        {profileLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
+                                    </button>
+                                </>
+                            ) : (
                                 <button
-                                    type="submit"
-                                    className="profile-btn-save"
-                                    disabled={passwordLoading}
+                                    type="button"
+                                    className="profile-btn-edit"
+                                    onClick={() => setIsEditingProfile(true)}
                                 >
-                                    <FiKey />
-                                    {passwordLoading ? 'Đang xử lý...' : 'Cập nhật mật khẩu'}
+                                    <FiEdit3 />
+                                    Chỉnh sửa thông tin
                                 </button>
-                            </div>
-                        </form>
-                    )}
-                </div>
+                            )}
+                        </div>
+                    </form>
+                )}
+
+                {activeTab === 'password' && (
+                    <form onSubmit={handlePasswordSubmit}>
+                        <div className="profile-info-group">
+                            <label className="profile-info-label">Mật khẩu hiện tại</label>
+                            <input
+                                type="password"
+                                name="oldPassword"
+                                className="profile-info-input"
+                                placeholder="••••••••"
+                                value={passwordData.oldPassword}
+                                onChange={handlePasswordChange}
+
+                            />
+                        </div>
+
+                        <div className="profile-info-group">
+                            <label className="profile-info-label">Mật khẩu mới</label>
+                            <input
+                                type="password"
+                                name="newPassword"
+                                className="profile-info-input"
+                                placeholder="••••••••"
+                                value={passwordData.newPassword}
+                                onChange={handlePasswordChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="profile-info-group">
+                            <label className="profile-info-label">Xác nhận mật khẩu mới</label>
+                            <input
+                                type="password"
+                                name="confirmPassword"
+                                className="profile-info-input"
+                                placeholder="••••••••"
+                                value={passwordData.confirmPassword}
+                                onChange={handlePasswordChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="profile-actions">
+                            <button
+                                type="submit"
+                                className="profile-btn-save"
+                                disabled={passwordLoading}
+                            >
+                                <FiKey />
+                                {passwordLoading ? 'Đang xử lý...' : 'Cập nhật mật khẩu'}
+                            </button>
+                        </div>
+                    </form>
+                )}
+            </div>
         </BaseModal>
     );
 };

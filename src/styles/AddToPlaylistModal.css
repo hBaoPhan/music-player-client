@@ -5,7 +5,7 @@
 }
 
 .modal-content {
-    @apply bg-gray-800 rounded-lg p-6 w-[90%] max-w-[400px] relative shadow-[0_10px_25px_rgba(0,0,0,0.5)];
+    @apply bg-gray-800 rounded-lg p-6 w-[90%] max-w-[400px] relative shadow-[0_10px_25px_rgba(0, 0, 0, 0.5)];
 }
 
 .close-modal-btn {
@@ -44,7 +44,6 @@
     @apply opacity-50 cursor-not-allowed;
 }
 
-/* Scrollbar styles inside CSS using raw CSS since Tailwind doesn't have standard utility for this without plugins */
 .playlists-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -55,6 +54,5 @@
 
 .playlists-list::-webkit-scrollbar-thumb {
     background-color: #4b5563;
-    /* Tailwind gray-600 */
     border-radius: 3px;
 }
