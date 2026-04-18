@@ -12,6 +12,7 @@ import Playlist from './pages/Playlist'
 import AdminSongs from './pages/AdminSongs'
 import AdminUsers from './pages/AdminUsers'
 import AlbumPage from './pages/AlbumPage'
+import Profile from './pages/Profile'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="playlist" element={<Playlist />} />
         <Route path="favorites" element={<Favorites />} />
         <Route path="album/:id" element={<AlbumPage />} />
+        <Route path="profile" element={<Profile />} />
 
         <Route element={<AdminRoute />}>
           <Route path="admin/songs" element={<AdminSongs />} />

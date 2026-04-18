@@ -1,0 +1,121 @@
+@reference "tailwindcss";
+
+.profile-container {
+    @apply flex flex-col w-full h-full text-white bg-linear-to-b from-gray-800 to-gray-900 overflow-y-auto;
+}
+
+.profile-header {
+    @apply flex gap-6 p-8 bg-linear-to-b from-gray-700/80 to-transparent pt-12;
+}
+
+.profile-avatar-wrapper {
+    @apply w-48 h-48 rounded-full bg-gray-800 shadow-2xl flex items-center justify-center shrink-0 overflow-hidden;
+}
+
+.profile-avatar-icon {
+    @apply text-[90px] text-gray-500;
+}
+
+.profile-info {
+    @apply flex flex-col justify-end gap-2 relative z-10 bottom-4;
+}
+
+.profile-label {
+    @apply text-sm font-semibold tracking-wider text-white;
+}
+
+.profile-name {
+    @apply text-[5rem] font-bold leading-none tracking-tighter m-0 pb-2;
+}
+
+.profile-stats {
+    @apply flex items-center gap-2 text-sm font-medium text-gray-300;
+}
+
+.profile-stats-dot {
+    @apply text-gray-500 text-[10px];
+}
+
+.profile-content {
+    @apply p-8 bg-black/20 flex-1;
+}
+
+.profile-section-title-wrapper {
+    @apply flex items-baseline justify-between mb-4;
+}
+
+.profile-section-title {
+    @apply text-2xl font-bold m-0;
+}
+
+.profile-section-subtitle {
+    @apply text-sm text-gray-400 mt-1;
+}
+
+.profile-show-all {
+    @apply text-sm font-bold text-gray-400 hover:text-white transition-colors cursor-pointer;
+}
+
+.top-tracks-list {
+    @apply flex flex-col gap-1;
+}
+
+.track-item {
+    @apply flex items-center gap-4 p-2 rounded-md hover:bg-white/10 transition-colors cursor-pointer;
+}
+
+.track-index {
+    @apply w-8 text-center text-gray-400 text-base flex items-center justify-center shrink-0;
+}
+
+.track-index-number {
+    @apply block group-hover:hidden;
+}
+
+.track-play-icon {
+    @apply hidden group-hover:block text-white text-base;
+}
+
+.track-image-wrapper {
+    @apply w-10 h-10 shrink-0 bg-gray-800 overflow-hidden rounded-sm;
+}
+
+.track-image {
+    @apply w-full h-full object-cover;
+}
+
+.track-info {
+    @apply flex flex-col flex-1 overflow-hidden;
+}
+
+.track-title {
+    @apply text-base font-medium text-white truncate;
+}
+
+.track-artist {
+    @apply text-sm text-gray-400 truncate mt-0.5 group-hover:text-white transition-colors;
+}
+
+.track-album {
+    @apply hidden md:block text-sm text-gray-400 truncate flex-1 hover:text-white transition-colors cursor-pointer hover:underline;
+}
+
+.track-actions {
+    @apply flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity;
+}
+
+.track-fav-icon {
+    @apply text-green-500 text-lg mx-2;
+}
+
+.track-action-btn {
+    @apply text-gray-400 hover:text-white text-lg transition-colors p-1;
+}
+
+.track-duration {
+    @apply text-sm text-gray-400 w-12 text-right shrink-0;
+}
+
+.track-actions-more {
+    @apply text-xl text-gray-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100 p-1 shrink-0;
+}

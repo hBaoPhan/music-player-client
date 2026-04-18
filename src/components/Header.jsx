@@ -1,6 +1,6 @@
 import '../styles/Header.css';
 import React, { useState, useEffect, useRef } from 'react';
-import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiUser, FiChevronDown, FiHeart, FiPlus } from 'react-icons/fi';
+import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiUser, FiChevronDown, FiHeart, FiPlus, FiLock } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import songService from '../services/songService';
@@ -257,7 +257,19 @@ const Header = () => {
                                         </div>
                                     </div>
 
-                                    {/* Profile / Change Password */}
+                                    {/* Profile Page */}
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={() => {
+                                            setIsDropdownOpen(false);
+                                            navigate('/profile');
+                                        }}
+                                    >
+                                        <FiUser className="text-lg" />
+                                        <span>Hồ sơ</span>
+                                    </button>
+
+                                    {/* Account / Change Password */}
                                     <button
                                         className="dropdown-item"
                                         onClick={() => {
@@ -265,8 +277,8 @@ const Header = () => {
                                             setShowProfileModal(true);
                                         }}
                                     >
-                                        <FiUser className="text-lg" />
-                                        <span>Tài khoản của tôi</span>
+                                        <FiLock className="text-lg" />
+                                        <span>Tài khoản</span>
                                     </button>
 
                                     {/* Logout */}
