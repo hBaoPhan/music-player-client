@@ -78,7 +78,7 @@ const Profile = () => {
             <div className="profile-content">
                 <div className="profile-section-title-wrapper">
                     <div>
-                        <h2 className="profile-section-title">Nhạc say đắm tháng này</h2>
+                        <h2 className="profile-section-title">Tháng này bạn đã say đắm cùng</h2>
                     </div>
                     <span className="profile-show-all">Hiện tất cả</span>
                 </div>
@@ -145,7 +145,7 @@ const Profile = () => {
 
                 <div className="profile-section-title-wrapper mt-12">
                     <div>
-                        <h2 className="profile-section-title">Danh sách phát công khai</h2>
+                        <h2 className="profile-section-title">Danh sách phát</h2>
                     </div>
                 </div>
 

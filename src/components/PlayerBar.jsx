@@ -38,6 +38,20 @@ const PlayerBar = () => {
         }
     }, [isPlaying, currentSong]);
 
+    useEffect(() => {
+        const recordHistory = async () => {
+            if (currentUser && currentSong) {
+                try {
+                    await userService.addHistorySong(currentUser.id, currentSong.id, 0);
+                } catch (error) {
+                    console.error("Lỗi khi lưu lịch sử nghe nhạc:", error);
+                }
+            }
+        };
+
+        recordHistory();
+    }, [currentSong, currentUser]);
+
     const togglePlay = () => {
         setIsPlaying(!isPlaying);
     };

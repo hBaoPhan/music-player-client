@@ -1,7 +1,7 @@
 import '../styles/Sidebar.css';
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiHome, FiList, FiHeart, FiChevronsLeft, FiChevronsRight, FiMusic, FiUsers, FiShield } from 'react-icons/fi';
+import { FiHome, FiList, FiHeart, FiClock, FiChevronsLeft, FiChevronsRight, FiMusic, FiUsers, FiShield } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -22,6 +22,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
 
     const secondaryItems = [
         { path: '/favorites', icon: FiHeart, label: 'Bài Hát Yêu Thích' },
+        { path: '/history', icon: FiClock, label: 'Lịch Sử Nghe' },
     ];
 
     const adminItems = [
@@ -36,7 +37,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
         const handleNavClick = () => {
             if (!item.path) return;
 
-            const restrictedPaths = ['/playlist', '/favorites'];
+            const restrictedPaths = ['/playlist', '/favorites', '/history'];
             if (!currentUser && restrictedPaths.includes(item.path)) {
                 showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
                 return;
