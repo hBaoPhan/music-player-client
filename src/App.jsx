@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import Login from './components/Login'
 import Register from './components/Register'
 import OAuth2RedirectHandler from './components/OAuth2RedirectHandler'
@@ -17,25 +17,28 @@ import History from './pages/History'
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
-      <Route path="/" element={<MainLayout />}>
-        <Route index element={<Home />} />
+    <>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
 
-        <Route path="playlist" element={<Playlist />} />
-        <Route path="favorites" element={<Favorites />} />
-        <Route path="history" element={<History />} />
-        <Route path="album/:id" element={<AlbumPage />} />
-        <Route path="profile" element={<Profile />} />
+          <Route path="playlist" element={<Playlist />} />
+          <Route path="favorites" element={<Favorites />} />
+          <Route path="history" element={<History />} />
+          <Route path="album/:id" element={<AlbumPage />} />
+          <Route path="profile" element={<Profile />} />
 
-        <Route element={<AdminRoute />}>
-          <Route path="admin/songs" element={<AdminSongs />} />
-          <Route path="admin/users" element={<AdminUsers />} />
+          <Route element={<AdminRoute />}>
+            <Route path="admin/songs" element={<AdminSongs />} />
+            <Route path="admin/users" element={<AdminUsers />} />
+          </Route>
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
+      <Analytics />
+    </>
   )
 }
 
