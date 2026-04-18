@@ -3,6 +3,7 @@ import { FiPlay, FiHeart, FiPlus } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import userService from '../services/userService';
+import '../styles/SongCard.css';
 
 const SongCard = ({ 
     song, 

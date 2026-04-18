@@ -9,11 +9,12 @@
 }
 
 .profile-avatar-wrapper {
-    @apply w-48 h-48 rounded-full bg-gray-800 shadow-2xl flex items-center justify-center shrink-0 overflow-hidden;
+    @apply w-48 h-48 rounded-full shadow-2xl flex items-center justify-center shrink-0 overflow-hidden;
+    background: linear-gradient(135deg, #a855f7 0%, #7c3aed 50%, #6d28d9 100%);
 }
 
-.profile-avatar-icon {
-    @apply text-[90px] text-gray-500;
+.profile-avatar-text {
+    @apply text-[90px] font-bold text-white;
 }
 
 .profile-info {
@@ -118,4 +119,20 @@
 
 .track-actions-more {
     @apply text-xl text-gray-400 hover:text-white transition-colors opacity-0 group-hover:opacity-100 p-1 shrink-0;
+}
+
+.profile-playlists-grid {
+    @apply grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mt-4 pb-8;
+}
+
+.profile-playlist-card {
+    @apply p-4 transition-all duration-300 bg-gray-800/40 rounded-xl cursor-pointer hover:bg-gray-800 hover:shadow-xl;
+}
+
+.profile-playlist-icon-wrapper {
+    @apply w-full aspect-square rounded-lg flex justify-center items-center bg-linear-to-br from-indigo-500 to-purple-600 shadow-lg mb-4;
+}
+
+.profile-playlist-title {
+    @apply text-white font-semibold text-base truncate whitespace-nowrap;
 }

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import userService from '../services/userService';
-import { FiUser, FiPlay, FiPlus, FiMoreHorizontal } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { FiUser, FiPlay, FiPlus, FiMoreHorizontal, FiMusic } from 'react-icons/fi';
 import { BsCheckCircleFill } from 'react-icons/bs';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import '../styles/Profile.css';
 
 const Profile = () => {
+    const navigate = useNavigate();
     const { currentUser } = useAuth();
     const { setCurrentSong, setIsPlaying, setSongQueue, songQueue } = usePlayer() || {};
     const [topTracks, setTopTracks] = useState([]);
@@ -48,6 +50,10 @@ const Profile = () => {
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
+    const getInitial = (name) => {
+        return name ? name.charAt(0).toUpperCase() : 'U';
+    };
+
     if (!currentUser) {
         return <div className="text-white p-8">Vui lòng đăng nhập để xem hồ sơ.</div>;
     }
@@ -56,7 +62,7 @@ const Profile = () => {
         <div className="profile-container">
             <div className="profile-header">
                 <div className="profile-avatar-wrapper">
-                    <FiUser className="profile-avatar-icon" />
+                    <span className="profile-avatar-text">{getInitial(currentUser.username)}</span>
                 </div>
                 <div className="profile-info">
                     <span className="profile-label">Profile</span>
@@ -72,7 +78,7 @@ const Profile = () => {
             <div className="profile-content">
                 <div className="profile-section-title-wrapper">
                     <div>
-                        <h2 className="profile-section-title">Nghe nhiều nhất tháng này</h2>
+                        <h2 className="profile-section-title">Nhạc say đắm tháng này</h2>
                     </div>
                     <span className="profile-show-all">Hiện tất cả</span>
                 </div>
@@ -81,7 +87,7 @@ const Profile = () => {
                     <div className="text-gray-400 mt-4">Đang tải...</div>
                 ) : topTracks.slice(0, 5).length > 0 ? (
                     <div className="top-tracks-list">
-                        {topTracks.map((song, index) => {
+                        {topTracks.slice(0, 5).map((song, index) => {
                             const isFav = currentUser?.favoriteSongs?.some(fav => fav.id === song.id);
                             return (
                                 <div
@@ -111,8 +117,8 @@ const Profile = () => {
                                         {isFav ? (
                                             <BsCheckCircleFill className="track-fav-icon" />
                                         ) : (
-                                            <button 
-                                                className="track-action-btn" 
+                                            <button
+                                                className="track-action-btn"
                                                 title="Thêm vào danh sách phát"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -135,6 +141,31 @@ const Profile = () => {
                     </div>
                 ) : (
                     <div className="text-gray-400 mt-4">Chưa có bài hát nào được nghe trong tháng này.</div>
+                )}
+
+                <div className="profile-section-title-wrapper mt-12">
+                    <div>
+                        <h2 className="profile-section-title">Danh sách phát công khai</h2>
+                    </div>
+                </div>
+
+                {currentUser?.playlists?.length > 0 ? (
+                    <div className="profile-playlists-grid">
+                        {currentUser.playlists.map(playlist => (
+                            <div
+                                key={playlist.id}
+                                className="profile-playlist-card group"
+                                onClick={() => navigate('/playlist')}
+                            >
+                                <div className="profile-playlist-icon-wrapper">
+                                    <FiMusic className="text-white text-4xl" />
+                                </div>
+                                <h3 className="profile-playlist-title">{playlist.name}</h3>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-gray-400 mt-4 pb-8">Chưa có danh sách phát nào.</div>
                 )}
             </div>
 
