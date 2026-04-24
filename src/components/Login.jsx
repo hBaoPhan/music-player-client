@@ -1,12 +1,12 @@
 import '../styles/Login.css';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import authService from '../services/authService';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
 const Login = () => {
-    const { setCurrentUser, getUser } = useAuth();
+    const { getUser } = useAuth();
     const { showToast } = useToast();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -18,6 +18,16 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    useEffect(() => {
+        const code = searchParams.get('code');
+
+        if (code === 'account_locked') {
+            showToast('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ hỗ trợ!', 'error');
+            setSearchParams({}, { replace: true });
+        }
+    }, [searchParams, setSearchParams, showToast]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -34,14 +44,19 @@ const Login = () => {
 
             await getUser();
 
-            if (response.reactivated) {
-                showToast('Tài khoản của bạn đã được kích hoạt lại thành công! Chào mừng trở lại 🎵', 'success');
-            }
+            // if (response.reactivated) {
+            //     showToast('Tài khoản của bạn đã được kích hoạt lại thành công! Chào mừng trở lại 🎵', 'success');
+            // }
 
             navigate('/');
         } catch (err) {
-            setError('Tên đăng nhập/email hoặc mật khẩu không chính xác!');
-            console.error("Lỗi đăng nhập:", err);
+            const errorMessage =
+                err?.response?.data?.message ||
+                (typeof err?.response?.data === 'string' ? err.response.data : '') ||
+                'Tên đăng nhập/email hoặc mật khẩu không chính xác!';
+
+            // setError(errorMessage);
+            showToast(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
