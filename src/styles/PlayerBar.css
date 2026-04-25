@@ -37,11 +37,17 @@
 }
 
 .control-icon-btn {
-    @apply flex items-center justify-center;
+    @apply flex flex-col items-center justify-center relative;
 }
 
 .control-icon-btn-active .control-btn {
     @apply text-green-500 hover:text-green-400;
+}
+
+.control-icon-btn-active::after {
+    content: '';
+    @apply absolute block w-1 h-1 rounded-full bg-green-500;
+    bottom: -5px;
 }
 
 .play-pause-btn {

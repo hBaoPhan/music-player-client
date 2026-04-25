@@ -1,13 +1,13 @@
 import '../styles/PlayerBar.css';
 import React, { useRef, useEffect, useState } from 'react';
-import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX, FiHeart, FiShuffle } from 'react-icons/fi';
+import { FiPlay, FiPause, FiSkipForward, FiSkipBack, FiVolume2, FiVolumeX, FiHeart, FiShuffle, FiRepeat } from 'react-icons/fi';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import userService from '../services/userService';
 
 const PlayerBar = () => {
-    const { currentSong, isPlaying, setIsPlaying, playNext, playPrev, isShuffle, setIsShuffle } = usePlayer();
+    const { currentSong, isPlaying, setIsPlaying, playNext, playPrev, isShuffle, setIsShuffle, isRepeat, setIsRepeat } = usePlayer();
     const { currentUser, getUser } = useAuth();
     const { showToast } = useToast();
     const audioRef = useRef(null);
@@ -82,7 +82,12 @@ const PlayerBar = () => {
     };
 
     const handleEnded = () => {
-        playNext();
+        if (isRepeat) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play();
+        } else {
+            playNext();
+        }
     };
 
     const handleVolumeChange = (e) => {
@@ -167,6 +172,16 @@ const PlayerBar = () => {
                     </button>
 
                     <FiSkipForward className="control-btn text-xl" onClick={playNext} />
+
+                    <button
+                        type="button"
+                        className={`control-icon-btn ${isRepeat ? 'control-icon-btn-active' : ''}`}
+                        onClick={() => setIsRepeat((prev) => !prev)}
+                        title={isRepeat ? 'Tắt lặp lại' : 'Bật lặp lại'}
+                        aria-label={isRepeat ? 'Turn off repeat' : 'Turn on repeat'}
+                    >
+                        <FiRepeat className="control-btn text-xl" />
+                    </button>
                 </div>
 
                 <div className="progress-container">

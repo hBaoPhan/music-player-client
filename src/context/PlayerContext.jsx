@@ -7,6 +7,7 @@ export const PlayerProvider = ({ children }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [songQueue, setSongQueue] = useState([]);
     const [isShuffle, setIsShuffle] = useState(false);
+    const [isRepeat, setIsRepeat] = useState(false)
 
     const getRandomNextSong = () => {
         if (songQueue.length === 0) return null;
@@ -74,6 +75,8 @@ export const PlayerProvider = ({ children }) => {
             setSongQueue,
             isShuffle,
             setIsShuffle,
+            isRepeat,
+            setIsRepeat,
             playNext,
             playPrev
         }}>
