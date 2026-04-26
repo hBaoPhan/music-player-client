@@ -11,7 +11,7 @@
 }
 
 .sidebar-header {
-    @apply flex justify-end gap-2 px-2 mt-2 mb-3;
+    @apply flex justify-end gap-2 px-2 mt-1 mb-1;
     overflow: hidden;
 }
 

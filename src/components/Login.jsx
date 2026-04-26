@@ -22,9 +22,10 @@ const Login = () => {
 
     useEffect(() => {
         const code = searchParams.get('code');
+        const message = searchParams.get('message');
 
         if (code === 'account_locked') {
-            showToast('Tài khoản của bạn đã bị khóa. Vui lòng liên hệ hỗ trợ!', 'error');
+            showToast(message || 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ hỗ trợ!', 'error');
             setSearchParams({}, { replace: true });
         }
     }, [searchParams, setSearchParams, showToast]);
@@ -84,8 +85,25 @@ const Login = () => {
         }
     };
 
+    const handleContactSupport = () => {
+        const subject = encodeURIComponent('Yêu cầu hỗ trợ - SPOTIFOUR');
+        const body = encodeURIComponent('Xin chào,\n\nTôi cần hỗ trợ về:\n\n[Mô tả vấn đề của bạn tại đây]\n\nTrân trọng,');
+        window.location.href = `mailto:baophan4399@gmail.com?subject=${subject}&body=${body}`;
+    };
+
     return (
         <div className="login-wrapper">
+            <button
+                id="contact-support-btn"
+                className="contact-support-btn"
+                onClick={handleContactSupport}
+                title="Liên hệ hỗ trợ"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="contact-support-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <span>Liên hệ hỗ trợ</span>
+            </button>
             <div className="login-box">
 
                 <div className="text-center">

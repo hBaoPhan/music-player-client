@@ -77,6 +77,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
             </div>
 
             <nav className="nav-menu">
+                <div className="divider" />
                 {navItems.map(renderNavItem)}
                 {/* <div className="divider" /> */}
                 {secondaryItems.map(renderNavItem)}
@@ -84,10 +85,10 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
                 {isAdmin && (
                     <>
                         <div className="divider" />
-                        <div className="admin-section-label" title={isCollapsed ? 'Quản trị' : undefined}>
+                        {/* <div className="admin-section-label" title={isCollapsed ? 'Quản trị' : undefined}>
                             <FiShield className="admin-label-icon" />
                             <span className="nav-label">Quản Trị</span>
-                        </div>
+                        </div> */}
                         {adminItems.map(renderNavItem)}
                     </>
                 )}

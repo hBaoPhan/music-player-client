@@ -19,22 +19,22 @@ const OAuth2RedirectHandler = () => {
 
         const token = getUrlParameter('token');
         const refreshToken = getUrlParameter('refreshToken');
-        const reactivated = getUrlParameter('reactivated') === 'true';
-
         if (token) {
             localStorage.setItem('token', token);
             if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
             getUser().then(() => {
-                if (reactivated) {
-                    showToast('Tài khoản của bạn đã được kích hoạt lại thành công! Chào mừng trở lại 🎵', 'success');
-                }
                 navigate('/');
             }).catch(err => {
                 console.error('Lỗi khi lấy thông tin user sau OAuth2:', err);
                 navigate('/login');
             });
         } else {
-            navigate('/login');
+            const code = getUrlParameter('code');
+            const message = getUrlParameter('message');
+            const params = new URLSearchParams();
+            if (code) params.set('code', code);
+            if (message) params.set('message', message);
+            navigate(`/login${params.toString() ? `?${params.toString()}` : ''}`);
         }
     }, [location, navigate, getUser, showToast]);
 
