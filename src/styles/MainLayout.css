@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../index.css";
 
 .layout-container {
     @apply flex h-screen bg-gray-900 text-white overflow-hidden pt-[72px];

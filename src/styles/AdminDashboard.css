@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../index.css";
 
 .dash-page {
     @apply p-6 page-fade-in;
@@ -32,7 +32,6 @@
     @apply animate-spin;
 }
 
-/* ─── Overview Cards ─── */
 .dash-overview-grid {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6;
 }
