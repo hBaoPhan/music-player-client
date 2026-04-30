@@ -1,7 +1,7 @@
 import '../styles/Sidebar.css';
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiHome, FiList, FiHeart, FiClock, FiChevronsLeft, FiChevronsRight, FiMusic, FiUsers, FiShield } from 'react-icons/fi';
+import { FiHome, FiList, FiHeart, FiClock, FiChevronsLeft, FiChevronsRight, FiMusic, FiUsers, FiGrid } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -26,6 +26,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
     ];
 
     const adminItems = [
+        { path: '/admin/dashboard', icon: FiGrid, label: 'Bảng Điều Khiển' },
         { path: '/admin/songs', icon: FiMusic, label: 'Quản Lý Nhạc' },
         { path: '/admin/users', icon: FiUsers, label: 'Quản Lý Người Dùng' },
     ];

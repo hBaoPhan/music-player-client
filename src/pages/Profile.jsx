@@ -70,7 +70,9 @@ const Profile = () => {
                     <div className="profile-stats">
                         <span>{currentUser.playlists ? currentUser.playlists.length : 0} Public Playlists</span>
                         <span className="profile-stats-dot">•</span>
-                        <span>0 Following</span>
+                        <span>
+                            Thành viên từ {currentUser.createdAt ? new Intl.DateTimeFormat('vi-VN', { year: 'numeric', month: 'long' }).format(new Date(currentUser.createdAt)) : 'N/A'}
+                        </span>
                     </div>
                 </div>
             </div>

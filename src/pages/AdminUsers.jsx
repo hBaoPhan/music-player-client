@@ -189,6 +189,7 @@ const AdminUsers = () => {
                                 <th>Người dùng</th>
                                 <th>Email</th>
                                 <th>Vai trò</th>
+                                <th>Ngày tham gia</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -210,6 +211,9 @@ const AdminUsers = () => {
                                         </td>
                                         <td className="admin-td-email">{user.email}</td>
                                         <td>{getRoleBadge(user.role)}</td>
+                                        <td className="admin-td-date">
+                                            {user.createdAt ? new Intl.DateTimeFormat('vi-VN').format(new Date(user.createdAt)) : '—'}
+                                        </td>
                                         <td>
                                             <AdminActionButtons
                                                 editId={`btn-edit-role-${user.id}`}

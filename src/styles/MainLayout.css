@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../index.css";
 
 .layout-container {
     @apply flex h-screen bg-gray-900 text-white overflow-hidden pt-[72px];
@@ -22,21 +22,8 @@
     @apply flex-1 overflow-y-auto pb-24;
 }
 
-@keyframes pageFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 .page-wrapper {
-    @apply p-8;
-    animation: pageFadeIn 0.5s;
+    @apply p-8 page-fade-in;
 }
 
 .player-bar {

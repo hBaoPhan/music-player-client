@@ -14,6 +14,7 @@ import AdminUsers from './pages/AdminUsers'
 import AlbumPage from './pages/AlbumPage'
 import Profile from './pages/Profile'
 import History from './pages/History'
+import AdminDashboard from './pages/AdminDashboard'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
 
           <Route element={<AdminRoute />}>
+            <Route path="admin/dashboard" element={<AdminDashboard />} />
             <Route path="admin/songs" element={<AdminSongs />} />
             <Route path="admin/users" element={<AdminUsers />} />
           </Route>
