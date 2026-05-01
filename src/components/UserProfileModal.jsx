@@ -66,8 +66,11 @@ const UserProfileModal = ({ onClose }) => {
                 email: profileData.email
             });
 
-            if (result && result.token) {
-                localStorage.setItem('token', result.token);
+            if (result?.accessToken) {
+                localStorage.setItem('token', result.accessToken);
+            }
+            if (result?.refreshToken) {
+                localStorage.setItem('refreshToken', result.refreshToken);
             }
 
             showToast('Cập nhật thông tin thành công!', 'success');

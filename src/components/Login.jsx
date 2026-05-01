@@ -38,16 +38,12 @@ const Login = () => {
 
         try {
             const response = await authService.login(username, password);
-            localStorage.setItem('token', response.token);
+            localStorage.setItem('token', response.accessToken);
             if (response.refreshToken) {
                 localStorage.setItem('refreshToken', response.refreshToken);
             }
 
             await getUser();
-
-            // if (response.reactivated) {
-            //     showToast('Tài khoản của bạn đã được kích hoạt lại thành công! Chào mừng trở lại 🎵', 'success');
-            // }
 
             navigate('/');
         } catch (err) {

@@ -114,10 +114,13 @@ const AdminDashboard = () => {
     useEffect(() => {
         fetchData();
 
-        // WebSocket Setup
-        const socket = new SockJS(`${import.meta.env.VITE_API_BASE_URL}/ws`);
+        const token = localStorage.getItem('token');
+        const socket = new SockJS(`${import.meta.env.VITE_API_BASE_URL}/ws?token=${token}`);
         const client = new Client({
             webSocketFactory: () => socket,
+            connectHeaders: {
+                Authorization: `Bearer ${token}`
+            },
             onConnect: () => {
                 console.log('Connected to WebSocket');
                 client.subscribe('/topic/online-users', (message) => {

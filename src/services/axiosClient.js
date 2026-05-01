@@ -75,7 +75,7 @@ axiosClient.interceptors.response.use(
                         refreshToken: refreshText
                     });
                     
-                    const newToken = response.data.token;
+                    const newToken = response.data.accessToken;
                     const newRefreshToken = response.data.refreshToken;
 
                     localStorage.setItem('token', newToken);
