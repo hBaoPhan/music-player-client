@@ -38,7 +38,7 @@ const Login = () => {
 
         try {
             const response = await authService.login(username, password);
-            localStorage.setItem('token', response.accessToken);
+            localStorage.setItem('accessToken', response.accessToken);
             if (response.refreshToken) {
                 localStorage.setItem('refreshToken', response.refreshToken);
             }

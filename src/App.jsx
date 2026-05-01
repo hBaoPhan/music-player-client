@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/react'
-import Login from './components/Login'
-import Register from './components/Register'
+import Login from './pages/Login'
+import Register from './pages/Register'
 import OAuth2RedirectHandler from './components/OAuth2RedirectHandler'
 import AdminRoute from './components/AdminRoute'
 import { Route, Routes } from 'react-router-dom'

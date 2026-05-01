@@ -11,7 +11,7 @@ export const SocketProvider = ({ children }) => {
     const stompClientRef = useRef(null);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         
         // Only connect if user is logged in
         if (!token || !currentUser) {

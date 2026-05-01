@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const getUser = async () => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         if (token) {
             const decodedJwt = parseJwt(token);
             if (decodedJwt && decodedJwt.sub) {
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const logout = () => {
-        localStorage.removeItem('token');
+        localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         setCurrentUser(null);
         navigate('/login');

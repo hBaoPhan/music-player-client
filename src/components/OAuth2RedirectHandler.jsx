@@ -20,7 +20,7 @@ const OAuth2RedirectHandler = () => {
         const token = getUrlParameter('token');
         const refreshToken = getUrlParameter('refreshToken');
         if (token) {
-            localStorage.setItem('token', token);
+            localStorage.setItem('accessToken', token);
             if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
             getUser().then(() => {
                 navigate('/');

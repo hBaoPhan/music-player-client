@@ -25,7 +25,7 @@ const processQueue = (error, token = null) => {
 //REQUEST INTERCEPTOR
 axiosClient.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -64,7 +64,7 @@ axiosClient.interceptors.response.use(
                 const refreshText = localStorage.getItem('refreshToken');
                 if (!refreshText) {
                     console.error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!");
-                    localStorage.removeItem('token');
+                    localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
                     window.location.href = '/login';
                     return Promise.reject(error);
@@ -78,7 +78,7 @@ axiosClient.interceptors.response.use(
                     const newToken = response.data.accessToken;
                     const newRefreshToken = response.data.refreshToken;
 
-                    localStorage.setItem('token', newToken);
+                    localStorage.setItem('accessToken', newToken);
                     localStorage.setItem('refreshToken', newRefreshToken);
                     
                     axiosClient.defaults.headers.common['Authorization'] = 'Bearer ' + newToken;
@@ -91,7 +91,7 @@ axiosClient.interceptors.response.use(
                 } catch (refreshError) {
                     processQueue(refreshError, null);
                     console.error("Refresh token hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại!");
-                    localStorage.removeItem('token');
+                    localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
                     window.location.href = '/login';
                     return Promise.reject(refreshError);
@@ -101,7 +101,7 @@ axiosClient.interceptors.response.use(
             }
 
             if (error.response.status === 403) {
-                const token = localStorage.getItem('token');
+                const token = localStorage.getItem('accessToken');
                 if (token) {
                     console.error("Bạn không có quyền để thực hiện thao tác này!");
                     alert("Bạn không có quyền để thực hiện thao tác này!");

@@ -67,7 +67,7 @@ const UserProfileModal = ({ onClose }) => {
             });
 
             if (result?.accessToken) {
-                localStorage.setItem('token', result.accessToken);
+                localStorage.setItem('accessToken', result.accessToken);
             }
             if (result?.refreshToken) {
                 localStorage.setItem('refreshToken', result.refreshToken);
