@@ -6,15 +6,18 @@ import { BrowserRouter } from 'react-router-dom'
 import { PlayerProvider } from './context/PlayerContext.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { ToastProvider } from './context/ToastContext.jsx'
+import { SocketProvider } from './context/SocketContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
-          <PlayerProvider>
-            <App />
-          </PlayerProvider>
+          <SocketProvider>
+            <PlayerProvider>
+              <App />
+            </PlayerProvider>
+          </SocketProvider>
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>

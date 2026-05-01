@@ -8,10 +8,9 @@ import {
     LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 import dashboardService from '../services/dashboardService';
 import { useToast } from '../context/ToastContext';
+import { useSocket } from '../context/SocketContext';
 
 // ─── Colour palette for PieChart ──────────────────────────────────────────────
 const GENRE_COLORS = [
@@ -90,11 +89,11 @@ const PieLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
 // ─── Main Component ───────────────────────────────────────────────────────────
 const AdminDashboard = () => {
     const { showToast } = useToast();
+    const { onlineCount: globalOnlineCount } = useSocket();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [onlineCount, setOnlineCount] = useState(0);
-    const stompClientRef = useRef(null);
 
     const fetchData = useCallback(async (isRefresh = false) => {
         if (isRefresh) setRefreshing(true);
@@ -102,46 +101,24 @@ const AdminDashboard = () => {
         try {
             const res = await dashboardService.getStats();
             setData(res);
-            setOnlineCount(res.usersOnline);
+            setOnlineCount(globalOnlineCount || res.usersOnline);
         } catch {
             showToast('Không thể tải dữ liệu Dashboard!', 'error');
         } finally {
             setLoading(false);
             setRefreshing(false);
         }
-    }, [showToast]);
+    }, [showToast, globalOnlineCount]);
 
     useEffect(() => {
         fetchData();
-
-        const token = localStorage.getItem('token');
-        const socket = new SockJS(`${import.meta.env.VITE_API_BASE_URL}/ws?token=${token}`);
-        const client = new Client({
-            webSocketFactory: () => socket,
-            connectHeaders: {
-                Authorization: `Bearer ${token}`
-            },
-            onConnect: () => {
-                console.log('Connected to WebSocket');
-                client.subscribe('/topic/online-users', (message) => {
-                    setOnlineCount(parseInt(message.body));
-                });
-            },
-            onStompError: (frame) => {
-                console.error('Broker reported error: ' + frame.headers['message']);
-                console.error('Additional details: ' + frame.body);
-            },
-        });
-
-        client.activate();
-        stompClientRef.current = client;
-
-        return () => {
-            if (stompClientRef.current) {
-                stompClientRef.current.deactivate();
-            }
-        };
     }, [fetchData]);
+
+    useEffect(() => {
+        if (globalOnlineCount !== undefined) {
+            setOnlineCount(globalOnlineCount);
+        }
+    }, [globalOnlineCount]);
 
     if (loading) {
         return (
