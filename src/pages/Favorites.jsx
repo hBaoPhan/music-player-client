@@ -1,20 +1,9 @@
 import '../styles/Playlist.css';
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import SongCard from '../components/SongCard';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
-
-const shuffleArray = (items = []) => {
-    const shuffled = [...items];
-
-    for (let i = shuffled.length - 1; i > 0; i -= 1) {
-        const randomIndex = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
-    }
-
-    return shuffled;
-};
 
 const Favorites = () => {
     const { currentUser } = useAuth();
@@ -28,7 +17,6 @@ const Favorites = () => {
     };
 
     const favoriteSongs = currentUser?.favoriteSongs || [];
-    const shuffledFavoriteSongs = useMemo(() => shuffleArray(favoriteSongs), [favoriteSongs]);
 
     if (!currentUser) {
         return <div className="loading-text">Vui lòng đăng nhập để xem bài hát yêu thích.</div>;
@@ -42,11 +30,11 @@ const Favorites = () => {
                 <p className="text-gray-400 text-lg">Bạn chưa có bài hát yêu thích nào. Hãy thả tim một bài hát để xem tại đây.</p>
             ) : (
                 <div className="song-grid">
-                    {shuffledFavoriteSongs.map((song) => (
+                    {favoriteSongs.map((song) => (
                         <SongCard 
                             key={song.id} 
                             song={song} 
-                            onClick={() => handlePlaySong(song, shuffledFavoriteSongs)}
+                            onClick={() => handlePlaySong(song, favoriteSongs)}
                             onAddToPlaylist={setSelectedSongForPlaylist}
                         />
                     ))}
