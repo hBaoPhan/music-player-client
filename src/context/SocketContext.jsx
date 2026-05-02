@@ -27,11 +27,22 @@ export const SocketProvider = ({ children }) => {
         if (stompClientRef.current?.active) return;
 
         console.log('Initializing Global WebSocket for user:', currentUser.username);
-        const socket = new SockJS(`${import.meta.env.VITE_API_BASE_URL}/ws?token=${token}`);
+
         const client = new Client({
-            webSocketFactory: () => socket,
+            webSocketFactory: () => {
+                const latestToken = localStorage.getItem('accessToken');
+                return new SockJS(`${import.meta.env.VITE_API_BASE_URL}/ws?token=${latestToken}`);
+            },
             connectHeaders: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+            },
+            beforeConnect: () => {
+                const latestToken = localStorage.getItem('accessToken');
+                if (latestToken) {
+                    client.connectHeaders = {
+                        Authorization: `Bearer ${latestToken}`
+                    };
+                }
             },
             onConnect: () => {
                 console.log('Connected to Global WebSocket');
