@@ -48,7 +48,7 @@ axiosClient.interceptors.response.use(
         if (error.response) {
             if (error.response.status === 401 && !originalRequest._retry && isNotOnLoginPage) {
                 if (isRefreshing) {
-                    return new Promise(function(resolve, reject) {
+                    return new Promise(function (resolve, reject) {
                         failedQueue.push({ resolve, reject });
                     }).then(token => {
                         originalRequest.headers.Authorization = 'Bearer ' + token;
@@ -62,8 +62,8 @@ axiosClient.interceptors.response.use(
                 isRefreshing = true;
 
                 const refreshText = localStorage.getItem('refreshToken');
-                if (!refreshText) {
-                    console.error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!");
+                if (!refreshText || refreshText === 'undefined' || refreshText === 'null') {
+                    console.error("Phiên đăng nhập hết hạn hoặc Refresh Token không hợp lệ. Vui lòng đăng nhập lại!");
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
                     window.location.href = '/login';
@@ -74,19 +74,22 @@ axiosClient.interceptors.response.use(
                     const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`, {
                         refreshToken: refreshText
                     });
-                    
-                    const newToken = response.data.accessToken;
-                    const newRefreshToken = response.data.refreshToken;
+
+                    const { accessToken: newToken, refreshToken: newRefreshToken } = response.data;
+
+                    if (!newToken) throw new Error("Không có token mới được trả về");
 
                     localStorage.setItem('accessToken', newToken);
-                    localStorage.setItem('refreshToken', newRefreshToken);
-                    
+                    if (newRefreshToken) {
+                        localStorage.setItem('refreshToken', newRefreshToken);
+                    }
+
                     axiosClient.defaults.headers.common['Authorization'] = 'Bearer ' + newToken;
                     originalRequest.headers.Authorization = 'Bearer ' + newToken;
 
                     processQueue(null, newToken);
-                    console.log("token refreshed")
-                    
+                    console.log("Token refreshed successfully");
+
                     return axiosClient(originalRequest);
                 } catch (refreshError) {
                     processQueue(refreshError, null);
