@@ -100,13 +100,18 @@ const PlayerBar = () => {
             return;
         }
 
-        if (!currentSong) return;
+        if (!currentUser?.id || !currentSong?.id) {
+            console.error("Thiếu thông tin người dùng hoặc bài hát hiện tại:", { userId: currentUser?.id, songId: currentSong?.id });
+            return;
+        }
 
         try {
             await userService.toggleFavorite(currentUser.id, currentSong.id);
             await getUser();
         } catch (error) {
             console.error("Lỗi khi thêm vào yêu thích:", error);
+            const errorMsg = error.response?.data?.error || 'Không thể cập nhật danh sách yêu thích';
+            showToast(errorMsg, 'error');
         }
     };
 

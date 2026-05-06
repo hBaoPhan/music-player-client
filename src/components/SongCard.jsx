@@ -25,6 +25,11 @@ const SongCard = ({
             return;
         }
 
+        if (!currentUser?.id || !song?.id) {
+            console.error("Thiếu thông tin người dùng hoặc bài hát:", { userId: currentUser?.id, songId: song?.id });
+            return;
+        }
+
         try {
             await userService.toggleFavorite(currentUser.id, song.id);
             if (getUser) {
@@ -32,6 +37,8 @@ const SongCard = ({
             }
         } catch (error) {
             console.error("Lỗi khi thêm/xóa yêu thích:", error);
+            const errorMsg = error.response?.data?.error || 'Không thể cập nhật danh sách yêu thích';
+            showToast(errorMsg, 'error');
         }
     };
 
