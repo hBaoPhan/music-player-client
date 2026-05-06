@@ -94,7 +94,11 @@ const PlayerBar = () => {
         setVolume(Number(e.target.value));
     };
 
+    const [isToggling, setIsToggling] = useState(false);
+
     const handleToggleFavorite = async () => {
+        if (isToggling) return;
+
         if (!currentUser) {
             showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
             return;
@@ -105,6 +109,7 @@ const PlayerBar = () => {
             return;
         }
 
+        setIsToggling(true);
         try {
             await userService.toggleFavorite(currentUser.id, currentSong.id);
             await getUser();
@@ -112,6 +117,8 @@ const PlayerBar = () => {
             console.error("Lỗi khi thêm vào yêu thích:", error);
             const errorMsg = error.response?.data?.error || 'Không thể cập nhật danh sách yêu thích';
             showToast(errorMsg, 'error');
+        } finally {
+            setIsToggling(false);
         }
     };
 

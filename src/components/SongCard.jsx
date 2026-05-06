@@ -18,8 +18,12 @@ const SongCard = ({
 
     const isFavorite = currentUser?.favoriteSongs?.some(fav => fav.id === song.id);
 
+    const [isToggling, setIsToggling] = React.useState(false);
+
     const handleToggleFavorite = async (e) => {
         e.stopPropagation();
+        if (isToggling) return;
+
         if (!currentUser) {
             showToast('Vui lòng đăng ký hoặc đăng nhập để sử dụng tính năng này!', 'error');
             return;
@@ -30,6 +34,7 @@ const SongCard = ({
             return;
         }
 
+        setIsToggling(true);
         try {
             await userService.toggleFavorite(currentUser.id, song.id);
             if (getUser) {
@@ -39,6 +44,8 @@ const SongCard = ({
             console.error("Lỗi khi thêm/xóa yêu thích:", error);
             const errorMsg = error.response?.data?.error || 'Không thể cập nhật danh sách yêu thích';
             showToast(errorMsg, 'error');
+        } finally {
+            setIsToggling(false);
         }
     };
 
