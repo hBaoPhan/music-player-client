@@ -68,7 +68,7 @@ export const SocketProvider = ({ children }) => {
                 stompClientRef.current = null;
             }
         };
-    }, [currentUser]);
+    }, [currentUser?.id]);
 
     return (
         <SocketContext.Provider value={{ onlineCount }}>
