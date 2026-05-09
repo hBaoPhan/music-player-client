@@ -1,0 +1,45 @@
+@reference "../index.css";
+
+.album-header {
+    @apply flex items-end gap-6 mb-8 px-2;
+}
+
+.album-cover-wrapper {
+    @apply w-48 h-48 shrink-0 rounded-xl overflow-hidden shadow-2xl;
+}
+
+.album-cover-img {
+    @apply w-full h-full object-cover;
+}
+
+.album-cover-fallback {
+    @apply w-full h-full bg-linear-to-br from-purple-900 to-indigo-900 flex items-center justify-center;
+}
+
+.album-info {
+    @apply flex flex-col gap-2 pb-2;
+}
+
+.album-type-label {
+    @apply text-xs font-bold uppercase tracking-wider text-gray-400;
+}
+
+.album-title {
+    @apply text-4xl md:text-5xl lg:text-7xl font-black text-white;
+}
+
+.album-meta-info {
+    @apply flex items-center gap-2 mt-2 text-sm text-gray-300;
+}
+
+.album-artist-name {
+    @apply font-semibold text-white;
+}
+
+.album-meta-dot {
+    @apply w-1 h-1 rounded-full bg-gray-500;
+}
+
+.album-empty-text {
+    @apply text-gray-400 text-lg px-2;
+}

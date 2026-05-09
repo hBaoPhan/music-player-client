@@ -1,0 +1,69 @@
+@reference "../index.css";
+
+.song-page-header {
+    @apply flex items-end gap-6 mb-8 px-2;
+}
+
+.song-page-cover-wrapper {
+    @apply w-48 h-48 shrink-0 rounded-xl overflow-hidden shadow-2xl relative group;
+}
+
+.song-page-cover-img {
+    @apply w-full h-full object-cover;
+}
+
+.song-page-cover-fallback {
+    @apply w-full h-full bg-linear-to-br from-purple-900 to-indigo-900 flex items-center justify-center;
+}
+
+.song-page-play-overlay {
+    @apply absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity;
+}
+
+.song-page-info {
+    @apply flex flex-col gap-3 pb-2;
+}
+
+.song-page-label {
+    @apply text-xs font-bold uppercase tracking-wider text-gray-400;
+}
+
+.song-page-title {
+    @apply text-4xl md:text-5xl lg:text-7xl font-black text-white;
+}
+
+.song-page-meta-row {
+    @apply flex items-center gap-2 mt-2 text-base text-gray-300;
+}
+
+.song-page-artist-link {
+    @apply font-bold text-white hover:underline cursor-pointer;
+}
+
+.song-page-album-link {
+    @apply hover:underline cursor-pointer;
+}
+
+.song-page-meta-dot {
+    @apply w-1.5 h-1.5 rounded-full bg-gray-500;
+}
+
+.song-page-actions {
+    @apply flex items-center gap-4 mt-4;
+}
+
+.song-page-play-btn {
+    @apply w-14 h-14 bg-green-500 hover:bg-green-400 text-black rounded-full flex items-center justify-center transition-transform hover:scale-105;
+}
+
+.song-page-action-btn {
+    @apply w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-800 transition-colors;
+}
+
+.song-page-related-section {
+    @apply px-2 mt-12;
+}
+
+.song-page-related-title {
+    @apply text-2xl font-bold text-white mb-6;
+}

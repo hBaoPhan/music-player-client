@@ -1,0 +1,81 @@
+@reference "../index.css";
+
+.artist-header {
+    @apply flex items-end gap-6 mb-8 px-2;
+}
+
+.artist-avatar-wrapper {
+    @apply w-48 h-48 shrink-0 rounded-full overflow-hidden shadow-2xl border-4 border-gray-800;
+}
+
+.artist-avatar-img {
+    @apply w-full h-full object-cover;
+}
+
+.artist-avatar-fallback {
+    @apply w-full h-full bg-linear-to-br from-purple-900 to-indigo-900 flex items-center justify-center;
+}
+
+.artist-info {
+    @apply flex flex-col gap-2 pb-2;
+}
+
+.artist-label {
+    @apply text-xs font-bold uppercase tracking-wider text-gray-400;
+}
+
+.artist-name {
+    @apply text-4xl md:text-5xl lg:text-7xl font-black text-white;
+}
+
+.artist-bio {
+    @apply text-sm text-gray-300 max-w-2xl mt-2 line-clamp-3;
+}
+
+.artist-meta-row {
+    @apply flex items-center gap-2 mt-2 text-sm text-gray-400;
+}
+
+.artist-meta-dot {
+    @apply w-1 h-1 rounded-full bg-gray-500;
+}
+
+.artist-section {
+    @apply mb-10 px-2;
+}
+
+.artist-section-title {
+    @apply text-2xl font-bold text-white mb-4;
+}
+
+.artist-albums-grid {
+    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6;
+}
+
+.artist-album-card {
+    @apply p-4 bg-gray-800/40 hover:bg-gray-800 rounded-xl cursor-pointer transition-colors flex flex-col;
+}
+
+.artist-album-cover-wrapper {
+    @apply w-full aspect-square rounded-lg overflow-hidden mb-3 relative;
+}
+
+.artist-album-cover-img {
+    @apply w-full h-full object-cover group-hover:scale-105 transition-transform;
+}
+
+.artist-album-cover-fallback {
+    @apply w-full h-full bg-gray-700 flex items-center justify-center group-hover:scale-105 transition-transform;
+}
+
+.artist-album-title {
+    @apply font-semibold text-white truncate;
+}
+
+.artist-album-type {
+    @apply text-xs text-gray-400 capitalize mt-1;
+}
+
+.artist-empty-text {
+    @apply text-gray-400 text-lg;
+}
