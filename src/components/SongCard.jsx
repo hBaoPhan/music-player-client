@@ -1,5 +1,6 @@
 import React from 'react';
 import { FiPlay, FiHeart, FiPlus } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import userService from '../services/userService';
@@ -15,6 +16,7 @@ const SongCard = ({
 }) => {
     const { currentUser, getUser } = useAuth();
     const { showToast } = useToast();
+    const navigate = useNavigate();
 
     const isFavorite = currentUser?.favoriteSongs?.some(fav => fav.id === song.id);
 
@@ -103,10 +105,25 @@ const SongCard = ({
             </div>
 
             <div className="song-bottom-info mt-3">
-                <h3 className="song-title">{song.title}</h3>
-                <p className="song-artist">{song.artist?.name || "Unknown Artist"}</p>
+                <h3 
+                    className="song-title cursor-pointer hover:underline hover:text-green-400" 
+                    onClick={(e) => { e.stopPropagation(); navigate(`/song/${song.id}`); }}
+                >
+                    {song.title}
+                </h3>
+                <p 
+                    className="song-artist cursor-pointer hover:underline hover:text-gray-300" 
+                    onClick={(e) => { e.stopPropagation(); if (song.artist?.id) navigate(`/artist/${song.artist.id}`); }}
+                >
+                    {song.artist?.name || "Unknown Artist"}
+                </p>
                 <div className="song-meta-row">
-                    <span className="song-album">{song.album ? (song.album.type === "SINGLE" ? "Single" : `${song.album.type}: ${song.album.title}`) : "Unknown Album"}</span>
+                    <span 
+                        className="song-album cursor-pointer hover:underline hover:text-gray-300" 
+                        onClick={(e) => { e.stopPropagation(); if (song.album?.id) navigate(`/album/${song.album.id}`); }}
+                    >
+                        {song.album ? (song.album.type === "SINGLE" ? "Single" : `${song.album.type}: ${song.album.title}`) : "Unknown Album"}
+                    </span>
                     {song.genre && <span className="song-genre">{song.genre}</span>}
                 </div>
             </div>
