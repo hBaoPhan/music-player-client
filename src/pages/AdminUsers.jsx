@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import BaseModal from '../components/BaseModal';
 import AdminSearchBox from '../components/AdminSearchBox';
 import AdminActionButtons from '../components/AdminActionButtons';
+import Pagination from '../components/Pagination';
 
 const RoleModal = ({ user, onClose, onSaved }) => {
     const { showToast } = useToast();
@@ -105,6 +106,8 @@ const AdminUsers = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [roleTarget, setRoleTarget] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
 
     const fetchUsers = async () => {
         try {
@@ -120,6 +123,10 @@ const AdminUsers = () => {
 
     useEffect(() => { fetchUsers(); }, []);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
+
     const filteredUsers = users.filter(user => {
         const keyword = searchTerm.toLowerCase();
         return (
@@ -127,6 +134,12 @@ const AdminUsers = () => {
             (user.email && user.email.toLowerCase().includes(keyword))
         );
     });
+
+    const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
+    const paginatedUsers = filteredUsers.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
 
     const handleDelete = async (userId, username) => {
         if (currentUser && currentUser.id === userId) {
@@ -194,8 +207,8 @@ const AdminUsers = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredUsers.length > 0 ? (
-                                filteredUsers.map(user => (
+                            {paginatedUsers.length > 0 ? (
+                                paginatedUsers.map(user => (
                                     <tr key={user.id}>
                                         <td className="admin-td-id">{user.id}</td>
                                         <td>
@@ -237,6 +250,14 @@ const AdminUsers = () => {
                         </tbody>
                     </table>
                 </div>
+            )}
+
+            {!loading && totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
             )}
 
             {roleTarget && (

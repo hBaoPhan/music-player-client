@@ -10,6 +10,7 @@ import { useToast } from '../context/ToastContext';
 import BaseModal from '../components/BaseModal';
 import AdminSearchBox from '../components/AdminSearchBox';
 import AdminActionButtons from '../components/AdminActionButtons';
+import Pagination from '../components/Pagination';
 import '../styles/Admin.css';
 
 const GENRES = [
@@ -44,6 +45,12 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
     const [form, setForm] = useState(EMPTY_SONG);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, genreFilter, artistFilter]);
 
     const artistOptions = useMemo(() => {
         const uniqueArtists = new Map();
@@ -71,6 +78,9 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
             return matchesSearch && matchesGenre && matchesArtist;
         });
     }, [songs, search, genreFilter, artistFilter]);
+
+    const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+    const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     const openCreate = () => { setEditing(null); setForm(EMPTY_SONG); setShowModal(true); };
     const openEdit = (song) => {
@@ -188,7 +198,7 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length > 0 ? filtered.map(song => (
+                        {paginated.length > 0 ? paginated.map(song => (
                             <tr key={song.id}>
                                 <td className="admin-td-id">{song.id}</td>
                                 <td>
@@ -221,6 +231,14 @@ const SongsTab = ({ songs, artists, albums, onRefresh, showToast }) => {
                     </tbody>
                 </table>
             </div>
+
+            {totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            )}
 
             {showModal && (
                 <BaseModal
@@ -280,8 +298,17 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
     const [form, setForm] = useState(EMPTY_ARTIST);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search]);
 
     const filtered = artists.filter(a => a.name?.toLowerCase().includes(search.toLowerCase()));
+    
+    const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+    const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     const openCreate = () => { setEditing(null); setForm(EMPTY_ARTIST); setShowModal(true); };
     const openEdit = (artist) => { setEditing(artist); setForm({ name: artist.name || '', bio: artist.bio || '', avatarUrl: artist.avatarUrl || '' }); setShowModal(true); };
@@ -343,7 +370,7 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length > 0 ? filtered.map(artist => (
+                        {paginated.length > 0 ? paginated.map(artist => (
                             <tr key={artist.id}>
                                 <td className="admin-td-id">{artist.id}</td>
                                 <td>
@@ -372,6 +399,14 @@ const ArtistsTab = ({ artists, onRefresh, showToast }) => {
                     </tbody>
                 </table>
             </div>
+
+            {totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            )}
 
             {showModal && (
                 <BaseModal
@@ -407,11 +442,20 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState(null);
     const [form, setForm] = useState(EMPTY_ALBUM);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search]);
 
     const filtered = albums.filter(a =>
         a.title?.toLowerCase().includes(search.toLowerCase()) ||
         a.artist?.name?.toLowerCase().includes(search.toLowerCase())
     );
+
+    const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+    const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     const openCreate = () => { setEditing(null); setForm(EMPTY_ALBUM); setShowModal(true); };
     const openEdit = (album) => {
@@ -495,7 +539,7 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length > 0 ? filtered.map(album => (
+                        {paginated.length > 0 ? paginated.map(album => (
                             <tr key={album.id}>
                                 <td className="admin-td-id">{album.id}</td>
                                 <td>
@@ -525,6 +569,14 @@ const AlbumsTab = ({ albums, artists, onRefresh, showToast }) => {
                     </tbody>
                 </table>
             </div>
+
+            {totalPages > 1 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
+            )}
 
             {showModal && (
                 <BaseModal
