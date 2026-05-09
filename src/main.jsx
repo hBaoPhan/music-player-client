@@ -7,6 +7,7 @@ import { PlayerProvider } from './context/PlayerContext.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { ToastProvider } from './context/ToastContext.jsx'
 import { SocketProvider } from './context/SocketContext.jsx'
+import { SongsProvider } from './context/SongsContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -14,9 +15,11 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <ToastProvider>
           <SocketProvider>
-            <PlayerProvider>
-              <App />
-            </PlayerProvider>
+            <SongsProvider>
+              <PlayerProvider>
+                <App />
+              </PlayerProvider>
+            </SongsProvider>
           </SocketProvider>
         </ToastProvider>
       </AuthProvider>

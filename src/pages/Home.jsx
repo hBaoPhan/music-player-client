@@ -4,12 +4,11 @@ import { FiPlay, FiHeart, FiPlus, FiChevronLeft, FiChevronRight, FiDisc } from '
 import { useNavigate } from 'react-router-dom';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import SongCard from '../components/SongCard';
-import songService from '../services/songService';
-import userService from '../services/userService';
 import albumService from '../services/albumService';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useSongs } from '../context/SongsContext';
 
 const shuffleArray = (items = []) => {
     const shuffled = [...items];
@@ -23,9 +22,8 @@ const shuffleArray = (items = []) => {
 };
 
 const Home = () => {
-    const [songs, setSongs] = useState([]);
+    const { allSongs: songs, songsLoading: loading, refreshSongs } = useSongs();
     const [albums, setAlbums] = useState([]);
-    const [loading, setLoading] = useState(true);
     const sliderRef = useRef(null);
     const albumSliderRef = useRef(null);
     const navigate = useNavigate();
@@ -52,34 +50,30 @@ const Home = () => {
 
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [songsData, albumsData] = await Promise.all([
-                    songService.getAllSongs(),
-                    albumService.getAllAlbums()
-                ]);
-                setSongs(songsData);
+        refreshSongs();
+    }, [refreshSongs]);
 
+    useEffect(() => {
+        if (!songs.length) return;
+        const fetchAlbums = async () => {
+            try {
+                const albumsData = await albumService.getAllAlbums();
                 const albumsDataFiltered = albumsData.filter((album) => {
                     let count = 0;
-                    songsData.forEach((song) => {
+                    songs.forEach((song) => {
                         if (album.id === song.album?.id) {
                             count += 1;
                         }
                     });
                     return count >= 2;
                 });
-
                 setAlbums(albumsDataFiltered);
             } catch (error) {
-                console.error("Lỗi khi tải dữ liệu trang chủ:", error);
-            } finally {
-                setLoading(false);
+                console.error('Lỗi khi tải album:', error);
             }
         };
-
-        fetchData();
-    }, []);
+        fetchAlbums();
+    }, [songs]);
 
     if (loading) {
         return <div className="loading-text">Đang tải danh sách bài hát...</div>;

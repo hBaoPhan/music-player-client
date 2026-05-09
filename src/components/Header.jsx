@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FiLogOut, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiUser, FiChevronDown, FiHeart, FiPlus, FiLock } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
-import songService from '../services/songService';
+import { useSongs } from '../context/SongsContext';
 import { useNavigate } from 'react-router-dom';
 import UserProfileModal from './UserProfileModal';
 import AddToPlaylistModal from './AddToPlaylistModal';
@@ -11,9 +11,10 @@ import { useToast } from '../context/ToastContext';
 import userService from '../services/userService';
 
 const Header = () => {
+    const { allSongs } = useSongs();
     const { currentUser, logout, getUser } = useAuth();
     const { setCurrentSong, setIsPlaying, setSongQueue, songQueue } = usePlayer() || {};
-
+    const { showToast } = useToast();
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
@@ -21,9 +22,9 @@ const Header = () => {
     const [selectedGenre, setSelectedGenre] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
-    const [allSongs, setAllSongs] = useState([]);
+
     const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
-    const { showToast } = useToast();
+
     const searchRef = useRef(null);
     const dropdownRef = useRef(null);
 
@@ -36,18 +37,7 @@ const Header = () => {
     ];
 
     useEffect(() => {
-        const fetchAllSongs = async () => {
-            try {
-                const response = await songService.getAllSongs();
-                setAllSongs(response);
-            } catch (error) {
-                console.error("Lỗi khi tải dữ liệu tìm kiếm", error);
-            }
-        };
-        fetchAllSongs();
-    }, []);
 
-    useEffect(() => {
         const keyword = searchTerm.trim().toLowerCase();
 
         if (!keyword) {
