@@ -102,7 +102,7 @@ const SongPage = () => {
     return (
         <div className="home-container">
             <div className="flex items-end gap-6 mb-8 px-2">
-                <div className="w-56 h-56 shrink-0 rounded-xl overflow-hidden shadow-2xl relative group">
+                <div className="w-48 h-48 shrink-0 rounded-xl overflow-hidden shadow-2xl relative group">
                     {song.album?.coverUrl ? (
                         <img src={song.album.coverUrl} alt={song.title} className="w-full h-full object-cover" />
                     ) : (
