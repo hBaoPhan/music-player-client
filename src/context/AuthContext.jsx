@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosClient from '../services/axiosClient';
+import authService from '../services/authService';
 
 const AuthContext = createContext();
 
@@ -47,12 +48,25 @@ export const AuthProvider = ({ children }) => {
         getUser();
     }, []);
 
-    const logout = () => {
+    const logout = async (allDevices = false) => {
+        const username = localStorage.getItem('username');
+        const refreshToken = localStorage.getItem('refreshToken');
+
+        // Clear local state first for instant feedback
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('username');
         setCurrentUser(null);
         navigate('/login');
+
+        // Call backend in background to clean up Redis
+        if (username && refreshToken) {
+            try {
+                await authService.logout(username, refreshToken, allDevices);
+            } catch (error) {
+                console.error("Lỗi khi đăng xuất trên server:", error);
+            }
+        }
     };
 
     const isAdmin = currentUser?.role === 'ADMIN';
