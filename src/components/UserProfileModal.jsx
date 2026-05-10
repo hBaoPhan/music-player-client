@@ -72,6 +72,9 @@ const UserProfileModal = ({ onClose }) => {
             if (result?.refreshToken) {
                 localStorage.setItem('refreshToken', result.refreshToken);
             }
+            if (result?.user?.username) {
+                localStorage.setItem('username', result.user.username);
+            }
 
             showToast('Cập nhật thông tin thành công!', 'success');
             setIsEditingProfile(false);

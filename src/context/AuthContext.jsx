@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
             if (decodedJwt && decodedJwt.sub) {
                 try {
                     const response = await axiosClient.get(`/users/username/${decodedJwt.sub}`);
+                    localStorage.setItem('username', decodedJwt.sub); // Save username for token refresh
                     setCurrentUser({
                         ...response,
                         avatar: 'https://i.pravatar.cc/150?img=11'
@@ -49,6 +50,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('username');
         setCurrentUser(null);
         navigate('/login');
     };

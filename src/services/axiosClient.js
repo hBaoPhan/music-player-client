@@ -66,12 +66,14 @@ axiosClient.interceptors.response.use(
                     console.error("Phiên đăng nhập hết hạn hoặc Refresh Token không hợp lệ. Vui lòng đăng nhập lại!");
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
+                    localStorage.removeItem('username');
                     window.location.href = '/login';
                     return Promise.reject(error);
                 }
 
                 try {
                     const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/refresh`, {
+                        username: localStorage.getItem('username'),
                         refreshToken: refreshText
                     });
 
@@ -96,6 +98,7 @@ axiosClient.interceptors.response.use(
                     console.error("Refresh token hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại!");
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
+                    localStorage.removeItem('username');
                     window.location.href = '/login';
                     return Promise.reject(refreshError);
                 } finally {
