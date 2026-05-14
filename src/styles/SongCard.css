@@ -1,7 +1,7 @@
 @reference "tailwindcss";
 
 .song-card {
-    @apply p-4 transition-all duration-300 bg-gray-800/40 rounded-xl cursor-pointer hover:bg-gray-800 hover:shadow-xl;
+    @apply p-3 transition-all duration-300 bg-gray-800/40 rounded-xl cursor-pointer hover:bg-gray-800 hover:shadow-xl;
 }
 
 .song-image-wrapper {
