@@ -1,11 +1,12 @@
 @reference "tailwindcss";
 
 .modal-overlay {
-    @apply fixed inset-0 bg-black/70 flex justify-center items-center z-50;
+    @apply fixed inset-0 bg-black/70 flex justify-center items-center;
+    z-index: 9999;
 }
 
 .modal-content {
-    @apply bg-gray-800 rounded-lg p-6 w-[90%] max-w-[400px] relative shadow-[0_10px_25px_rgba(0,0,0,0.5)];
+    @apply bg-gray-800 rounded-lg p-6 w-[90%] max-w-[400px] relative shadow-[0_10px_25px_rgba(0, 0, 0, 0.5)];
 }
 
 .close-modal-btn {

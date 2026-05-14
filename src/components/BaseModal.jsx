@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { FiX } from 'react-icons/fi';
 
 const BaseModal = ({
@@ -23,8 +24,8 @@ const BaseModal = ({
 
     if (!isOpen) return null;
 
-    return (
-        <div className={overlayClassName} onClick={onClose}>
+    return createPortal(
+        <div className={overlayClassName} onClick={onClose} style={{ zIndex: 99999 }}>
             <div className={contentClassName} onClick={(e) => e.stopPropagation()}>
                 <button type="button" className={closeBtnClassName} onClick={onClose} aria-label="Đóng">
                     <FiX />
@@ -32,7 +33,8 @@ const BaseModal = ({
                 {title && <h3 className={titleClassName}>{title}</h3>}
                 {children}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
