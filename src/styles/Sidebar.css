@@ -87,6 +87,18 @@
     @apply mx-2 my-3 border-t border-gray-800;
 }
 
+.nav-item-admin {
+    @apply text-emerald-500;
+}
+
+.nav-item-admin:hover {
+    @apply text-emerald-400 bg-emerald-500/10;
+}
+
+.nav-item-admin.nav-item-active {
+    @apply text-emerald-400 bg-emerald-500/15;
+}
+
 .logo-section {
     @apply p-6;
 }

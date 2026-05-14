@@ -72,9 +72,9 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
     ];
 
     const adminItems = [
-        { path: '/admin/dashboard', icon: FiGrid, label: 'Bảng Điều Khiển' },
-        { path: '/admin/songs', icon: FiMusic, label: 'Quản Lý Nhạc' },
-        { path: '/admin/users', icon: FiUsers, label: 'Quản Lý Người Dùng' },
+        { path: '/admin/dashboard', icon: FiGrid, label: 'Bảng Điều Khiển', isAdmin: true },
+        { path: '/admin/songs', icon: FiMusic, label: 'Quản Lý Nhạc', isAdmin: true },
+        { path: '/admin/users', icon: FiUsers, label: 'Quản Lý Người Dùng', isAdmin: true },
     ];
 
     const renderNavItem = (item) => {
@@ -83,11 +83,6 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
 
         const handleNavClick = () => {
             if (!item.path) return;
-
-            if (item.path === '/charts') {
-                showToast('Tính năng đang phát triển!', 'info');
-                return;
-            }
 
             const restrictedPaths = ['/playlist', '/favorites', '/history'];
             if (!currentUser && restrictedPaths.includes(item.path)) {
@@ -101,7 +96,7 @@ const Sidebar = ({ isCollapsed, onToggle }) => {
         return (
             <div
                 key={item.label}
-                className={`nav-item ${active ? 'nav-item-active' : ''}`}
+                className={`nav-item ${active ? 'nav-item-active' : ''} ${item.isAdmin ? 'nav-item-admin' : ''}`}
                 onClick={handleNavClick}
                 title={isCollapsed ? item.label : undefined}
             >

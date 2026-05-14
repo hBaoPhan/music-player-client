@@ -1,0 +1,188 @@
+@reference "tailwindcss";
+
+.charts-container {
+    @apply space-y-8 pb-8;
+}
+
+/* Hero */
+.charts-hero {
+    @apply flex items-center gap-5 mb-2;
+}
+
+.charts-hero-icon {
+    @apply flex items-center justify-center w-16 h-16 rounded-2xl text-3xl text-white;
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+}
+
+.charts-hero-title {
+    @apply text-3xl font-black text-white m-0;
+}
+
+.charts-hero-subtitle {
+    @apply text-gray-400 text-sm mt-1;
+}
+
+/* Tabs */
+.charts-tabs {
+    @apply flex gap-3 mb-6;
+}
+
+.charts-tab-btn {
+    @apply px-5 py-2.5 rounded-full text-sm font-semibold text-gray-400 border border-gray-700 bg-transparent cursor-pointer transition-all duration-200;
+}
+
+.charts-tab-btn:hover {
+    @apply text-white border-gray-500;
+}
+
+.charts-tab-btn.active {
+    @apply text-black border-transparent;
+    background: linear-gradient(135deg, #10b981, #34d399);
+}
+
+/* Body Layout */
+.charts-body {
+    @apply grid gap-8;
+    grid-template-columns: 1fr 320px;
+}
+
+@media (max-width: 1024px) {
+    .charts-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Song List */
+.charts-song-list {
+    @apply flex flex-col gap-2;
+}
+
+.charts-song-row {
+    @apply flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all duration-200;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.charts-song-row:hover {
+    @apply bg-gray-800;
+}
+
+/* Rank */
+.charts-rank {
+    @apply w-8 flex justify-center shrink-0;
+}
+
+.charts-rank-num {
+    @apply text-gray-500 text-base font-semibold;
+}
+
+.charts-rank-badge {
+    @apply flex items-center justify-center w-7 h-7 rounded-full text-xs font-black text-white;
+}
+
+.rank-1 {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.rank-2 {
+    background: linear-gradient(135deg, #c0c0c0, #808080);
+    box-shadow: 0 0 8px rgba(192, 192, 192, 0.3);
+}
+
+.rank-3 {
+    background: linear-gradient(135deg, #cd7f32, #a05a2c);
+    box-shadow: 0 0 8px rgba(205, 127, 50, 0.3);
+}
+
+/* Cover */
+.charts-song-cover-wrapper {
+    @apply relative w-12 h-12 rounded-lg overflow-hidden shrink-0;
+}
+
+.charts-song-cover {
+    @apply w-full h-full object-cover;
+}
+
+.charts-song-cover-placeholder {
+    @apply w-full h-full flex items-center justify-center bg-gray-700;
+}
+
+.charts-song-play-overlay {
+    @apply absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-200;
+}
+
+.charts-song-row:hover .charts-song-play-overlay {
+    @apply opacity-100;
+}
+
+/* Info */
+.charts-song-info {
+    @apply flex-1 min-w-0;
+}
+
+.charts-song-title {
+    @apply text-white font-semibold text-sm truncate;
+}
+
+.charts-song-artist {
+    @apply text-gray-400 text-xs truncate mt-0.5;
+}
+
+/* Play Count */
+.charts-play-count {
+    @apply flex items-center gap-1.5 text-xs text-gray-400 shrink-0 whitespace-nowrap;
+}
+
+/* Skeleton */
+.charts-song-skeleton {
+    @apply h-16 rounded-xl animate-pulse;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.charts-empty {
+    @apply text-gray-400 text-lg text-center mt-12;
+}
+
+/* Genre Panel */
+.charts-genre-panel {
+    @apply p-5 rounded-2xl;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.charts-genre-title {
+    @apply text-base font-bold text-white mb-5;
+}
+
+.charts-genre-list {
+    @apply flex flex-col gap-4;
+}
+
+.charts-genre-item {
+    @apply flex flex-col gap-1.5;
+}
+
+.charts-genre-label {
+    @apply flex items-center gap-2;
+}
+
+.charts-genre-dot {
+    @apply w-2.5 h-2.5 rounded-full shrink-0;
+}
+
+.charts-genre-name {
+    @apply text-sm text-white flex-1 truncate;
+}
+
+.charts-genre-pct {
+    @apply text-xs text-gray-400 font-semibold;
+}
+
+.charts-genre-bar-bg {
+    @apply h-1.5 w-full rounded-full bg-gray-800 overflow-hidden;
+}
+
+.charts-genre-bar-fill {
+    @apply h-full rounded-full transition-all duration-700;
+}

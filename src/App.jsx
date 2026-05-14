@@ -17,6 +17,7 @@ import ArtistPage from './pages/ArtistPage'
 import Profile from './pages/Profile'
 import History from './pages/History'
 import AdminDashboard from './pages/AdminDashboard'
+import Charts from './pages/Charts'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="playlist" element={<Playlist />} />
           <Route path="favorites" element={<Favorites />} />
           <Route path="history" element={<History />} />
+          <Route path="charts" element={<Charts />} />
           <Route path="album/:id" element={<AlbumPage />} />
           <Route path="song/:id" element={<SongPage />} />
           <Route path="artist/:id" element={<ArtistPage />} />
