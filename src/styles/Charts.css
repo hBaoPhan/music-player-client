@@ -144,45 +144,68 @@
     @apply text-gray-400 text-lg text-center mt-12;
 }
 
-/* Genre Panel */
-.charts-genre-panel {
-    @apply p-5 rounded-2xl;
+/* Artist Panel */
+.charts-artist-panel {
+    @apply p-6 rounded-2xl;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.06);
+    height: fit-content;
 }
 
-.charts-genre-title {
-    @apply text-base font-bold text-white mb-5;
+.charts-artist-panel-title {
+    @apply text-lg font-bold text-white mb-1;
 }
 
-.charts-genre-list {
-    @apply flex flex-col gap-4;
+.charts-artist-panel-sub {
+    @apply text-gray-400 text-xs mb-6;
 }
 
-.charts-genre-item {
-    @apply flex flex-col gap-1.5;
+.charts-artist-list {
+    @apply flex flex-col gap-5;
 }
 
-.charts-genre-label {
-    @apply flex items-center gap-2;
+.charts-artist-row {
+    @apply flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all duration-200;
+    background: rgba(255, 255, 255, 0.02);
 }
 
-.charts-genre-dot {
-    @apply w-2.5 h-2.5 rounded-full shrink-0;
+.charts-artist-row:hover {
+    @apply bg-gray-800/80;
 }
 
-.charts-genre-name {
-    @apply text-sm text-white flex-1 truncate;
+.charts-artist-rank-wrap {
+    @apply w-8 flex justify-center shrink-0;
 }
 
-.charts-genre-pct {
-    @apply text-xs text-gray-400 font-semibold;
+.charts-artist-avatar-wrap {
+    @apply w-12 h-12 rounded-full overflow-hidden border-2 border-transparent transition-all duration-300 shrink-0;
 }
 
-.charts-genre-bar-bg {
-    @apply h-1.5 w-full rounded-full bg-gray-800 overflow-hidden;
+.charts-artist-row:hover .charts-artist-avatar-wrap {
+    @apply border-emerald-500 scale-105;
 }
 
-.charts-genre-bar-fill {
-    @apply h-full rounded-full transition-all duration-700;
+.charts-artist-avatar {
+    @apply w-full h-full object-cover;
+}
+
+.charts-artist-avatar-placeholder {
+    @apply w-full h-full flex items-center justify-center bg-gray-800 text-xl;
+}
+
+.charts-artist-info {
+    @apply flex-1 min-w-0;
+}
+
+.charts-artist-name {
+    @apply text-white font-bold text-sm truncate;
+}
+
+.charts-artist-plays {
+    @apply text-gray-400 text-xs mt-1;
+}
+
+.charts-artist-skeleton {
+    @apply h-14 rounded-xl animate-pulse mb-4;
+    background: rgba(255, 255, 255, 0.05);
 }

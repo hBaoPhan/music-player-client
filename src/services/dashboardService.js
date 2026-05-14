@@ -8,6 +8,9 @@ const dashboardService = {
     getTrending: () => axiosClient.get('/songs/trending'),
     getTopFavorites: () => axiosClient.get('/songs/top-favorites'),
     getGenreDistribution: () => axiosClient.get('/songs/genre-stats'),
+
+    // Charts: trending artists (under /artists)
+    getTrendingArtists: (limit = 5) => axiosClient.get(`/artists/trending?limit=${limit}`),
 };
 
 export default dashboardService;

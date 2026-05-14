@@ -1,14 +1,9 @@
 import '../styles/Charts.css';
 import React, { useState, useEffect, useCallback } from 'react';
-import { FiTrendingUp, FiHeart, FiDisc, FiMusic, FiPlay } from 'react-icons/fi';
+import { FiTrendingUp, FiHeart, FiDisc, FiPlay, FiUser, FiHeadphones } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { usePlayer } from '../context/PlayerContext';
 import dashboardService from '../services/dashboardService';
-
-const GENRE_COLORS = [
-    '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#3b82f6',
-    '#ec4899', '#14b8a6', '#f97316', '#6366f1', '#84cc16',
-];
 
 const Charts = () => {
     const navigate = useNavigate();
@@ -16,21 +11,21 @@ const Charts = () => {
 
     const [trending, setTrending] = useState([]);
     const [favorites, setFavorites] = useState([]);
-    const [genres, setGenres] = useState([]);
+    const [trendingArtists, setTrendingArtists] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('trending');
 
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const [trendingData, favoritesData, genresData] = await Promise.all([
+            const [trendingData, favoritesData, artistsData] = await Promise.all([
                 dashboardService.getTrending(),
                 dashboardService.getTopFavorites(),
-                dashboardService.getGenreDistribution(),
+                dashboardService.getTrendingArtists(5),
             ]);
             setTrending(trendingData || []);
             setFavorites(favoritesData || []);
-            setGenres(genresData || []);
+            setTrendingArtists(artistsData || []);
         } catch (error) {
             console.error('Lỗi khi tải bảng xếp hạng:', error);
         } finally {
@@ -55,7 +50,6 @@ const Charts = () => {
         setSongQueue(queue);
     };
 
-    const totalGenreCount = genres.reduce((sum, g) => sum + g.count, 0);
 
     const activeList = activeTab === 'trending' ? trending : favorites;
 
@@ -91,7 +85,6 @@ const Charts = () => {
             </div>
 
             <div className="charts-body">
-                {/* Song List */}
                 <div className="charts-song-list">
                     {loading ? (
                         Array.from({ length: 10 }).map((_, i) => (
@@ -151,37 +144,53 @@ const Charts = () => {
                     )}
                 </div>
 
-                {/* Genre Distribution */}
-                <div className="charts-genre-panel">
-                    <h2 className="charts-genre-title">
-                        <FiMusic className="inline mr-2" />
-                        Phân Bố Thể Loại
+                {/* Trending Artists Panel */}
+                <div className="charts-artist-panel">
+                    <h2 className="charts-artist-panel-title">
+                        <FiUser className="inline mr-2" />
+                        Nghệ Sĩ Nổi Bật
                     </h2>
+                    <p className="charts-artist-panel-sub">Top 5 nghệ sĩ được nghe nhiều nhất tuần này</p>
+
                     {loading ? (
-                        <div className="charts-song-skeleton h-40" />
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <div key={i} className="charts-artist-skeleton" />
+                        ))
+                    ) : trendingArtists.length === 0 ? (
+                        <p className="charts-empty">Chưa có dữ liệu.</p>
                     ) : (
-                        <div className="charts-genre-list">
-                            {genres.map((g, i) => {
-                                const pct = totalGenreCount > 0
-                                    ? ((g.count / totalGenreCount) * 100).toFixed(1)
-                                    : 0;
-                                const color = GENRE_COLORS[i % GENRE_COLORS.length];
-                                return (
-                                    <div key={g.genre} className="charts-genre-item">
-                                        <div className="charts-genre-label">
-                                            <span className="charts-genre-dot" style={{ background: color }} />
-                                            <span className="charts-genre-name">{g.genre}</span>
-                                            <span className="charts-genre-pct">{pct}%</span>
-                                        </div>
-                                        <div className="charts-genre-bar-bg">
-                                            <div
-                                                className="charts-genre-bar-fill"
-                                                style={{ width: `${pct}%`, background: color }}
-                                            />
-                                        </div>
+                        <div className="charts-artist-list">
+                            {trendingArtists.map((artist, index) => (
+                                <div
+                                    key={artist.id}
+                                    className="charts-artist-row group"
+                                    onClick={() => navigate(`/artist/${artist.id}`)}
+                                >
+                                    <div className="charts-artist-rank-wrap">
+                                        {index < 3 ? (
+                                            <span className={`charts-rank-badge rank-${index + 1}`}>{index + 1}</span>
+                                        ) : (
+                                            <span className="charts-rank-num">{index + 1}</span>
+                                        )}
                                     </div>
-                                );
-                            })}
+                                    <div className="charts-artist-avatar-wrap">
+                                        {artist.avatarUrl ? (
+                                            <img src={artist.avatarUrl} alt={artist.name} className="charts-artist-avatar" />
+                                        ) : (
+                                            <div className="charts-artist-avatar-placeholder">
+                                                <FiUser className="text-gray-400" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="charts-artist-info">
+                                        <p className="charts-artist-name">{artist.name}</p>
+                                        <p className="charts-artist-plays">
+                                            <FiHeadphones className="inline mr-1" />
+                                            {artist.playCount.toLocaleString()} lượt nghe
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
                 </div>
