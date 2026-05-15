@@ -12,6 +12,14 @@
     @apply text-2xl font-bold text-white hover:underline cursor-pointer m-0;
 }
 
+.title-with-icon {
+    @apply flex items-center gap-3;
+}
+
+.title-icon {
+    @apply text-emerald-400;
+}
+
 .slider-nav {
     @apply hidden items-center gap-3 md:flex;
 }

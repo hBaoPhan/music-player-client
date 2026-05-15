@@ -1,5 +1,6 @@
 import '../styles/Playlist.css';
 import React, { useState, useEffect } from 'react';
+import { FiClock } from 'react-icons/fi';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import SongCard from '../components/SongCard';
 import { useAuth } from '../context/AuthContext';
@@ -89,7 +90,9 @@ const History = () => {
 
     return (
         <div className="home-container">
-            <h2 className="section-title">Lịch Sử Nghe Gần Đây</h2>
+            <h2 className="section-title title-with-icon">
+                <FiClock className="title-icon" /> Lịch Sử Nghe Gần Đây
+            </h2>
 
             {Object.keys(historyGroups).length === 0 ? (
                 <p className="text-gray-400 text-lg">Bạn chưa có lịch sử nghe nhạc nào.</p>

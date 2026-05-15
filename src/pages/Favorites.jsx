@@ -1,5 +1,6 @@
 import '../styles/Playlist.css';
 import React, { useState } from 'react';
+import { FiHeart } from 'react-icons/fi';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import SongCard from '../components/SongCard';
 import { useAuth } from '../context/AuthContext';
@@ -24,7 +25,9 @@ const Favorites = () => {
 
     return (
         <div className="home-container">
-            <h2 className="section-title">Bài Hát Yêu Thích Của Bạn</h2>
+            <h2 className="section-title title-with-icon">
+                <FiHeart className="title-icon text-red-500" /> Bài Hát Yêu Thích Của Bạn
+            </h2>
 
             {favoriteSongs.length === 0 ? (
                 <p className="text-gray-400 text-lg">Bạn chưa có bài hát yêu thích nào. Hãy thả tim một bài hát để xem tại đây.</p>

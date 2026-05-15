@@ -198,7 +198,9 @@ const Playlist = () => {
     return (
         <div className="home-container">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="section-title mb-0">Danh Sách Của Bạn</h2>
+                <h2 className="section-title mb-0 title-with-icon">
+                    <FiMusic className="title-icon" /> Danh Sách Của Bạn
+                </h2>
                 <button
                     className="create-playlist-main-btn"
                     onClick={() => setShowCreateModal(true)}
