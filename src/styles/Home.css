@@ -8,6 +8,10 @@
     @apply flex items-center justify-between mb-6;
 }
 
+.section-header--albums {
+    @apply mt-8;
+}
+
 .section-title {
     @apply text-2xl font-bold text-white hover:underline cursor-pointer m-0;
 }
@@ -28,6 +32,10 @@
     @apply flex items-center justify-center w-10 h-10 text-gray-400 bg-gray-800/50 rounded-full hover:bg-gray-700 hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed;
 }
 
+.slider-icon {
+    @apply text-xl;
+}
+
 .song-slider-track {
     @apply grid gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pt-2 pb-4;
     grid-auto-flow: column;
@@ -39,12 +47,23 @@
     display: none;
 }
 
-.song-slider-track .song-card {
+.song-slider-track .song-card,
+.song-slider-track .playlist-home-card {
     @apply snap-start;
 }
 
 .loading-text {
     @apply text-center text-gray-400 mt-20 text-lg;
+}
+
+/* Album placeholder */
+.album-img-placeholder {
+    @apply w-full h-full flex items-center justify-center;
+    background: linear-gradient(to bottom right, #3b0764, #1e1b4b);
+}
+
+.album-placeholder-icon {
+    @apply text-4xl text-white/50;
 }
 
 /* ===== PLAYLIST SECTION ===== */
@@ -57,10 +76,9 @@
     @apply flex flex-col;
 }
 
-/* Playlist Home Card */
+/* Playlist Home Card — width is handled by the song-slider-track grid columns */
 .playlist-home-card {
-    @apply flex flex-col gap-3 cursor-pointer snap-start shrink-0;
-    width: calc((100% - (6 * 1.5rem)) / 7);
+    @apply flex flex-col gap-3 cursor-pointer;
 }
 
 .playlist-home-info {
@@ -68,8 +86,11 @@
 }
 
 .playlist-home-name {
-    @apply text-sm font-semibold text-white truncate m-0 leading-tight
-           group-hover:text-emerald-400 transition-colors duration-200;
+    @apply text-sm font-semibold text-white truncate m-0 leading-tight transition-colors duration-200;
+}
+
+.playlist-home-card:hover .playlist-home-name {
+    @apply text-emerald-400;
 }
 
 .playlist-home-count {
@@ -93,65 +114,6 @@
 }
 
 .playlist-cover-placeholder {
-    @apply w-full aspect-square rounded-xl flex items-center justify-center text-4xl text-gray-500
-           bg-gradient-to-br from-gray-800 to-gray-900;
-}
-
-/* ===== TRENDING LIST ===== */
-
-.trending-list {
-    @apply flex flex-col gap-1;
-}
-
-.trending-item {
-    @apply flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer
-           hover:bg-white/5 transition-all duration-200 group/item;
-}
-
-.trending-rank {
-    @apply w-6 text-center text-base font-bold text-gray-500 font-mono shrink-0;
-}
-
-.trending-rank.rank-top3 {
-    @apply text-amber-400;
-}
-
-.trending-thumb {
-    @apply w-12 h-12 rounded-lg object-cover shrink-0;
-}
-
-.trending-thumb-placeholder {
-    @apply flex items-center justify-center text-gray-500 text-xl
-           bg-gradient-to-br from-gray-800 to-gray-900;
-}
-
-.trending-info {
-    @apply flex flex-col gap-0.5 min-w-0 flex-1;
-}
-
-.trending-title {
-    @apply text-sm font-semibold text-white truncate m-0 leading-tight;
-}
-
-.trending-artist {
-    @apply text-xs text-gray-400 truncate m-0;
-}
-
-.trending-plays {
-    @apply text-xs text-gray-500 shrink-0 ml-auto pr-2;
-}
-
-.trending-play-btn {
-    @apply flex items-center justify-center w-8 h-8 rounded-full
-           bg-emerald-500 text-white text-sm shrink-0
-           opacity-0 group-hover/item:opacity-100
-           hover:bg-emerald-400 hover:scale-110
-           transition-all duration-200;
-}
-
-/* Play All Button */
-.play-all-btn {
-    @apply flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold
-           bg-emerald-500 text-white hover:bg-emerald-400
-           hover:scale-105 transition-all duration-200 cursor-pointer;
+    @apply w-full aspect-square rounded-xl flex items-center justify-center text-4xl text-gray-500;
+    background: linear-gradient(to bottom right, #1f2937, #111827);
 }

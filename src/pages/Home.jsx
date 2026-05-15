@@ -1,12 +1,11 @@
 import '../styles/Home.css';
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { FiPlay, FiHeart, FiPlus, FiChevronLeft, FiChevronRight, FiDisc, FiList } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiDisc, FiList } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import SongCard from '../components/SongCard';
 import albumService from '../services/albumService';
 import playlistService from '../services/playlistService';
-import dashboardService from '../services/dashboardService';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -14,29 +13,28 @@ import { useSongs } from '../context/SongsContext';
 
 const shuffleArray = (items = []) => {
     const shuffled = [...items];
-
     for (let i = shuffled.length - 1; i > 0; i -= 1) {
         const randomIndex = Math.floor(Math.random() * (i + 1));
         [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
     }
-
     return shuffled;
 };
 
-// Inline component: ghép collage 2x2 từ ảnh bìa của tối đa 4 bài hát đầu tiên
+// Ghép collage 2x2 từ coverUrl của album thuộc 4 bài hát đầu tiên.
+// Nếu không đủ 4 ảnh hợp lệ → hiển thị placeholder mặc định.
 const PlaylistCoverCollage = ({ songs = [] }) => {
-    const covers = songs.slice(0, 4).map(s => s.coverUrl).filter(Boolean);
+    const covers = songs
+        .map(s => s.album?.coverUrl)
+        .filter(Boolean)
+        .slice(0, 4);
 
-    if (covers.length === 0) {
+    // Chỉ hiển thị collage khi có đúng 4 ảnh
+    if (covers.length < 4) {
         return (
             <div className="playlist-cover-placeholder">
                 <FiList />
             </div>
         );
-    }
-
-    if (covers.length < 4) {
-        return <img src={covers[0]} className="playlist-cover-single" alt="cover" />;
     }
 
     return (
@@ -52,17 +50,17 @@ const Home = () => {
     const { allSongs: songs, songsLoading: loading, refreshSongs } = useSongs();
     const [albums, setAlbums] = useState([]);
     const [userPlaylists, setUserPlaylists] = useState([]);
-    const [trendingSongs, setTrendingSongs] = useState([]);
 
     const sliderRef = useRef(null);
     const albumSliderRef = useRef(null);
     const playlistSliderRef = useRef(null);
 
     const navigate = useNavigate();
-    const { currentUser, getUser } = useAuth();
+    const { currentUser } = useAuth();
     const { showToast } = useToast();
-    const { currentSong, setCurrentSong, isPlaying, setIsPlaying, setSongQueue } = usePlayer();
+    const { setCurrentSong, setIsPlaying, setSongQueue } = usePlayer();
     const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
+
     const shuffledSongs = useMemo(() => shuffleArray(songs), [songs]);
     const shuffledAlbums = useMemo(() => shuffleArray(albums), [albums]);
 
@@ -72,18 +70,6 @@ const Home = () => {
         setSongQueue(shuffledSongs);
     }, [setCurrentSong, setIsPlaying, setSongQueue, shuffledSongs]);
 
-    const handlePlayTrending = useCallback((startIdx) => {
-        const mapped = trendingSongs.map(s => ({
-            id: s.id,
-            title: s.title,
-            artistName: s.artistName,
-            coverUrl: s.coverUrl,
-            audioUrl: s.audioUrl,
-        }));
-        setSongQueue(mapped);
-        setCurrentSong(mapped[startIdx]);
-        setIsPlaying(true);
-    }, [trendingSongs, setSongQueue, setCurrentSong, setIsPlaying]);
 
     useEffect(() => {
         const hasShownWarning = sessionStorage.getItem('hasShownStudyWarning');
@@ -92,7 +78,6 @@ const Home = () => {
             sessionStorage.setItem('hasShownStudyWarning', 'true');
         }
     }, []);
-
 
     useEffect(() => {
         refreshSongs();
@@ -106,9 +91,7 @@ const Home = () => {
                 const albumsDataFiltered = albumsData.filter((album) => {
                     let count = 0;
                     songs.forEach((song) => {
-                        if (album.id === song.album?.id) {
-                            count += 1;
-                        }
+                        if (album.id === song.album?.id) count += 1;
                     });
                     return count >= 2;
                 });
@@ -128,29 +111,25 @@ const Home = () => {
             .catch(err => console.error('Lỗi khi tải playlist:', err));
     }, [currentUser]);
 
-    // Fetch top trending songs
-    useEffect(() => {
-        dashboardService.getTrending()
-            .then(data => setTrendingSongs(data || []))
-            .catch(err => console.error('Lỗi khi tải trending:', err));
-    }, []);
 
     if (loading) {
         return <div className="loading-text">Đang tải danh sách bài hát...</div>;
     }
 
-    const showPlaylistSection = (currentUser && userPlaylists.length > 0) || trendingSongs.length > 0;
+    const showPlaylistSection = currentUser && userPlaylists.length > 0;
 
     return (
         <div className="home-container">
+
+            {/* ===== SECTION: DÀNH CHO BẠN ===== */}
             <div className="section-header">
                 <h2 className="section-title">Dành cho {currentUser?.username}</h2>
                 <div className="slider-nav">
                     <button className="slider-btn" onClick={() => sliderRef.current?.scrollBy({ left: -800, behavior: 'smooth' })}>
-                        <FiChevronLeft className="text-xl" />
+                        <FiChevronLeft className="slider-icon" />
                     </button>
                     <button className="slider-btn" onClick={() => sliderRef.current?.scrollBy({ left: 800, behavior: 'smooth' })}>
-                        <FiChevronRight className="text-xl" />
+                        <FiChevronRight className="slider-icon" />
                     </button>
                 </div>
             </div>
@@ -178,21 +157,21 @@ const Home = () => {
                                     className="section-title title-with-icon"
                                     onClick={() => navigate('/playlist')}
                                 >
-                                    <FiList className="title-icon" />
-                                    Danh Sách Của Bạn
+                                    {/* <FiList className="title-icon" /> */}
+                                    Danh Sách Phát Của Bạn
                                 </h2>
                                 <div className="slider-nav">
                                     <button
                                         className="slider-btn"
                                         onClick={() => playlistSliderRef.current?.scrollBy({ left: -800, behavior: 'smooth' })}
                                     >
-                                        <FiChevronLeft className="text-xl" />
+                                        <FiChevronLeft className="slider-icon" />
                                     </button>
                                     <button
                                         className="slider-btn"
                                         onClick={() => playlistSliderRef.current?.scrollBy({ left: 800, behavior: 'smooth' })}
                                     >
-                                        <FiChevronRight className="text-xl" />
+                                        <FiChevronRight className="slider-icon" />
                                     </button>
                                 </div>
                             </div>
@@ -201,7 +180,7 @@ const Home = () => {
                                 {userPlaylists.map(pl => (
                                     <div
                                         key={pl.id}
-                                        className="playlist-home-card group"
+                                        className="playlist-home-card"
                                         onClick={() => navigate('/playlist', { state: { selectedPlaylistId: pl.id } })}
                                     >
                                         <PlaylistCoverCollage songs={pl.songs || []} />
@@ -214,89 +193,38 @@ const Home = () => {
                             </div>
                         </div>
                     )}
-
-                    {/* Sub-section 2: BXH Nổi Bật */}
-                    {trendingSongs.length > 0 && (
-                        <div className="pl-subsection">
-                            <div className="section-header">
-                                <h2 className="section-title">🔥 BXH Nổi Bật</h2>
-                                <button
-                                    className="play-all-btn"
-                                    onClick={() => handlePlayTrending(0)}
-                                >
-                                    <FiPlay />
-                                    Phát tất cả
-                                </button>
-                            </div>
-
-                            <div className="trending-list">
-                                {trendingSongs.map((song, idx) => (
-                                    <div
-                                        key={song.id}
-                                        className="trending-item group"
-                                        onClick={() => handlePlayTrending(idx)}
-                                    >
-                                        <span className={`trending-rank${idx < 3 ? ' rank-top3' : ''}`}>
-                                            {idx + 1}
-                                        </span>
-                                        {song.coverUrl ? (
-                                            <img src={song.coverUrl} alt={song.title} className="trending-thumb" />
-                                        ) : (
-                                            <div className="trending-thumb trending-thumb-placeholder">
-                                                <FiDisc />
-                                            </div>
-                                        )}
-                                        <div className="trending-info">
-                                            <p className="trending-title">{song.title}</p>
-                                            <p className="trending-artist">{song.artistName}</p>
-                                        </div>
-                                        <span className="trending-plays">
-                                            {song.playCount?.toLocaleString('vi-VN')} lượt
-                                        </span>
-                                        <button className="trending-play-btn" aria-label="Phát bài hát">
-                                            <FiPlay />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
             )}
 
+
             {/* ===== SECTION: KHÁM PHÁ ALBUMS ===== */}
-            <div className="section-header mt-8">
+            <div className="section-header section-header--albums">
                 <h2 className="section-title">Khám phá Albums</h2>
                 <div className="slider-nav">
                     <button className="slider-btn" onClick={() => albumSliderRef.current?.scrollBy({ left: -800, behavior: 'smooth' })}>
-                        <FiChevronLeft className="text-xl" />
+                        <FiChevronLeft className="slider-icon" />
                     </button>
                     <button className="slider-btn" onClick={() => albumSliderRef.current?.scrollBy({ left: 800, behavior: 'smooth' })}>
-                        <FiChevronRight className="text-xl" />
+                        <FiChevronRight className="slider-icon" />
                     </button>
                 </div>
             </div>
 
             <div className="song-slider-track" ref={albumSliderRef}>
                 {shuffledAlbums.map((album) => (
-                    <div key={album.id} className="song-card group" onClick={() => navigate(`/album/${album.id}`)}>
+                    <div key={album.id} className="song-card" onClick={() => navigate(`/album/${album.id}`)}>
                         <div className="song-image-wrapper">
                             {album.coverUrl ? (
-                                <img
-                                    src={album.coverUrl}
-                                    alt={album.title}
-                                    className="song-image"
-                                />
+                                <img src={album.coverUrl} alt={album.title} className="song-image" />
                             ) : (
-                                <div className="w-full h-full bg-linear-to-br from-purple-900 to-indigo-900 flex items-center justify-center">
-                                    <FiDisc className="text-4xl text-white/50" />
+                                <div className="album-img-placeholder">
+                                    <FiDisc className="album-placeholder-icon" />
                                 </div>
                             )}
                         </div>
-
-                        <div className="song-bottom-info mt-3">
+                        <div className="song-bottom-info">
                             <h3 className="song-title">{album.title}</h3>
-                            <p className="song-artist">{album.artist?.name || "Unknown Artist"}</p>
+                            <p className="song-artist">{album.artist?.name || 'Unknown Artist'}</p>
                             {album.releaseDate && (
                                 <div className="song-meta-row">
                                     <span className="song-album">{new Date(album.releaseDate).getFullYear()}</span>
