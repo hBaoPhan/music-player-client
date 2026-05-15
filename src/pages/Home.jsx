@@ -1,11 +1,12 @@
 import '../styles/Home.css';
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { FiChevronLeft, FiChevronRight, FiDisc, FiList } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiDisc, FiList, FiPlay } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import AddToPlaylistModal from '../components/AddToPlaylistModal';
 import SongCard from '../components/SongCard';
 import albumService from '../services/albumService';
 import playlistService from '../services/playlistService';
+import dashboardService from '../services/dashboardService';
 import { usePlayer } from '../context/PlayerContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -20,36 +21,13 @@ const shuffleArray = (items = []) => {
     return shuffled;
 };
 
-// Ghép collage 2x2 từ coverUrl của album thuộc 4 bài hát đầu tiên.
-// Nếu không đủ 4 ảnh hợp lệ → hiển thị placeholder mặc định.
-const PlaylistCoverCollage = ({ songs = [] }) => {
-    const covers = songs
-        .map(s => s.album?.coverUrl)
-        .filter(Boolean)
-        .slice(0, 4);
-
-    // Chỉ hiển thị collage khi có đúng 4 ảnh
-    if (covers.length < 4) {
-        return (
-            <div className="playlist-cover-placeholder">
-                <FiList />
-            </div>
-        );
-    }
-
-    return (
-        <div className="playlist-cover-collage">
-            {covers.map((url, i) => (
-                <img key={i} src={url} alt="" />
-            ))}
-        </div>
-    );
-};
+import PlaylistCoverCollage from '../components/PlaylistCoverCollage';
 
 const Home = () => {
     const { allSongs: songs, songsLoading: loading, refreshSongs } = useSongs();
     const [albums, setAlbums] = useState([]);
     const [userPlaylists, setUserPlaylists] = useState([]);
+    const [trendingSongs, setTrendingSongs] = useState([]);
 
     const sliderRef = useRef(null);
     const albumSliderRef = useRef(null);
@@ -69,6 +47,19 @@ const Home = () => {
         setIsPlaying(true);
         setSongQueue(shuffledSongs);
     }, [setCurrentSong, setIsPlaying, setSongQueue, shuffledSongs]);
+
+    const handlePlayTrending = useCallback((startIdx = 0) => {
+        const mapped = trendingSongs.map(s => ({
+            id: s.id,
+            title: s.title,
+            artistName: s.artistName,
+            coverUrl: s.coverUrl,
+            audioUrl: s.audioUrl,
+        }));
+        setSongQueue(mapped);
+        setCurrentSong(mapped[startIdx]);
+        setIsPlaying(true);
+    }, [trendingSongs, setSongQueue, setCurrentSong, setIsPlaying]);
 
 
     useEffect(() => {
@@ -111,19 +102,26 @@ const Home = () => {
             .catch(err => console.error('Lỗi khi tải playlist:', err));
     }, [currentUser]);
 
+    // Fetch top trending songs
+    useEffect(() => {
+        dashboardService.getTrending()
+            .then(data => setTrendingSongs(data || []))
+            .catch(err => console.error('Lỗi khi tải trending:', err));
+    }, []);
+
 
     if (loading) {
         return <div className="loading-text">Đang tải danh sách bài hát...</div>;
     }
-
-    const showPlaylistSection = currentUser && userPlaylists.length > 0;
+    console.log(trendingSongs)
+    const showPlaylistSection = trendingSongs.length > 0 || (currentUser && userPlaylists.length > 0);
 
     return (
         <div className="home-container">
 
-            {/* ===== SECTION: DÀNH CHO BẠN ===== */}
+            {/* DÀNH CHO BẠN */}
             <div className="section-header">
-                <h2 className="section-title">Dành cho {currentUser?.username}</h2>
+                <h2 className="section-title">Dành cho {currentUser ? currentUser.username : "bạn"}</h2>
                 <div className="slider-nav">
                     <button className="slider-btn" onClick={() => sliderRef.current?.scrollBy({ left: -800, behavior: 'smooth' })}>
                         <FiChevronLeft className="slider-icon" />
@@ -145,20 +143,17 @@ const Home = () => {
                 ))}
             </div>
 
-            {/* ===== SECTION: DANH SÁCH PHÁT ===== */}
+            {/* DANH SÁCH PHÁT*/}
             {showPlaylistSection && (
                 <div className="playlists-section">
-
-                    {/* Sub-section 1: Danh Sách Của Bạn */}
-                    {currentUser && userPlaylists.length > 0 && (
+                    {(trendingSongs.length > 0 || (currentUser && userPlaylists.length > 0)) && (
                         <div className="pl-subsection">
                             <div className="section-header">
                                 <h2
                                     className="section-title title-with-icon"
                                     onClick={() => navigate('/playlist')}
                                 >
-                                    {/* <FiList className="title-icon" /> */}
-                                    Danh Sách Phát Của Bạn
+                                    Danh Sách Phát
                                 </h2>
                                 <div className="slider-nav">
                                     <button
@@ -177,6 +172,31 @@ const Home = () => {
                             </div>
 
                             <div className="song-slider-track" ref={playlistSliderRef}>
+                                {/* Card tổng hợp Top Trending*/}
+                                {trendingSongs.length > 0 && (() => {
+                                    const trendingCovers = trendingSongs
+                                        .map(s => s.coverUrl)
+                                        .filter(Boolean);
+                                    return (
+                                        <div
+                                            className="playlist-home-card playlist-home-card--trending"
+                                            onClick={() => handlePlayTrending(0)}
+                                        >
+                                            <div className="playlist-trending-cover-wrapper">
+                                                <PlaylistCoverCollage covers={trendingCovers} />
+                                                <div className="playlist-trending-play-overlay">
+                                                    <FiPlay />
+                                                </div>
+                                            </div>
+                                            <div className="playlist-home-info">
+                                                <h3 className="playlist-home-name">🔥 Top Trending</h3>
+                                                <p className="playlist-home-count">{trendingSongs.length} bài hát</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })()}
+
+                                {/* Các playlist của người dùng */}
                                 {userPlaylists.map(pl => (
                                     <div
                                         key={pl.id}
@@ -197,7 +217,7 @@ const Home = () => {
             )}
 
 
-            {/* ===== SECTION: KHÁM PHÁ ALBUMS ===== */}
+            {/* KHÁM PHÁ ALBUMS*/}
             <div className="section-header section-header--albums">
                 <h2 className="section-title">Khám phá Albums</h2>
                 <div className="slider-nav">

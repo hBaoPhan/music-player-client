@@ -8,6 +8,7 @@ import { usePlayer } from '../context/PlayerContext';
 import playlistService from '../services/playlistService';
 import SongCard from '../components/SongCard';
 import BaseModal from '../components/BaseModal';
+import PlaylistCoverCollage from '../components/PlaylistCoverCollage';
 
 const shuffleArray = (items = []) => {
     const shuffled = [...items];
@@ -153,9 +154,10 @@ const Playlist = () => {
                 </button>
 
                 <div className="playlist-header">
-                    <div className="playlist-icon-large bg-linear-to-br from-indigo-500 to-purple-600">
-                        <FiMusic className="text-white text-5xl" />
-                    </div>
+                    <PlaylistCoverCollage
+                        songs={playlistSongs}
+                        className="playlist-icon-large shrink-0"
+                    />
                     <div className="playlist-info">
                         <h2>{selectedPlaylist.name}</h2>
                         <p>{playlistSongs.length} bài hát</p>
@@ -217,7 +219,7 @@ const Playlist = () => {
                             onClick={() => playlist && handleSelectPlaylist(playlist)}
                         >
                             <div className="playlist-container">
-                                <FiMusic className="text-gray-400 text-4xl" />
+                                <PlaylistCoverCollage songs={playlist?.songs || []} className="w-full h-full" />
                                 <button
                                     className="delete-playlist-btn"
                                     onClick={(e) => playlist && handleDeletePlaylist(e, playlist.id)}

@@ -97,23 +97,21 @@
     @apply text-xs text-gray-400 m-0;
 }
 
-/* Cover collage styles */
-.playlist-cover-collage {
-    @apply grid rounded-xl overflow-hidden aspect-square w-full;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 2px;
+
+/* Trending card accent */
+.playlist-home-card--trending {
+    @apply relative;
 }
 
-.playlist-cover-collage img {
-    @apply w-full h-full object-cover;
+.playlist-trending-cover-wrapper {
+    @apply relative w-full;
 }
 
-.playlist-cover-single {
-    @apply w-full aspect-square object-cover rounded-xl;
+.playlist-trending-play-overlay {
+    @apply absolute inset-0 rounded-xl flex items-center justify-center text-white text-2xl
+           bg-black/40 opacity-0 transition-opacity duration-200;
 }
 
-.playlist-cover-placeholder {
-    @apply w-full aspect-square rounded-xl flex items-center justify-center text-4xl text-gray-500;
-    background: linear-gradient(to bottom right, #1f2937, #111827);
+.playlist-home-card--trending:hover .playlist-trending-play-overlay {
+    @apply opacity-100;
 }

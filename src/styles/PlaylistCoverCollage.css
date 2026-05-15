@@ -1,0 +1,22 @@
+@reference "tailwindcss";
+
+/* Cover collage styles */
+.playlist-cover-collage {
+    @apply grid rounded-xl overflow-hidden aspect-square;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+}
+
+.playlist-cover-collage img {
+    @apply w-full h-full object-cover;
+}
+
+.playlist-cover-single {
+    @apply w-full aspect-square object-cover rounded-xl;
+}
+
+.playlist-cover-placeholder {
+    @apply aspect-square rounded-xl flex items-center justify-center text-4xl text-gray-500;
+    background: linear-gradient(to bottom right, #1f2937, #111827);
+}

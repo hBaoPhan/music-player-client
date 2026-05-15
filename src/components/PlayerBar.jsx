@@ -155,7 +155,7 @@ const PlayerBar = () => {
                 />
                 <div className="song-text-info">
                     <span className="player-song-title">{currentSong.title}</span>
-                    <span className="player-song-artist">{currentSong.artist?.name || "Unknown Artist"}</span>
+                    <span className="player-song-artist">{currentSong.artist?.name || (currentSong?.artistName || "Unknown Artist")}</span>
                 </div>
                 <button
                     className="ml-4 focus:outline-none"
