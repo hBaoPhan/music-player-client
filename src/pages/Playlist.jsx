@@ -8,6 +8,7 @@ import { usePlayer } from '../context/PlayerContext';
 import playlistService from '../services/playlistService';
 import SongCard from '../components/SongCard';
 import BaseModal from '../components/BaseModal';
+import PlaylistCoverCollage from '../components/PlaylistCoverCollage';
 
 const shuffleArray = (items = []) => {
     const shuffled = [...items];
@@ -106,7 +107,6 @@ const Playlist = () => {
         setLoadingSongs(true);
         try {
             const data = await playlistService.getPlaylistById(playlist.id);
-            // Assuming the API returns the songs in the 'songs' field
             setPlaylistSongs(data.songs || []);
         } catch (error) {
             console.error("Lỗi khi tải bài hát trong playlist:", error);
@@ -143,7 +143,6 @@ const Playlist = () => {
         return <div className="loading-text">Vui lòng đăng nhập để xem danh sách phát.</div>;
     }
 
-    // Render detailed view of a selected playlist
     if (selectedPlaylist) {
         return (
             <div className="home-container">
@@ -155,9 +154,10 @@ const Playlist = () => {
                 </button>
 
                 <div className="playlist-header">
-                    <div className="playlist-icon-large bg-linear-to-br from-indigo-500 to-purple-600">
-                        <FiMusic className="text-white text-5xl" />
-                    </div>
+                    <PlaylistCoverCollage
+                        songs={playlistSongs}
+                        className="playlist-icon-large shrink-0"
+                    />
                     <div className="playlist-info">
                         <h2>{selectedPlaylist.name}</h2>
                         <p>{playlistSongs.length} bài hát</p>
@@ -194,7 +194,6 @@ const Playlist = () => {
         );
     }
 
-    // Render list of playlists
     return (
         <div className="home-container">
             <div className="flex justify-between items-center mb-6">
@@ -220,7 +219,7 @@ const Playlist = () => {
                             onClick={() => playlist && handleSelectPlaylist(playlist)}
                         >
                             <div className="playlist-container">
-                                <FiMusic className="text-gray-400 text-4xl" />
+                                <PlaylistCoverCollage songs={playlist?.songs || []} className="w-full h-full" />
                                 <button
                                     className="delete-playlist-btn"
                                     onClick={(e) => playlist && handleDeletePlaylist(e, playlist.id)}
