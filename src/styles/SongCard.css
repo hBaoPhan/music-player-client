@@ -1,7 +1,15 @@
 @reference "tailwindcss";
 
 .song-card {
-    @apply p-4 transition-all duration-300 bg-gray-800/40 rounded-xl cursor-pointer hover:bg-gray-800 hover:shadow-xl;
+    @apply p-3 transition-all duration-300 bg-gray-800/40 rounded-xl cursor-pointer;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.song-card:hover {
+    @apply bg-gray-800/80;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.3);
+    border-color: rgba(16, 185, 129, 0.4);
 }
 
 .song-image-wrapper {

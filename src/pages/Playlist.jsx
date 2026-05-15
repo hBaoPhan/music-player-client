@@ -1,5 +1,6 @@
 import '../styles/Playlist.css';
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { FiPlay, FiTrash2, FiPlus, FiArrowLeft, FiMusic } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -23,6 +24,7 @@ const Playlist = () => {
     const { currentUser } = useAuth();
     const { showToast } = useToast();
     const { setCurrentSong, setIsPlaying, setSongQueue } = usePlayer();
+    const location = useLocation();
 
     const [playlists, setPlaylists] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -38,6 +40,15 @@ const Playlist = () => {
     useEffect(() => {
         fetchPlaylists();
     }, [currentUser]);
+
+    useEffect(() => {
+        if (playlists.length > 0 && location.state?.selectedPlaylistId) {
+            const p = playlists.find(p => p.id === location.state.selectedPlaylistId);
+            if (p && (!selectedPlaylist || selectedPlaylist.id !== p.id)) {
+                handleSelectPlaylist(p);
+            }
+        }
+    }, [playlists, location.state]);
 
     const fetchPlaylists = async () => {
         if (!currentUser) return;

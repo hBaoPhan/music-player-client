@@ -1,0 +1,211 @@
+@reference "tailwindcss";
+
+.charts-container {
+    @apply space-y-8 pb-8;
+}
+
+/* Hero */
+.charts-hero {
+    @apply flex items-center gap-5 mb-2;
+}
+
+.charts-hero-icon {
+    @apply flex items-center justify-center w-16 h-16 rounded-2xl text-3xl text-white;
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+}
+
+.charts-hero-title {
+    @apply text-3xl font-black text-white m-0;
+}
+
+.charts-hero-subtitle {
+    @apply text-gray-400 text-sm mt-1;
+}
+
+/* Tabs */
+.charts-tabs {
+    @apply flex gap-3 mb-6;
+}
+
+.charts-tab-btn {
+    @apply px-5 py-2.5 rounded-full text-sm font-semibold text-gray-400 border border-gray-700 bg-transparent cursor-pointer transition-all duration-200;
+}
+
+.charts-tab-btn:hover {
+    @apply text-white border-gray-500;
+}
+
+.charts-tab-btn.active {
+    @apply text-black border-transparent;
+    background: linear-gradient(135deg, #10b981, #34d399);
+}
+
+/* Body Layout */
+.charts-body {
+    @apply grid gap-8;
+    grid-template-columns: 1fr 320px;
+}
+
+@media (max-width: 1024px) {
+    .charts-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Song List */
+.charts-song-list {
+    @apply flex flex-col gap-2;
+}
+
+.charts-song-row {
+    @apply flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all duration-200;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.charts-song-row:hover {
+    @apply bg-gray-800;
+}
+
+/* Rank */
+.charts-rank {
+    @apply w-8 flex justify-center shrink-0;
+}
+
+.charts-rank-num {
+    @apply text-gray-500 text-base font-semibold;
+}
+
+.charts-rank-badge {
+    @apply flex items-center justify-center w-7 h-7 rounded-full text-xs font-black text-white;
+}
+
+.rank-1 {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.rank-2 {
+    background: linear-gradient(135deg, #c0c0c0, #808080);
+    box-shadow: 0 0 8px rgba(192, 192, 192, 0.3);
+}
+
+.rank-3 {
+    background: linear-gradient(135deg, #cd7f32, #a05a2c);
+    box-shadow: 0 0 8px rgba(205, 127, 50, 0.3);
+}
+
+/* Cover */
+.charts-song-cover-wrapper {
+    @apply relative w-12 h-12 rounded-lg overflow-hidden shrink-0;
+}
+
+.charts-song-cover {
+    @apply w-full h-full object-cover;
+}
+
+.charts-song-cover-placeholder {
+    @apply w-full h-full flex items-center justify-center bg-gray-700;
+}
+
+.charts-song-play-overlay {
+    @apply absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-200;
+}
+
+.charts-song-row:hover .charts-song-play-overlay {
+    @apply opacity-100;
+}
+
+/* Info */
+.charts-song-info {
+    @apply flex-1 min-w-0;
+}
+
+.charts-song-title {
+    @apply text-white font-semibold text-sm truncate;
+}
+
+.charts-song-artist {
+    @apply text-gray-400 text-xs truncate mt-0.5;
+}
+
+/* Play Count */
+.charts-play-count {
+    @apply flex items-center gap-1.5 text-xs text-gray-400 shrink-0 whitespace-nowrap;
+}
+
+/* Skeleton */
+.charts-song-skeleton {
+    @apply h-16 rounded-xl animate-pulse;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.charts-empty {
+    @apply text-gray-400 text-lg text-center mt-12;
+}
+
+/* Artist Panel */
+.charts-artist-panel {
+    @apply p-6 rounded-2xl;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    height: fit-content;
+}
+
+.charts-artist-panel-title {
+    @apply text-lg font-bold text-white mb-1;
+}
+
+.charts-artist-panel-sub {
+    @apply text-gray-400 text-xs mb-6;
+}
+
+.charts-artist-list {
+    @apply flex flex-col gap-5;
+}
+
+.charts-artist-row {
+    @apply flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all duration-200;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.charts-artist-row:hover {
+    @apply bg-gray-800/80;
+}
+
+.charts-artist-rank-wrap {
+    @apply w-8 flex justify-center shrink-0;
+}
+
+.charts-artist-avatar-wrap {
+    @apply w-12 h-12 rounded-full overflow-hidden border-2 border-transparent transition-all duration-300 shrink-0;
+}
+
+.charts-artist-row:hover .charts-artist-avatar-wrap {
+    @apply border-emerald-500 scale-105;
+}
+
+.charts-artist-avatar {
+    @apply w-full h-full object-cover;
+}
+
+.charts-artist-avatar-placeholder {
+    @apply w-full h-full flex items-center justify-center bg-gray-800 text-xl;
+}
+
+.charts-artist-info {
+    @apply flex-1 min-w-0;
+}
+
+.charts-artist-name {
+    @apply text-white font-bold text-sm truncate;
+}
+
+.charts-artist-plays {
+    @apply text-gray-400 text-xs mt-1;
+}
+
+.charts-artist-skeleton {
+    @apply h-14 rounded-xl animate-pulse mb-4;
+    background: rgba(255, 255, 255, 0.05);
+}

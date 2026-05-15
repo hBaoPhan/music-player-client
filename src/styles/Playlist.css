@@ -3,7 +3,7 @@
 }
 
 .playlists-grid {
-    @apply grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+    @apply grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 pt-2;
 }
 
 .playlist-card {
@@ -69,5 +69,5 @@
 }
 
 .song-grid {
-    @apply grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5;
+    @apply grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 pt-2;
 }
