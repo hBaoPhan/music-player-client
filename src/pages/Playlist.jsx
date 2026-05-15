@@ -106,7 +106,6 @@ const Playlist = () => {
         setLoadingSongs(true);
         try {
             const data = await playlistService.getPlaylistById(playlist.id);
-            // Assuming the API returns the songs in the 'songs' field
             setPlaylistSongs(data.songs || []);
         } catch (error) {
             console.error("Lỗi khi tải bài hát trong playlist:", error);
@@ -143,7 +142,6 @@ const Playlist = () => {
         return <div className="loading-text">Vui lòng đăng nhập để xem danh sách phát.</div>;
     }
 
-    // Render detailed view of a selected playlist
     if (selectedPlaylist) {
         return (
             <div className="home-container">
@@ -194,7 +192,6 @@ const Playlist = () => {
         );
     }
 
-    // Render list of playlists
     return (
         <div className="home-container">
             <div className="flex justify-between items-center mb-6">

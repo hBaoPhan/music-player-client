@@ -20,6 +20,9 @@ export const SongsProvider = ({ children }) => {
 
     useEffect(() => {
         refreshSongs();
+
+        const interval = setInterval(refreshSongs, 5 * 60 * 1000); // auto-refetch mỗi 5 phút
+        return () => clearInterval(interval);
     }, [refreshSongs]);
 
     return (
