@@ -50,10 +50,10 @@ const Home = () => {
 
     const handlePlayTrending = useCallback((startIdx = 0) => {
         const mapped = trendingSongs.map(s => ({
-            id: s.id,
+            id: s.songId,
             title: s.title,
-            artistName: s.artistName,
-            coverUrl: s.coverUrl,
+            artist: { name: s.artistName },
+            album: { coverUrl: s.coverUrl },
             audioUrl: s.audioUrl,
         }));
         setSongQueue(mapped);
@@ -113,7 +113,6 @@ const Home = () => {
     if (loading) {
         return <div className="loading-text">Đang tải danh sách bài hát...</div>;
     }
-    console.log(trendingSongs)
     const showPlaylistSection = trendingSongs.length > 0 || (currentUser && userPlaylists.length > 0);
 
     return (

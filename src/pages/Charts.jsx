@@ -43,8 +43,15 @@ const Charts = () => {
             title: s.title,
             artist: { name: s.artistName },
             album: { coverUrl: s.coverUrl },
+            audioUrl: s.audioUrl,
         }));
-        const current = { id: song.songId, title: song.title, artist: { name: song.artistName }, album: { coverUrl: song.coverUrl } };
+        const current = {
+            id: song.songId,
+            title: song.title,
+            artist: { name: song.artistName },
+            album: { coverUrl: song.coverUrl },
+            audioUrl: song.audioUrl,
+        };
         setCurrentSong(current);
         setIsPlaying(true);
         setSongQueue(queue);
