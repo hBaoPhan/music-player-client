@@ -72,7 +72,7 @@ const Playlist = () => {
                 name: newPlaylistName,
                 userId: currentUser.id
             });
-            console.log('Backend trả về playlist:', newPlaylist);
+            // console.log('Backend trả về playlist:', newPlaylist);
             setPlaylists([...playlists, newPlaylist]);
             showToast('Tạo danh sách phát thành công!', 'success');
             setNewPlaylistName('');
