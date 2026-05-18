@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { usePlayer } from '../context/PlayerContext';
 import userService from '../services/userService';
+import playlistService from '../services/playlistService';
 import { useNavigate } from 'react-router-dom';
 import { FiUser, FiPlay, FiPlus, FiMoreHorizontal, FiMusic } from 'react-icons/fi';
 import { BsCheckCircleFill } from 'react-icons/bs';
@@ -13,24 +14,29 @@ const Profile = () => {
     const { currentUser } = useAuth();
     const { setCurrentSong, setIsPlaying, setSongQueue, songQueue } = usePlayer() || {};
     const [topTracks, setTopTracks] = useState([]);
+    const [playlists, setPlaylists] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState(null);
 
     useEffect(() => {
         if (!currentUser) return;
 
-        const fetchTopTracks = async () => {
+        const fetchData = async () => {
             try {
-                const response = await userService.getTopSongsThisMonth(currentUser.id);
-                setTopTracks(response);
+                const [tracksResponse, playlistsResponse] = await Promise.all([
+                    userService.getTopSongsThisMonth(currentUser.id),
+                    playlistService.getUserPlaylists(currentUser.id)
+                ]);
+                setTopTracks(tracksResponse);
+                setPlaylists(playlistsResponse);
             } catch (error) {
-                console.error("Lỗi khi tải bài hát top tháng:", error);
+                console.error("Lỗi khi tải dữ liệu trang cá nhân:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchTopTracks();
+        fetchData();
     }, [currentUser]);
 
     const handlePlaySong = (song) => {
@@ -58,7 +64,7 @@ const Profile = () => {
         return <div className="text-white p-8">Vui lòng đăng nhập để xem hồ sơ.</div>;
     }
 
-    const activePlaylists = currentUser.playlists ? currentUser.playlists.filter(p => p.isActive) : [];
+    const activePlaylists = playlists.filter(p => p.isActive);
 
     return (
         <div className="profile-container">
