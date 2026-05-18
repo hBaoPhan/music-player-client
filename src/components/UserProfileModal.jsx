@@ -102,11 +102,19 @@ const UserProfileModal = ({ onClose }) => {
 
         setPasswordLoading(true);
         try {
-            await authService.changePassword(
+            const result = await authService.changePassword(
                 currentUser.username,
                 passwordData.oldPassword,
                 passwordData.newPassword
             );
+
+            if (result?.accessToken) {
+                localStorage.setItem('accessToken', result.accessToken);
+            }
+            if (result?.refreshToken) {
+                localStorage.setItem('refreshToken', result.refreshToken);
+            }
+
             showToast('Đổi mật khẩu thành công!', 'success');
             setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
         } catch (error) {
