@@ -58,6 +58,8 @@ const Profile = () => {
         return <div className="text-white p-8">Vui lòng đăng nhập để xem hồ sơ.</div>;
     }
 
+    const activePlaylists = currentUser.playlists ? currentUser.playlists.filter(p => p.isActive) : [];
+
     return (
         <div className="profile-container">
             <div className="profile-header">
@@ -68,7 +70,7 @@ const Profile = () => {
                     <span className="profile-label">Profile</span>
                     <h1 className="profile-name">{currentUser.username}</h1>
                     <div className="profile-stats">
-                        <span>{currentUser.playlists ? currentUser.playlists.length : 0} Public Playlists</span>
+                        <span>{activePlaylists.length} Public Playlists</span>
                         <span className="profile-stats-dot">•</span>
                         <span>
                             Thành viên từ {currentUser.createdAt ? new Intl.DateTimeFormat('vi-VN', { year: 'numeric', month: 'long' }).format(new Date(currentUser.createdAt)) : 'N/A'}
@@ -151,9 +153,9 @@ const Profile = () => {
                     </div>
                 </div>
 
-                {currentUser?.playlists?.length > 0 ? (
+                {activePlaylists.length > 0 ? (
                     <div className="profile-playlists-grid">
-                        {currentUser.playlists.map(playlist => (
+                        {activePlaylists.map(playlist => (
                             <div
                                 key={playlist.id}
                                 className="profile-playlist-card group"
